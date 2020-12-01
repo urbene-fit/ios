@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "7BEA40F2-BB93-4D6E-A537-2679C28D56D2"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "welfare/Test2ScrollViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "Test2ScrollViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065 - f9e95f4250960e2e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.Test2ScrollViewController.__deallocating_deinit"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/Test2ScrollViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065 - edcdb503d31dded0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.Test2ScrollViewController.__allocating_init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; welfare.Test2ScrollViewController"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/Test2ScrollViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065 - 77f7d7f0f715881b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.Test2ScrollViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; welfare.Test2ScrollViewController"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/Test2ScrollViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "335">
+               </Location>
+               <Location
+                  uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065 - 3056365f30b6212e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.Test2ScrollViewController.__allocating_init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;welfare.Test2ScrollViewController&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/Test2ScrollViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "76C11EA8-D81A-404A-AD77-39F199DC3065 - a911ec254f505bdd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.Test2ScrollViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;welfare.Test2ScrollViewController&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/Test2ScrollViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "276">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "68129186-7402-4B96-A882-8789459433D9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "welfare/FirstCategoryViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "775"
+            endingLineNumber = "775"
+            landmarkName = "nexted(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2F744F88-3C97-475B-A926-6B49A8FCE7F5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "welfare/FirstCategoryViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "774"
+            endingLineNumber = "774"
+            landmarkName = "nexted(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "welfare/ResultViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "ResultViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - 370467c5861800b6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.items.getter : Swift.Array&lt;welfare.ResultViewController.item&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "112">
+               </Location>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - 742ef1965b0388ba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.items.setter : Swift.Array&lt;welfare.ResultViewController.item&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "132">
+               </Location>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - c8f5cf582e7293a0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.items.modify : Swift.Array&lt;welfare.ResultViewController.item&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - dd8466394e5937a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.items.modify : Swift.Array&lt;welfare.ResultViewController.item&gt; with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "8">
+               </Location>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - 58ddc6019922c23b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.init(nibName: Swift.Optional&lt;Swift.String&gt;, bundle: Swift.Optional&lt;__C.NSBundle&gt;) -&gt; welfare.ResultViewController"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "884">
+               </Location>
+               <Location
+                  uuid = "5B236072-0728-4CC2-BE52-76A7C909E4A3 - 1eaa00c87b96d500"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "welfare.ResultViewController.init(coder: __C.NSCoder) -&gt; Swift.Optional&lt;welfare.ResultViewController&gt;"
+                  moduleName = "welfare"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/dh/Desktop/welfare/welfare/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "39"
+                  endingLineNumber = "39"
+                  offsetFromSymbolStart = "860">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3A5C19AB-D065-420C-812A-883033535351"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "welfare/UiTest/UiTestController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1249"
+            endingLineNumber = "1249"
+            landmarkName = "move(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
