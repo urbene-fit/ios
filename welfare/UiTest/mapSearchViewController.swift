@@ -150,9 +150,9 @@ class mapSearchViewController: UIViewController, UISearchBarDelegate, UITableVie
         //뷰 이동
         RVC.modalPresentationStyle = .fullScreen
         
-        // B 컨트롤러 뷰로 넘어간다.
-        self.present(RVC, animated: true, completion: nil)
-        
+        //혜택지도로 다시 이동
+        self.navigationController?.pushViewController(RVC, animated: true)
+
         
     }
     

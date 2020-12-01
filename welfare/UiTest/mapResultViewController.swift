@@ -207,8 +207,9 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
         //뷰 이동
         RVC.modalPresentationStyle = .fullScreen
 
-        // B 컨트롤러 뷰로 넘어간다.
-        self.present(RVC, animated: true, completion: nil)
+        // 상세정보 뷰로 이동
+        //self.present(RVC, animated: true, completion: nil)
+        self.navigationController?.pushViewController(RVC, animated: true)
 
         
     }

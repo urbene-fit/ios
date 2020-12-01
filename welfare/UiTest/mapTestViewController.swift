@@ -11,7 +11,7 @@ import CoreLocation
 import MapKit
 import Alamofire
 
-class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate , UISearchBarDelegate {
+class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate , UISearchBarDelegate, UITabBarControllerDelegate {
     
     // var areaCounts : [areaCount] = []
     
@@ -69,6 +69,8 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     //효과를 줄 원형 이미지
     weak var mask: CAShapeLayer?
     
+    var tabBarCnt = UITabBarController()
+
     
     let imgView = UIImageView()
     
@@ -150,13 +152,15 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         return manager
     }()
     
-    var start: CFTimeInterval!          // when the animation was started
+    var start: CFTimeInterval!          // when the animationㅌ was started
     let duration: CFTimeInterval = 0.5  // how long will the animation take
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         
+        //self.navigationController?.isNavigationBarHidden = true
+
         //화면 스크롤 크기
         var screenWidth = Int(view.bounds.width)
         var screenHeight = Int(view.bounds.height)
@@ -171,8 +175,23 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         cityXYs.append(cityXY.init(cityName: "대구", cityX: 240, cityY: 400))
         cityXYs.append(cityXY.init(cityName: "대전", cityX: 140, cityY: 340))
         cityXYs.append(cityXY.init(cityName: "부산", cityX: 330, cityY: 480))
-        
-        
+        cityXYs.append(cityXY.init(cityName: "제주", cityX: 50, cityY: 550))
+
+//       self.tabBarController?.delegate = self
+//        let tab = UITabBar()
+//        tab.frame =  CGRect(x: 0, y: 0, width: view.frame.size.width, height: 500)
+//        view.addSubview(tab)
+//
+//        tabBarCnt = UITabBarController()
+//          tabBarCnt.tabBar.barStyle = .black
+//
+//
+//          let journalVC = UiTestController()
+//          journalVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
+//
+//          tabBarCnt.viewControllers = [journalVC]
+//          self.view.addSubview(tabBarCnt.view)
+//
         
         
         //        //앱 로고
@@ -316,7 +335,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         
         
         areaMoveBtn.setTitleColor(UIColor.gray, for: .normal)
-        areaMoveBtn.frame = CGRect(x: 300, y: 60, width: 100, height: 50)
+        areaMoveBtn.frame = CGRect(x: 300, y: 560, width: 100, height: 50)
         areaMoveBtn.setTitle("지역변경", for: .normal)
         areaMoveBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14.7)
         
@@ -324,7 +343,6 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
         areaMoveBtn.addTarget(self, action: #selector(self.areaMove), for: .touchUpInside)
         
-        self.view.addSubview(areaMoveBtn)
         
         
         
@@ -342,7 +360,8 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         //        imgView.image = imgView.image?.withRenderingMode(.alwaysTemplate)
         //imgView.tintColor =  #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         self.view.addSubview(imgView)
-        
+        self.view.addSubview(areaMoveBtn)
+
         // Do any additional setup after loading the view.
         
         locationManager.delegate = self
@@ -485,7 +504,8 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                                     print(areaLists[i].welf_count)
                                     
                                     
-                                    let testView = UIView(frame: CGRect(x: self.cityXYs[i].cityX, y: self.cityXYs[i].cityY, width:  70, height: 70))
+//                                    let testView = UIView(frame: CGRect(x: self.cityXYs[i].cityX, y: self.cityXYs[i].cityY, width:  70, height: 70))
+                                    let testView = UIView(frame: CGRect(x: 50, y: 50, width:  70, height: 70))
                                     testView.backgroundColor = #colorLiteral(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 1)
                                     testView.backgroundColor = UIColor(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 0.3)
                                     //색상고르는 법 Color Literal
@@ -671,21 +691,52 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         RVC.local = local
         
         //뷰 이동
-        RVC.modalPresentationStyle = .fullScreen
+        RVC.modalPresentationStyle = .overFullScreen
         
-        // B 컨트롤러 뷰로 넘어간다.
-        self.present(RVC, animated: true, completion: nil)
+        //self.present(RVC, animated: true, completion: nil)
+        self.navigationController?.pushViewController(RVC, animated: true)
+
         
-        
-        
-        
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let mainTabBar = storyboard.instantiateViewController(withIdentifier: "tabBarController") as! tabBarController
+//        let tset = mapTestViewController()
+//        mainTabBar.present(tset, animated: false, completion: nil)
+//
+//        self.present(RVC, animated: false) {
+//            mainTabBar.selectedIndex = 1
+//        }
+
+        //mainTabBar.selectedIndex = 1
+       // tabBarController(tabBarController: mainTabBar, didSelectViewController: tset)
+        //self.tabBarController?.present(RVC, animated: true, completion: nil)
+//        self.present(RVC, animated:true, completion:nil)
+//        tabBarController?.selectedViewController = RVC
+//        self.navigationController?.pushViewController(RVC, animated: true)
+        //tabBarController!.selectedIndex = 0
+         
+        //self.selectedIndex = 0
+
+
+
+//        self.tabBarController?.present(RVC, animated: false, completion: nil)
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+//
+//        let mainTabBar = storyboard.instantiateViewController(withIdentifier: "tabBarController") as! UITabBarController
+//            // mainTabBar.popToViewController(RVC, animated: true)
+//        let viewNumNavController  = mainTabBar.viewControllers![1] as! ViewNumNavigationController
+//
+//        viewNumNavController.popToViewController(RVC, animated: true)
     }
     
     
     //지역혜택 리스트를 보여주는 페이지로 이동
     @objc func moveList(_ sender: UIButton) {
         
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapResultViewController") as? mapResultViewController         else{
+        print("move")
+       // self.dismiss(animated: false, completion: nil)
+        
+        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapSearchViewController") as? mapSearchViewController         else{
             
             return
             
@@ -697,9 +748,29 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         RVC.modalPresentationStyle = .fullScreen
         
         // B 컨트롤러 뷰로 넘어간다.
-        self.present(RVC, animated: true, completion: nil)
+        //self.present(RVC, animated: true, completion: nil)
+        self.navigationController?.pushViewController(RVC, animated: true)
+        
+//        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapResultViewController") as? mapResultViewController         else{
+//
+//            return
+//
+//        }
+//
+//        RVC.local = local
+//
+//        //뷰 이동
+//        RVC.modalPresentationStyle = .fullScreen
+//
+//        // B 컨트롤러 뷰로 넘어간다.
+//        self.present(RVC, animated: true, completion: nil)
     }
     
-    
+    func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
+      
+        print("tabbar메소드")
+
+      
+    }
     
 }
