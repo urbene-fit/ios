@@ -14,8 +14,11 @@
 import UIKit
 import Alamofire
 
-class UiTestController: UIViewController {
+
+class UiTestController: UIViewController, UIScrollViewDelegate {
     
+    //
+    var scrollView = UIScrollView()
     
     
     //푸쉬알람으로 앱이 켜진지 체크
@@ -88,6 +91,43 @@ class UiTestController: UIViewController {
     var categorys = Array<String>()
     
     
+    
+    //데이터 파싱
+    struct saerchList: Decodable {
+        var welf_name : String
+        var welf_local : String
+        var parent_category : String
+        var welf_category : String
+        var tag : String
+        
+    }
+    
+    
+    struct parse: Decodable {
+        let Status : String
+        //반환값이 없을떄 처리
+        let Message : [saerchList]
+    }
+    
+    
+    struct ytb: Decodable {
+        var videoId : String
+        var title : String
+        var thumbnail : String
+        
+    }
+    
+    
+    struct ytbParse: Decodable {
+        let Status : String
+        //반환값이 없을떄 처리
+        let Message : [ytb]
+    }
+    
+    var ytbList = [ytb]()
+    
+    
+    
     //    override func viewWillDisappear(_ animated: Bool){
     //        super.viewWillDisappear(<#Bool#>)
     //
@@ -106,6 +146,8 @@ class UiTestController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("ViewController의 view가 Load됨")
+        //메인 네비 타이틀 초기화
+       // self.title = "메인"
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -133,11 +175,148 @@ class UiTestController: UIViewController {
         print("ViewController의 SubView를 레이아웃 함")
     }
     
+    
+    //뷰페이저 영상목록
+    var pageControl = UIPageControl()
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         print("viewDidLoad 함")
         self.view.backgroundColor = UIColor.white
+        
+       
+        
+        //유튜브 정보를 받아온다.
+        Alamofire.request("https://www.urbene-fit.com/youtube", method: .get)
+            .validate()
+            .responseJSON { [self] response in
+                
+                switch response.result {
+                case .success(let value):
+                    do {
+                        let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                        let ytbList = try JSONDecoder().decode(ytbParse.self, from: data)
+                        
+                        //페이지 컨트롤 설정
+                        self.pageControl.numberOfPages = ytbList.Message.count //페이지 컨트롤의 전체 수
+                        self.pageControl.currentPage = 0             //현재 페이지를 의미
+                        self.pageControl.pageIndicatorTintColor = UIColor.lightGray  // 페이지 컨트롤의 페이지를 표시하는 부분의 색상
+                        self.pageControl.currentPageIndicatorTintColor = UIColor.black //선택된 페이지 컨트롤의 색
+                
+                        
+                        //리뷰데이터를 테이블아이템에 추가해준다.
+                        for i in 0..<ytbList.Message.count {
+                            //                                        self.reviewItems.append(reviewItem.init(content: resultList.retBody[i].content,  email: resultList.retBody[i].email, like_count: resultList.retBody[i].like_count, bad_count: resultList.retBody[i].bad_count, star_count: resultList.retBody[i].star_count))
+                            //
+                            self.ytbList.append(ytb.init(videoId: ytbList.Message[i].videoId, title: ytbList.Message[i].title, thumbnail: ytbList.Message[i].thumbnail))
+                            
+                            
+                            
+                            
+                            //                            let url2 = URL(string: ytbList.Message[i].thumbnail)
+                            //let xPosition = (self.view.frame.width - 60) * CGFloat(i) + 10
+                            let xPosition = (self.view.frame.width) * CGFloat(i) + 30 *  DeviceManager.sharedInstance.widthRatio
+                            
+                            let listView = UIView()
+                            listView.frame = CGRect(x: xPosition, y: 0,
+                                                    width: self.view.frame.width - 60 *  DeviceManager.sharedInstance.widthRatio,
+                                                    height: 340 *  DeviceManager.sharedInstance.heightRatio)
+                            
+                            //listView.layer.cornerRadius = 16
+                            listView.layer.borderColor = UIColor(displayP3Red: 224/255.0, green:224/255.0, blue: 224/255.0, alpha: 1).cgColor
+                            //listView.layer.borderWidth = 1
+                            let imageView = UIImageView()
+                            let url = URL(string: ytbList.Message[i].thumbnail)
+                            imageView.frame = CGRect(x: xPosition, y: 0,
+                                                     width: self.view.frame.width - 60 *  DeviceManager.sharedInstance.widthRatio,
+                                                     height: 300 *  DeviceManager.sharedInstance.heightRatio)
+                            imageView.layer.borderWidth = 0.1
+                            imageView.layer.cornerRadius = 33 *  DeviceManager.sharedInstance.heightRatio
+                            imageView.layer.borderColor = UIColor.white.cgColor
+                            imageView.clipsToBounds = true
+                           imageView.kf.setImage(with: url)
+                            
+                            //imageView.setImage(crop(imgUrl: ytbList.Message[i].thumbnail)!)
+                            
+                            
+                            //imageView.kf.setImage(with: url2)
+                            //imageView.contentMode = .scaleAspectFit //  사진의 비율을 맞춤.
+                            
+                          
+                            let cropView = UIView()
+                            cropView.frame = CGRect(x: 0, y: 0, width: listView.frame.width, height: 100 *  DeviceManager.sharedInstance.heightRatio)
+                            cropView.backgroundColor = UIColor.white
+                            //imageView.addSubview(cropView)
+                            self.scrollView.contentSize.width =
+                                self.view.frame.width * CGFloat(1+i) *  DeviceManager.sharedInstance.widthRatio
+                            
+                            
+                            //영상관련 태그 라벨
+                            let tagLabel = UILabel()
+                            tagLabel.frame = CGRect(x: 40 *  DeviceManager.sharedInstance.widthRatio, y: 315 *  DeviceManager.sharedInstance.heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+                            tagLabel.text = "주거"
+                            tagLabel.textAlignment = .center
+                            tagLabel.font = UIFont(name: "Jalnan", size: 12 *  DeviceManager.sharedInstance.heightRatio)
+                            tagLabel.layer.cornerRadius = 8 *  DeviceManager.sharedInstance.heightRatio
+                            tagLabel.layer.borderWidth = 1
+                            tagLabel.layer.borderColor = UIColor(displayP3Red: 224/255.0, green:224/255.0, blue: 224/255.0, alpha: 1).cgColor
+                            
+                    
+//                            listView.addSubview(tagLabel)
+//                            listView.addSubview(imageView)
+                            self.scrollView.addSubview(imageView)
+                            self.scrollView.addSubview(tagLabel)
+
+                            print("영상 제목 내용: \(self.ytbList[i].title)!")
+                        }
+                        
+                        let singleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.MyTapMethod))
+                        
+                        singleTapGestureRecognizer.numberOfTapsRequired = 1
+                        
+                        singleTapGestureRecognizer.isEnabled = true
+                        
+                        singleTapGestureRecognizer.cancelsTouchesInView = false
+                        
+                        self.scrollView.addGestureRecognizer(singleTapGestureRecognizer)
+                        
+                        
+                        
+                        
+                    }
+                    catch let DecodingError.dataCorrupted(context) {
+                        print(context)
+                    } catch let DecodingError.keyNotFound(key, context) {
+                        print("Key '\(key)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.valueNotFound(value, context) {
+                        print("Value '\(value)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.typeMismatch(type, context)  {
+                        print("Type '\(type)' mismatch:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch {
+                        print("error: ", error)
+                    }
+                    
+                    
+                    
+                case .failure(let error):
+                    print(error)
+                }
+                
+                
+                
+            }
+        
+        
+        
+        
+        
         
         //푸쉬알람으로 온 경우
         if(pushAlram){
@@ -159,264 +338,262 @@ class UiTestController: UIViewController {
         var screenWidth = Int(view.bounds.width)
         var screenHeight = Int(view.bounds.height)
         
-        if(screenWidth == 375){
+        
+        let LogoImg = UIImage(named: "appLogo")
+        appLogo.image = LogoImg
+        appLogo.frame = CGRect(x: 24.3 *  DeviceManager.sharedInstance.widthRatio , y: 29.3 *  DeviceManager.sharedInstance.heightRatio, width: 116.6 *  DeviceManager.sharedInstance.widthRatio, height: 15.7 *  DeviceManager.sharedInstance.heightRatio)
+        //self.view.addSubview(appLogo)
+        m_Scrollview.addSubview(appLogo)
+        
+        
+        let descriptionImg = UIImage(named: "descriptionImg")
+        appDescription.image = descriptionImg
+        appDescription.frame = CGRect(x: 64.1 *  DeviceManager.sharedInstance.widthRatio , y: 125 *  DeviceManager.sharedInstance.heightRatio, width: 284.1 *  DeviceManager.sharedInstance.widthRatio, height: 82.5 *  DeviceManager.sharedInstance.heightRatio)
+        // self.view.addSubview(appDescription)
+        m_Scrollview.addSubview(appDescription)
+        
+        let inquiryLabel = UILabel()
+        inquiryLabel.frame = CGRect(x: 63.8 *  DeviceManager.sharedInstance.widthRatio, y: 235.4 *  DeviceManager.sharedInstance.heightRatio, width: 118 *  DeviceManager.sharedInstance.widthRatio, height: 17.3 *  DeviceManager.sharedInstance.heightRatio)
+        inquiryLabel.textAlignment = .right
+        inquiryLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
+        //폰트지정 추가
+        
+        inquiryLabel.text = "혜택 조회하러 가기"
+        inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 14.3 *  DeviceManager.sharedInstance.heightRatio)
+        // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
+        // self.view.addSubview(inquiryLabel)
+        m_Scrollview.addSubview(inquiryLabel)
+        
+        
+        
+        bottomBtn.setImage(UIImage(named: "bottomBtnImg"), for: .normal)
+        bottomBtn.frame = CGRect(x: 192.5 *  DeviceManager.sharedInstance.widthRatio, y: 227.1 *  DeviceManager.sharedInstance.heightRatio, width: 18.7 *  DeviceManager.sharedInstance.widthRatio, height: 26 *  DeviceManager.sharedInstance.heightRatio)
+        //self.view.addSubview(bottomBtn)
+        m_Scrollview.addSubview(bottomBtn)
+        
+        
+        bottomBtn.addTarget(self, action: #selector(self.moveBottom), for: .touchUpInside)
+        
+        //그라데이션으로 변경
+        //카테고리 전체뷰
+        
+        //    categoryView.frame = CGRect(x: 0, y: 547.4, width: Double(screenWidth), height: 1144.3)
+        
+       // categoryView.frame = CGRect(x: 0, y: 1107.4 *  DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth), height: 1144.3 *  DeviceManager.sharedInstance.heightRatio)
+        
+        categoryView.frame = CGRect(x: 0, y: 600 *  DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth), height: 1144.3 *  DeviceManager.sharedInstance.heightRatio)
+        
+        //그라데이션으로 변경
+        //        let gradientLayer = CAGradientLayer()
+        //        gradientLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 1040.3)
+        //        gradientLayer.startPoint = CGPoint(x: 375, y: 0)
+        //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
+        //        //gradientLayer.locations  = [0, 520.1, 1040.3]
+        //
+        //        //그라데이션 색깔 입력
+        //
+        //        gradientLayer.colors =
+        //        [UIColor(displayP3Red: 95/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1),
+        //         UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)]
+        //
+        //        gradientLayer.locations = [0.0 , 1040.3]
+        //       gradientLayer.startPoint = CGPoint(x: 375, y: 0)
+        //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
+        //
+        //        gradientLayer.shouldRasterize = true
+        //
+        //        categoryView.layer.addSublayer(gradientLayer)
+        
+        
+        // categoryView.backgroundColor = UIColor(displayP3Red: 93/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1)
+        categoryView.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)
+        
+        m_Scrollview.addSubview(categoryView)
+        
+        //카테고리 전체뷰 위에 표시되어야 하기때문에 카테고리뷰를 스크롤뷰에 추가한 후에 다시 추가해준다.
+        //카테고리뷰 라벨 추가
+        benefitLabel.font = UIFont(name: "Jalnan", size: 23.1 *  DeviceManager.sharedInstance.heightRatio)
+        benefitLabel.text = "당신이 관심있는 혜택은?"
+        benefitLabel.frame = CGRect(x: 71.1 *  DeviceManager.sharedInstance.widthRatio, y: 630 *  DeviceManager.sharedInstance.heightRatio, width: 270.6 *  DeviceManager.sharedInstance.widthRatio, height: 24.2 *  DeviceManager.sharedInstance.heightRatio)
+        benefitLabel.textAlignment = .center
+        benefitLabel.textColor = UIColor(displayP3Red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1)
+        
+        m_Scrollview.addSubview(benefitLabel)
+        
+        //메인 이미지
+        
+        
+        let MainImg = UIImage(named: "MainImg")
+        MainImgView.image = MainImg
+        MainImgView.frame = CGRect(x: 0, y: 320.5 *  DeviceManager.sharedInstance.heightRatio, width: 411.4 *  DeviceManager.sharedInstance.widthRatio, height: 232.2 *  DeviceManager.sharedInstance.heightRatio)
+        //self.view.addSubview(appLogo)
+        m_Scrollview.addSubview(MainImgView)
+        
+        //카테고리 선택버튼 추가하는 부분
+        for i in 0..<10 {
             
+            var button = UIButton(type: .system)
+            var imgView = UIImageView()
+            var label = UILabel()
+            button.tag = i
             
-            print("넓이:\(screenWidth)")
-            print("길이 태그:\(screenHeight)")
-            
-            
-            // Do any additional setup after loading the view.
-            
-            let LogoImg = UIImage(named: "appLogo")
-            appLogo.image = LogoImg
-            appLogo.frame = CGRect(x: 22.1, y: 26.7, width: 106, height: 14.3)
-            //self.view.addSubview(appLogo)
-            m_Scrollview.addSubview(appLogo)
-            
-            
-            let descriptionImg = UIImage(named: "descriptionImg")
-            appDescription.image = descriptionImg
-            appDescription.frame = CGRect(x: 58.3, y: 113.7, width: 258.3, height: 75)
-            // self.view.addSubview(appDescription)
-            m_Scrollview.addSubview(appDescription)
-            
-            let inquiryLabel = UILabel()
-            inquiryLabel.frame = CGRect(x: 58, y: 214, width: 107.3, height: 15.7)
-            inquiryLabel.textAlignment = .right
-            inquiryLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
-            //폰트지정 추가
-            
-            inquiryLabel.text = "혜택 조회하러 가기"
-            inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13)
-            // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
-            // self.view.addSubview(inquiryLabel)
-            m_Scrollview.addSubview(inquiryLabel)
-            
-            
-            
-            bottomBtn.setImage(UIImage(named: "bottomBtnImg"), for: .normal)
-            bottomBtn.frame = CGRect(x: 175, y: 207, width: 17, height: 23.7)
-            //self.view.addSubview(bottomBtn)
-            m_Scrollview.addSubview(bottomBtn)
-            
-            
-            bottomBtn.addTarget(self, action: #selector(self.moveBottom), for: .touchUpInside)
-            
-            //그라데이션으로 변경
-            //카테고리 전체뷰
-            
-            categoryView.frame = CGRect(x: 0, y: 497.7, width: 375, height: 1040.3)
-            //그라데이션으로 변경
-            //        let gradientLayer = CAGradientLayer()
-            //        gradientLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 1040.3)
-            //        gradientLayer.startPoint = CGPoint(x: 375, y: 0)
-            //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
-            //        //gradientLayer.locations  = [0, 520.1, 1040.3]
             //
-            //        //그라데이션 색깔 입력
-            //
-            //        gradientLayer.colors =
-            //        [UIColor(displayP3Red: 95/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1),
-            //         UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)]
-            //
-            //        gradientLayer.locations = [0.0 , 1040.3]
-            //       gradientLayer.startPoint = CGPoint(x: 375, y: 0)
-            //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
-            //
-            //        gradientLayer.shouldRasterize = true
-            //
-            //        categoryView.layer.addSublayer(gradientLayer)
+            buttons.append(button)
+            imgViews.append(imgView)
+            labels.append(label)
             
             
-            // categoryView.backgroundColor = UIColor(displayP3Red: 93/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1)
-            categoryView.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)
-            
-            m_Scrollview.addSubview(categoryView)
-            
-            //카테고리 전체뷰 위에 표시되어야 하기때문에 카테고리뷰를 스크롤뷰에 추가한 후에 다시 추가해준다.
-            //카테고리뷰 라벨 추가
-            benefitLabel.font = UIFont(name: "Jalnan", size: 21)
-            benefitLabel.text = "당신이 관심있는 혜택은?"
-            benefitLabel.frame = CGRect(x: 64.7, y: 564.3, width: 246, height: 22)
-            benefitLabel.textAlignment = .center
-            benefitLabel.textColor = UIColor(displayP3Red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1)
-            
-            m_Scrollview.addSubview(benefitLabel)
-            
-            //메인 이미지
+            //그리드 배치를 위한 홀짝 구분
             
             
-            let MainImg = UIImage(named: "MainImg")
-            MainImgView.image = MainImg
-            MainImgView.frame = CGRect(x: 0, y: 291.4, width: 374, height: 211.1)
-            //self.view.addSubview(appLogo)
-            m_Scrollview.addSubview(MainImgView)
             
-            //카테고리 선택버튼 추가하는 부분
-            for i in 0..<10 {
+            //마지막 버튼은 더보기 버튼
+            if(i == 9){
                 
-                var button = UIButton(type: .system)
-                var imgView = UIImageView()
-                var label = UILabel()
-                button.tag = i
+                button.frame = CGRect(x:213, y:Double(Int(175.2) * (i - 1)/2)  + 700 , width: 177.4  , height: 161.7 )
                 
-                //
-                buttons.append(button)
-                imgViews.append(imgView)
-                labels.append(label)
+                //button.setTitle(LabelName[i], for: .normal)
+                
+                //이미지 및 라벨 추가
+                let img = UIImage(named: ImgFile[i])
+                imgView.setImage(img!)
+                imgView.frame = CGRect(x: 26.4 *  DeviceManager.sharedInstance.widthRatio, y: 38.1 *  DeviceManager.sharedInstance.heightRatio, width: 38.8 *  DeviceManager.sharedInstance.widthRatio, height: 38.8 *  DeviceManager.sharedInstance.heightRatio)
+                imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
                 
                 
-                //그리드 배치를 위한 홀짝 구분
+                //라벨
+                label.frame = CGRect(x: 26.7, y: 97.4, width: 110, height: 18.7)
+                label.textAlignment = .left
+                
+                //폰트지정 추가
+                label.text = LabelName[i]
+                label.textColor = .white
+                label.font = UIFont(name: "NanumGothicBold", size: 16.1)
                 
                 
                 
-                //마지막 버튼은 더보기 버튼
-                if(i == 9){
-                    
-                    button.frame = CGRect(x:193.7, y:Double(Int(159.3) * (i - 1)/2) + 617.7, width: 161.3, height: 147)
-                    
-                    //button.setTitle(LabelName[i], for: .normal)
-                    
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 24, y: 34.7, width: 35.3, height: 35.3)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    
-                    
-                    //라벨
-                    label.frame = CGRect(x: 24.3, y: 88.6, width: 100, height: 17)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.textColor = .white
-                    label.font = UIFont(name: "NanumGothicBold", size: 14.7)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.layer.cornerRadius = 14
-                    
-                    button.layer.borderWidth = 2.7
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.addBtn), for: .touchUpInside)
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                    //홀수번호
-                }else if(i%2==0){
-                    
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    button.frame = CGRect(x:20, y:Double(Int(159.3) * i/2) + 617.7, width: 161.3, height: 147)
-                    
-                    //button.setTitle(LabelName[i], for: .normal)
-                    
-                    
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 24, y: 34.7, width: 35.3, height: 35.3)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    //라벨
-                    label.frame = CGRect(x: 24.3, y: 88.6, width: 100, height: 17)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.font = UIFont(name: "NanumGothicBold", size: 14.7)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.backgroundColor = .white
-                    button.layer.cornerRadius = 14
-                    button.layer.borderWidth = 2.7
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    
-                    //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들
-                    //에 대해 변형해준다.
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                    
-                    
-                    //짝수
-                }else if(i != 0 && i%2==1){
-                    
-                    
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    button.frame = CGRect(x:193.7, y:Double(Int(159.3) * (i - 1)/2) + 617.7, width: 161.3, height: 147)
-                    //button.setTitle(LabelName[i], for: .normal)
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 24, y: 34.7, width: 35.3, height: 35.3)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    
-                    
-                    //라벨
-                    label.frame = CGRect(x: 24.3, y: 88.6, width: 100, height: 17)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.font = UIFont(name: "NanumGothicBold", size: 14.7)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    
-                    
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.backgroundColor = .white
-                    button.layer.cornerRadius = 14
-                    button.layer.borderWidth = 2.7
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                }
+                button.addSubview(imgView)
+                button.addSubview(label)
+                
+                button.setTitleColor(UIColor.black, for: .normal)
+                button.layer.cornerRadius = 15.4
+                
+                button.layer.borderWidth = 3
+                button.layer.borderColor = UIColor.white.cgColor
+                
+                
+                //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
+                button.addTarget(self, action: #selector(self.addBtn), for: .touchUpInside)
+                
+                
+                m_Scrollview.addSubview(button)
+                
+                //홀수번호
+            }else if(i%2==0){
+                
+                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
+                // button.frame = CGRect(x:22, y:Double(Int(175.2) * i/2) + 679.4, width: 177.4, height: 158.4)
+                button.frame = CGRect(x:22, y:Double(Int(175.2) * i/2)  + 700 , width: 177.4 , height: 158.4 )
+                
+                //button.setTitle(LabelName[i], for: .normal)
+                
+                
+                //이미지 및 라벨 추가
+                let img = UIImage(named: ImgFile[i])
+                imgView.setImage(img!)
+                imgView.frame = CGRect(x: 26.4 *  DeviceManager.sharedInstance.widthRatio, y: 38.1 *  DeviceManager.sharedInstance.heightRatio, width: 38.8 *  DeviceManager.sharedInstance.widthRatio, height: 38.8 *  DeviceManager.sharedInstance.heightRatio)
+                imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
+                //라벨
+                label.frame = CGRect(x: 26.7 *  DeviceManager.sharedInstance.widthRatio, y: 97.4 *  DeviceManager.sharedInstance.heightRatio, width: 110 *  DeviceManager.sharedInstance.widthRatio, height: 18.7 *  DeviceManager.sharedInstance.heightRatio)
+                label.textAlignment = .left
+                
+                //폰트지정 추가
+                label.text = LabelName[i]
+                label.font = UIFont(name: "NanumGothicBold", size: 16.1 *  DeviceManager.sharedInstance.heightRatio)
+                
+                
+                
+                button.addSubview(imgView)
+                button.addSubview(label)
+                button.setTitleColor(UIColor.black, for: .normal)
+                button.backgroundColor = .white
+                button.layer.cornerRadius = 14 *  DeviceManager.sharedInstance.heightRatio
+                button.layer.borderWidth = 2.7
+                button.layer.borderColor = UIColor.white.cgColor
+                
+                //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
+                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
+                
+                //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들
+                //에 대해 변형해준다.
+                
+                
+                m_Scrollview.addSubview(button)
+                
+                
+                
+                //짝수
+            }else if(i != 0 && i%2==1){
+                
+                
+                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
+                button.frame = CGRect(x:213 *  DeviceManager.sharedInstance.widthRatio, y:CGFloat(Int(175.2) * (i - 1)/2) *  DeviceManager.sharedInstance.heightRatio + 700 *  DeviceManager.sharedInstance.heightRatio, width: 177.4 *  DeviceManager.sharedInstance.widthRatio, height: 161.7 *  DeviceManager.sharedInstance.heightRatio)
+                //button.setTitle(LabelName[i], for: .normal)
+                //이미지 및 라벨 추가
+                let img = UIImage(named: ImgFile[i])
+                imgView.setImage(img!)
+                imgView.frame = CGRect(x: 26.4 *  DeviceManager.sharedInstance.widthRatio, y: 38.1 *  DeviceManager.sharedInstance.heightRatio, width: 38.8 *  DeviceManager.sharedInstance.widthRatio, height: 38.8 *  DeviceManager.sharedInstance.heightRatio)
+                imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
+                
+                
+                //라벨
+                label.frame = CGRect(x: 26.7 *  DeviceManager.sharedInstance.widthRatio, y: 97.4 *  DeviceManager.sharedInstance.heightRatio, width: 110 *  DeviceManager.sharedInstance.widthRatio, height: 18.7 *  DeviceManager.sharedInstance.heightRatio)
+                label.textAlignment = .left
+                
+                //폰트지정 추가
+                label.text = LabelName[i]
+                label.font = UIFont(name: "NanumGothicBold", size: 16.1 *  DeviceManager.sharedInstance.heightRatio)
+                
+                
+                
+                button.addSubview(imgView)
+                button.addSubview(label)
+                
+                
+                button.setTitleColor(UIColor.black, for: .normal)
+                button.backgroundColor = .white
+                button.layer.cornerRadius = 14 *  DeviceManager.sharedInstance.heightRatio
+                button.layer.borderWidth = 2.7
+                button.layer.borderColor = UIColor.white.cgColor
+                
+                //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
+                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
+                
+                
+                m_Scrollview.addSubview(button)
                 
             }
+            
+            //   }
             
             
             //조회하기 버튼
             
             //라벨
             let inquiryBtnLabel = UILabel()
-            inquiryBtnLabel.frame = CGRect(x: 18.3, y: 139.3, width: 54, height: 17)
+            inquiryBtnLabel.frame = CGRect(x: 20.1 *  DeviceManager.sharedInstance.widthRatio, y: 153.2 *  DeviceManager.sharedInstance.heightRatio, width: 59.4 *  DeviceManager.sharedInstance.widthRatio, height: 18.7 *  DeviceManager.sharedInstance.heightRatio)
             inquiryBtnLabel.textAlignment = .center
             inquiryBtnLabel.textColor = UIColor(displayP3Red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1)
             
             inquiryBtnLabel.text = "조회하기"
-            inquiryBtnLabel.font = UIFont(name: "NanumGothic", size: 14.7)
+            inquiryBtnLabel.font = UIFont(name: "NanumGothic", size: 16.1 *  DeviceManager.sharedInstance.heightRatio)
             
             
             inquiryBtn.setTitle("조회하기", for: .normal)
-            inquiryBtn.frame = CGRect(x: 20, y: 1424.3, width: 335, height: 53.7)
+            inquiryBtn.frame = CGRect(x: 22 *  DeviceManager.sharedInstance.widthRatio, y: 2126.7 *  DeviceManager.sharedInstance.heightRatio, width: 368.5 *  DeviceManager.sharedInstance.widthRatio, height: 59 *  DeviceManager.sharedInstance.heightRatio)
             
-            inquiryBtn.titleLabel!.font = UIFont(name: "NanumGothic", size:14.7)
-            inquiryBtn.layer.cornerRadius = 3.3
+            inquiryBtn.titleLabel!.font = UIFont(name: "NanumGothic", size:16.1 *  DeviceManager.sharedInstance.heightRatio)
+            inquiryBtn.layer.cornerRadius = 3.3 *  DeviceManager.sharedInstance.heightRatio
             inquiryBtn.layer.borderWidth = 1.3
             inquiryBtn.layer.borderColor = UIColor.white.cgColor
             //선택결과 페이지로 이동하는 메소드
@@ -429,416 +606,25 @@ class UiTestController: UIViewController {
             
             
             //최하단 설명뷰(고객센터,개인정보 취급방침,이용약관등)
-            footer.frame = CGRect(x: 0, y: 1538, width: 375, height: 208.7)
+            footer.frame = CGRect(x: 0, y: 1688.5 *  DeviceManager.sharedInstance.heightRatio, width: 412.5 *  DeviceManager.sharedInstance.widthRatio, height: 229.5 *  DeviceManager.sharedInstance.heightRatio)
             footer.backgroundColor = UIColor(displayP3Red: 251/255.0, green: 251/255.0, blue: 251/255.0, alpha: 1)
             
             //하단 뷰 너의 혜택은 이미지 뷰
             //이미지 및 라벨 추가
             let bottomImg = UIImage(named: "bottomImg")
             let bottomImgView = UIImageView(image: bottomImg)
-            bottomImgView.frame = CGRect(x: 20.7, y: 31.7, width: 96.7, height: 17)
+            bottomImgView.frame = CGRect(x: 22.7 *  DeviceManager.sharedInstance.widthRatio, y: 34.8 *  DeviceManager.sharedInstance.heightRatio, width: 106.3 *  DeviceManager.sharedInstance.widthRatio, height: 18.7 *  DeviceManager.sharedInstance.heightRatio)
             footer.addSubview(bottomImgView)
             
             //하단 설명 라벨
             let bottomLabel = UILabel()
             //bottomLabel.frame = CGRect(x: 20.7, y: 58.3, width: 238.7, height: 12.7)
-            bottomLabel.frame = CGRect(x: 20.7, y: 58.3, width: 300, height: 12.7)
-            bottomLabel.textAlignment = .left
-            bottomLabel.textColor = UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1)
-            
-            bottomLabel.text = "사용자에게 알 맞는 복지 지원과 혜택을 알려드립니다"
-            bottomLabel.font = UIFont(name: "NanumGothic", size: 11)
-            footer.addSubview(bottomLabel)
-            
-            
-            
-            //2번째 라벨
-            let bottomSecLabel = UILabel()
-            //bottomLabel.frame = CGRect(x: 20.7, y: 58.3, width: 238.7, height: 12.7)
-            bottomSecLabel.frame = CGRect(x: 20.7, y: 108.3, width: 300, height: 15)
-            bottomSecLabel.textAlignment = .left
-            bottomSecLabel.textColor = UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1)
-            
-            bottomSecLabel.text = "Copyright © All rights reserved"
-            bottomSecLabel.font = UIFont(name: "OpenSans-Bold", size: 11)
-            footer.addSubview(bottomSecLabel)
-            
-            //하단 페이스북 버튼
-            let bottomFbBtn = UIButton(type: .system)
-            bottomFbBtn.frame = CGRect(x:20.7, y:143.3, width: 35.3, height: 35.3)
-            bottomFbBtn.backgroundColor = UIColor(displayP3Red: 233/255.0, green: 233/255.0, blue: 233/255.0, alpha: 1)
-            bottomFbBtn.layer.cornerRadius = 100
-            
-            bottomFbBtn.layer.cornerRadius = bottomFbBtn.frame.height/2
-            bottomFbBtn.layer.borderWidth = 1
-            bottomFbBtn.layer.borderColor = UIColor.clear.cgColor
-            // 뷰의 경계에 맞춰준다
-            bottomFbBtn.clipsToBounds = true
-            
-            
-            //페이스북 로고이미지 추가
-            let fbImg = UIImage(named:"fbImg")
-            let fbImgView = UIImageView(image: fbImg)
-            fbImgView.frame = CGRect(x: 14.4, y: 10.5, width: 6.9, height: 13.8)
-            
-            //각 상위뷰에 추가
-            bottomFbBtn.addSubview(fbImgView)
-            footer.addSubview(bottomFbBtn)
-            
-            
-            //하단 구글 버튼
-            let bottomGgBtn = UIButton(type: .system)
-            bottomGgBtn.frame = CGRect(x:64, y:143.3, width: 35.3, height: 35.3)
-            bottomGgBtn.backgroundColor = UIColor(displayP3Red: 233/255.0, green: 233/255.0, blue: 233/255.0, alpha: 1)
-            bottomGgBtn.layer.cornerRadius = 100
-            
-            bottomGgBtn.layer.cornerRadius = bottomFbBtn.frame.height/2
-            bottomGgBtn.layer.borderWidth = 1
-            bottomGgBtn.layer.borderColor = UIColor.clear.cgColor
-            // 뷰의 경계에 맞춰준다
-            bottomGgBtn.clipsToBounds = true
-            
-            
-            //페이스북 로고이미지 추가
-            let GgImg = UIImage(named:"GgImg")
-            let GgImgView = UIImageView(image: GgImg)
-            GgImgView.frame = CGRect(x: 10.8, y: 10.5, width: 9.3, height: 13.8)
-            
-            //각 상위뷰에 추가
-            bottomGgBtn.addSubview(GgImgView)
-            footer.addSubview(bottomGgBtn)
-            
-            //앱스토어 추가
-            //애플
-            //로고
-            let appleImg = UIImage(named:"appleImg")
-            let appleImgView = UIImageView(image: appleImg)
-            appleImgView.frame = CGRect(x: 129, y: 153.7, width: 14.3, height: 17.3)
-            
-            footer.addSubview(appleImgView)
-            
-            //버튼
-            let appleBtn = UIButton(type: .system)
-            appleBtn.frame = CGRect(x:150.7, y:151.7, width: 70.3, height: 20.7)
-            appleBtn.backgroundColor = .clear
-            appleBtn.setTitle("App Store", for: .normal)
-            appleBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
-            appleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:14.3)
-            footer.addSubview(appleBtn)
-            
-            
-            
-            //구글
-            //로고
-            let googleImg = UIImage(named:"googleImg")
-            let googleImgView = UIImageView(image: googleImg)
-            googleImgView.frame = CGRect(x: 235, y: 153.3, width: 16.7, height: 18)
-            
-            footer.addSubview(googleImgView)
-            
-            //버튼
-            let googleBtn = UIButton(type: .system)
-            googleBtn.frame = CGRect(x:258.7, y:151.3, width: 87.7, height: 20.7)
-            googleBtn.backgroundColor = .clear
-            googleBtn.setTitle("Google play", for: .normal)
-            googleBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
-            googleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:14.3)
-            footer.addSubview(googleBtn)
-            
-            
-            
-            //하단 뷰 추가
-            m_Scrollview.addSubview(footer)
-            
-            
-            //메인스크롤 뷰 추가
-            m_Scrollview.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-            m_Scrollview.contentSize = CGSize(width:screenWidth, height: 1747)
-            self.view.addSubview(m_Scrollview)
-            
-            //디바이스 크기별 화면 조정
-            //임시
-        }else if(screenWidth == 414){
-            let LogoImg = UIImage(named: "appLogo")
-            appLogo.image = LogoImg
-            appLogo.frame = CGRect(x: 24.3, y: 29.3, width: 116.6, height: 15.7)
-            //self.view.addSubview(appLogo)
-            m_Scrollview.addSubview(appLogo)
-            
-            
-            let descriptionImg = UIImage(named: "descriptionImg")
-            appDescription.image = descriptionImg
-            appDescription.frame = CGRect(x: 64.1, y: 125, width: 284.1, height: 82.5)
-            // self.view.addSubview(appDescription)
-            m_Scrollview.addSubview(appDescription)
-            
-            let inquiryLabel = UILabel()
-            inquiryLabel.frame = CGRect(x: 63.8, y: 235.4, width: 118, height: 17.3)
-            inquiryLabel.textAlignment = .right
-            inquiryLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
-            //폰트지정 추가
-            
-            inquiryLabel.text = "혜택 조회하러 가기"
-            inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 14.3)
-            // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
-            // self.view.addSubview(inquiryLabel)
-            m_Scrollview.addSubview(inquiryLabel)
-            
-            
-            
-            bottomBtn.setImage(UIImage(named: "bottomBtnImg"), for: .normal)
-            bottomBtn.frame = CGRect(x: 192.5, y: 227.1, width: 18.7, height: 26)
-            //self.view.addSubview(bottomBtn)
-            m_Scrollview.addSubview(bottomBtn)
-            
-            
-            bottomBtn.addTarget(self, action: #selector(self.moveBottom), for: .touchUpInside)
-            
-            //그라데이션으로 변경
-            //카테고리 전체뷰
-            
-            categoryView.frame = CGRect(x: 0, y: 547.4, width: Double(screenWidth), height: 1144.3)
-            //그라데이션으로 변경
-            //        let gradientLayer = CAGradientLayer()
-            //        gradientLayer.frame = CGRect(x: 0, y: 0, width: 375, height: 1040.3)
-            //        gradientLayer.startPoint = CGPoint(x: 375, y: 0)
-            //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
-            //        //gradientLayer.locations  = [0, 520.1, 1040.3]
-            //
-            //        //그라데이션 색깔 입력
-            //
-            //        gradientLayer.colors =
-            //        [UIColor(displayP3Red: 95/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1),
-            //         UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)]
-            //
-            //        gradientLayer.locations = [0.0 , 1040.3]
-            //       gradientLayer.startPoint = CGPoint(x: 375, y: 0)
-            //        gradientLayer.endPoint   = CGPoint(x: 375, y: 1040.3)
-            //
-            //        gradientLayer.shouldRasterize = true
-            //
-            //        categoryView.layer.addSublayer(gradientLayer)
-            
-            
-            // categoryView.backgroundColor = UIColor(displayP3Red: 93/255.0, green: 116/255.0, blue: 251/255.0, alpha: 1)
-            categoryView.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 241/255.0, alpha: 1)
-            
-            m_Scrollview.addSubview(categoryView)
-            
-            //카테고리 전체뷰 위에 표시되어야 하기때문에 카테고리뷰를 스크롤뷰에 추가한 후에 다시 추가해준다.
-            //카테고리뷰 라벨 추가
-            benefitLabel.font = UIFont(name: "Jalnan", size: 23.1)
-            benefitLabel.text = "당신이 관심있는 혜택은?"
-            benefitLabel.frame = CGRect(x: 71.1, y: 620.7, width: 270.6, height: 24.2)
-            benefitLabel.textAlignment = .center
-            benefitLabel.textColor = UIColor(displayP3Red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1)
-            
-            m_Scrollview.addSubview(benefitLabel)
-            
-            //메인 이미지
-            
-            
-            let MainImg = UIImage(named: "MainImg")
-            MainImgView.image = MainImg
-            MainImgView.frame = CGRect(x: 0, y: 320.5, width: 411.4, height: 232.2)
-            //self.view.addSubview(appLogo)
-            m_Scrollview.addSubview(MainImgView)
-            
-            //카테고리 선택버튼 추가하는 부분
-            for i in 0..<10 {
-                
-                var button = UIButton(type: .system)
-                var imgView = UIImageView()
-                var label = UILabel()
-                button.tag = i
-                
-                //
-                buttons.append(button)
-                imgViews.append(imgView)
-                labels.append(label)
-                
-                
-                //그리드 배치를 위한 홀짝 구분
-                
-                
-                
-                //마지막 버튼은 더보기 버튼
-                if(i == 9){
-                    
-                    button.frame = CGRect(x:213, y:Double(Int(175.2) * (i - 1)/2) + 679.4, width: 177.4, height: 161.7)
-                    
-                    //button.setTitle(LabelName[i], for: .normal)
-                    
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 26.4, y: 38.1, width: 38.8, height: 38.8)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    
-                    
-                    //라벨
-                    label.frame = CGRect(x: 26.7, y: 97.4, width: 110, height: 18.7)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.textColor = .white
-                    label.font = UIFont(name: "NanumGothicBold", size: 16.1)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.layer.cornerRadius = 15.4
-                    
-                    button.layer.borderWidth = 3
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.addBtn), for: .touchUpInside)
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                    //홀수번호
-                }else if(i%2==0){
-                    
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    button.frame = CGRect(x:22, y:Double(Int(175.2) * i/2) + 679.4, width: 177.4, height: 158.4)
-                    
-                    //button.setTitle(LabelName[i], for: .normal)
-                    
-                    
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 26.4, y: 38.1, width: 38.8, height: 38.8)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    //라벨
-                    label.frame = CGRect(x: 26.7, y: 97.4, width: 110, height: 18.7)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.font = UIFont(name: "NanumGothicBold", size: 16.1)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.backgroundColor = .white
-                    button.layer.cornerRadius = 14
-                    button.layer.borderWidth = 2.7
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    
-                    //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들
-                    //에 대해 변형해준다.
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                    
-                    
-                    //짝수
-                }else if(i != 0 && i%2==1){
-                    
-                    
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    button.frame = CGRect(x:213, y:Double(Int(175.2) * (i - 1)/2) + 679.4, width: 177.4, height: 161.7)
-                    //button.setTitle(LabelName[i], for: .normal)
-                    //이미지 및 라벨 추가
-                    let img = UIImage(named: ImgFile[i])
-                    imgView.setImage(img!)
-                    imgView.frame = CGRect(x: 26.4, y: 38.1, width: 38.8, height: 38.8)
-                    imgView.image = imgView.image?.withRenderingMode(.alwaysOriginal)
-                    
-                    
-                    //라벨
-                    label.frame = CGRect(x: 26.7, y: 97.4, width: 110, height: 18.7)
-                    label.textAlignment = .left
-                    
-                    //폰트지정 추가
-                    label.text = LabelName[i]
-                    label.font = UIFont(name: "NanumGothicBold", size: 16.1)
-                    
-                    
-                    
-                    button.addSubview(imgView)
-                    button.addSubview(label)
-                    
-                    
-                    button.setTitleColor(UIColor.black, for: .normal)
-                    button.backgroundColor = .white
-                    button.layer.cornerRadius = 14
-                    button.layer.borderWidth = 2.7
-                    button.layer.borderColor = UIColor.white.cgColor
-                    
-                    //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-                    button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-                    
-                    
-                    m_Scrollview.addSubview(button)
-                    
-                }
-                
-            }
-            
-            
-            //조회하기 버튼
-            
-            //라벨
-            let inquiryBtnLabel = UILabel()
-            inquiryBtnLabel.frame = CGRect(x: 20.1, y: 153.2, width: 59.4, height: 18.7)
-            inquiryBtnLabel.textAlignment = .center
-            inquiryBtnLabel.textColor = UIColor(displayP3Red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1)
-            
-            inquiryBtnLabel.text = "조회하기"
-            inquiryBtnLabel.font = UIFont(name: "NanumGothic", size: 16.1)
-            
-            
-            inquiryBtn.setTitle("조회하기", for: .normal)
-            inquiryBtn.frame = CGRect(x: 22, y: 1566.7, width: 368.5, height: 59)
-            
-            inquiryBtn.titleLabel!.font = UIFont(name: "NanumGothic", size:16.1)
-            inquiryBtn.layer.cornerRadius = 3.3
-            inquiryBtn.layer.borderWidth = 1.3
-            inquiryBtn.layer.borderColor = UIColor.white.cgColor
-            //선택결과 페이지로 이동하는 메소드
-            inquiryBtn.addTarget(self, action: #selector(self.move), for: .touchUpInside)
-            
-            //조회하기 버튼 삭제를 위한 태그값 설정
-            inquiryBtn.tag = 44
-            //self.view.addSubview(bottomBtn)
-            m_Scrollview.addSubview(inquiryBtn)
-            
-            
-            //최하단 설명뷰(고객센터,개인정보 취급방침,이용약관등)
-            footer.frame = CGRect(x: 0, y: 1688.5, width: 412.5, height: 229.5)
-            footer.backgroundColor = UIColor(displayP3Red: 251/255.0, green: 251/255.0, blue: 251/255.0, alpha: 1)
-            
-            //하단 뷰 너의 혜택은 이미지 뷰
-            //이미지 및 라벨 추가
-            let bottomImg = UIImage(named: "bottomImg")
-            let bottomImgView = UIImageView(image: bottomImg)
-            bottomImgView.frame = CGRect(x: 22.7, y: 34.8, width: 106.3, height: 18.7)
-            footer.addSubview(bottomImgView)
-            
-            //하단 설명 라벨
-            let bottomLabel = UILabel()
-            //bottomLabel.frame = CGRect(x: 20.7, y: 58.3, width: 238.7, height: 12.7)
-            bottomLabel.frame = CGRect(x: 22.7, y: 64.1, width: 330, height: 13.9)
+            bottomLabel.frame = CGRect(x: 22.7 *  DeviceManager.sharedInstance.widthRatio, y: 64.1 *  DeviceManager.sharedInstance.heightRatio, width: 330 *  DeviceManager.sharedInstance.widthRatio, height: 13.9 *  DeviceManager.sharedInstance.heightRatio)
             bottomLabel.textAlignment = .left
             bottomLabel.textColor = UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1)
             
             bottomLabel.text = "당신에게 필요한 복지 지원과 혜택을 알려드립니다"
-            bottomLabel.font = UIFont(name: "NanumGothic", size: 12.1)
+            bottomLabel.font = UIFont(name: "NanumGothic", size: 12.1 *  DeviceManager.sharedInstance.heightRatio)
             footer.addSubview(bottomLabel)
             
             
@@ -846,19 +632,18 @@ class UiTestController: UIViewController {
             //2번째 라벨
             let bottomSecLabel = UILabel()
             //bottomLabel.frame = CGRect(x: 20.7, y: 58.3, width: 238.7, height: 12.7)
-            bottomSecLabel.frame = CGRect(x: 22.7, y: 119.1, width: 330, height: 16.5)
+            bottomSecLabel.frame = CGRect(x: 22.7 *  DeviceManager.sharedInstance.widthRatio, y: 119.1 *  DeviceManager.sharedInstance.heightRatio, width: 330 *  DeviceManager.sharedInstance.widthRatio, height: 16.5 *  DeviceManager.sharedInstance.heightRatio)
             bottomSecLabel.textAlignment = .left
             bottomSecLabel.textColor = UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1)
             
             bottomSecLabel.text = "Copyright © All rights reserved"
-            bottomSecLabel.font = UIFont(name: "OpenSans-Bold", size: 12.1)
+            bottomSecLabel.font = UIFont(name: "OpenSans-Bold", size: 12.1 *  DeviceManager.sharedInstance.heightRatio)
             footer.addSubview(bottomSecLabel)
             
             //하단 페이스북 버튼
             let bottomFbBtn = UIButton(type: .system)
-            bottomFbBtn.frame = CGRect(x:22.7, y:157.6, width: 38.8, height: 38.8)
+            bottomFbBtn.frame = CGRect(x:22.7 *  DeviceManager.sharedInstance.widthRatio, y:157.6 *  DeviceManager.sharedInstance.heightRatio, width: 38.8 *  DeviceManager.sharedInstance.widthRatio, height: 38.8 *  DeviceManager.sharedInstance.heightRatio)
             bottomFbBtn.backgroundColor = UIColor(displayP3Red: 233/255.0, green: 233/255.0, blue: 233/255.0, alpha: 1)
-            bottomFbBtn.layer.cornerRadius = 100
             
             bottomFbBtn.layer.cornerRadius = bottomFbBtn.frame.height/2
             bottomFbBtn.layer.borderWidth = 1
@@ -870,7 +655,7 @@ class UiTestController: UIViewController {
             //페이스북 로고이미지 추가
             let fbImg = UIImage(named:"fbImg")
             let fbImgView = UIImageView(image: fbImg)
-            fbImgView.frame = CGRect(x: 15.8, y: 11.4, width: 7.6, height: 15.1)
+            fbImgView.frame = CGRect(x: 15.8 *  DeviceManager.sharedInstance.widthRatio, y: 11.4 *  DeviceManager.sharedInstance.heightRatio, width: 7.6 *  DeviceManager.sharedInstance.widthRatio, height: 15.1 *  DeviceManager.sharedInstance.heightRatio)
             
             //각 상위뷰에 추가
             bottomFbBtn.addSubview(fbImgView)
@@ -879,9 +664,8 @@ class UiTestController: UIViewController {
             
             //하단 구글 버튼
             let bottomGgBtn = UIButton(type: .system)
-            bottomGgBtn.frame = CGRect(x:70.4, y:158.7, width: 38.8, height: 38.8)
+            bottomGgBtn.frame = CGRect(x:70.4 *  DeviceManager.sharedInstance.widthRatio, y:158.7 *  DeviceManager.sharedInstance.heightRatio, width: 38.8 *  DeviceManager.sharedInstance.widthRatio, height: 38.8 *  DeviceManager.sharedInstance.heightRatio)
             bottomGgBtn.backgroundColor = UIColor(displayP3Red: 233/255.0, green: 233/255.0, blue: 233/255.0, alpha: 1)
-            bottomGgBtn.layer.cornerRadius = 100
             
             bottomGgBtn.layer.cornerRadius = bottomFbBtn.frame.height/2
             bottomGgBtn.layer.borderWidth = 1
@@ -893,7 +677,7 @@ class UiTestController: UIViewController {
             //페이스북 로고이미지 추가
             let GgImg = UIImage(named:"GgImg")
             let GgImgView = UIImageView(image: GgImg)
-            GgImgView.frame = CGRect(x: 11.8, y: 11.5, width: 10.2, height: 15.1)
+            GgImgView.frame = CGRect(x: 11.8 *  DeviceManager.sharedInstance.widthRatio, y: 11.5 *  DeviceManager.sharedInstance.heightRatio, width: 10.2 *  DeviceManager.sharedInstance.widthRatio, height: 15.1 *  DeviceManager.sharedInstance.heightRatio)
             
             //각 상위뷰에 추가
             bottomGgBtn.addSubview(GgImgView)
@@ -904,17 +688,17 @@ class UiTestController: UIViewController {
             //로고
             let appleImg = UIImage(named:"appleImg")
             let appleImgView = UIImageView(image: appleImg)
-            appleImgView.frame = CGRect(x: 142, y: 169, width: 15.7, height: 19)
+            appleImgView.frame = CGRect(x: 142 *  DeviceManager.sharedInstance.widthRatio, y: 169 *  DeviceManager.sharedInstance.heightRatio, width: 15.7 *  DeviceManager.sharedInstance.widthRatio, height: 19 *  DeviceManager.sharedInstance.heightRatio)
             
             footer.addSubview(appleImgView)
             
             //버튼
             let appleBtn = UIButton(type: .system)
-            appleBtn.frame = CGRect(x:165.7, y:166.8, width: 77.3, height: 22.7)
+            appleBtn.frame = CGRect(x:165.7 *  DeviceManager.sharedInstance.widthRatio, y:166.8 *  DeviceManager.sharedInstance.heightRatio, width: 77.3 *  DeviceManager.sharedInstance.widthRatio, height: 22.7 *  DeviceManager.sharedInstance.heightRatio)
             appleBtn.backgroundColor = .clear
             appleBtn.setTitle("App Store", for: .normal)
             appleBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
-            appleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:15.7)
+            appleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:15.7 *  DeviceManager.sharedInstance.heightRatio)
             footer.addSubview(appleBtn)
             
             
@@ -923,28 +707,63 @@ class UiTestController: UIViewController {
             //로고
             let googleImg = UIImage(named:"googleImg")
             let googleImgView = UIImageView(image: googleImg)
-            googleImgView.frame = CGRect(x: 258.5, y: 168.6, width: 18.3, height: 19.8)
+            googleImgView.frame = CGRect(x: 258.5 *  DeviceManager.sharedInstance.widthRatio, y: 168.6 *  DeviceManager.sharedInstance.heightRatio, width: 18.3 *  DeviceManager.sharedInstance.widthRatio, height: 19.8 *  DeviceManager.sharedInstance.heightRatio)
             
             footer.addSubview(googleImgView)
             
             //버튼
             let googleBtn = UIButton(type: .system)
-            googleBtn.frame = CGRect(x:284.5, y:166.4, width: 96.4, height: 22.7)
+            googleBtn.frame = CGRect(x:284.5 *  DeviceManager.sharedInstance.widthRatio, y:166.4 *  DeviceManager.sharedInstance.heightRatio, width: 96.4 *  DeviceManager.sharedInstance.widthRatio, height: 22.7 *  DeviceManager.sharedInstance.heightRatio)
             googleBtn.backgroundColor = .clear
             googleBtn.setTitle("Google play", for: .normal)
             googleBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
-            googleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:15.7)
+            googleBtn.titleLabel!.font = UIFont(name: "OpenSans-Semibold", size:15.7 *  DeviceManager.sharedInstance.heightRatio)
             footer.addSubview(googleBtn)
             
             
             
             //하단 뷰 추가
-            m_Scrollview.addSubview(footer)
+            //  m_Scrollview.addSubview(footer)
+            
+            
+            
+            
+            
+            
+            //혜택리뷰 영상목록
+            
+            //유튜브 목록 스크롤뷰 추가
+            scrollView.frame = CGRect(x: 0, y: 680 *  DeviceManager.sharedInstance.heightRatio, width: self.view.frame.width, height: 360 *  DeviceManager.sharedInstance.heightRatio)
+            scrollView.isPagingEnabled = true
+            //유튜브 목록 페이지 컨트롤러 추가
+            pageControl.frame = CGRect(x: 0, y: 1000 *  DeviceManager.sharedInstance.heightRatio, width: self.view.frame.width, height: 100 *  DeviceManager.sharedInstance.heightRatio)
+            scrollView.showsHorizontalScrollIndicator = false
+//            m_Scrollview.addSubview(pageControl)
+//
+//            m_Scrollview.addSubview(scrollView)
+
+            //영상목록 페이저 스크롤뷰 대리자 설정
+            scrollView.delegate = self
+            
+            
+            //영상소개 라벨
+            var youtubeLabel = UILabel()
+            
+            youtubeLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 600 *  DeviceManager.sharedInstance.heightRatio, width: 400 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  DeviceManager.sharedInstance.heightRatio)
+            youtubeLabel.textAlignment = .left
+            
+            //폰트지정 추가
+            youtubeLabel.text = "유튜버들의 혜택리뷰"
+            youtubeLabel.font = UIFont(name: "Jalnan", size: 17 *  DeviceManager.sharedInstance.heightRatio)
+            //m_Scrollview.addSubview(youtubeLabel)
+            
+            
+            
             
             
             //메인스크롤 뷰 추가
             m_Scrollview.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-            m_Scrollview.contentSize = CGSize(width:screenWidth, height: 1921)
+            m_Scrollview.contentSize = CGSize(width:screenWidth, height: 2271 *  Int(DeviceManager.sharedInstance.heightRatio))
             self.view.addSubview(m_Scrollview)
             
             
@@ -1204,12 +1023,12 @@ class UiTestController: UIViewController {
             
             
             //선택한 카테고리를 전송할 데이터로 파싱하여 옮긴다.
-            let string = categorys.joined(separator: " ")
-            
-            let parameters = ["reqBody": string]
+            let string = categorys.joined(separator: "|")
             
             
-            Alamofire.request("http://3.34.64.143/backend/ios/ios_category_result.php", method: .post, parameters: parameters)
+            let parameters = ["type":"category_search", "keyword":string]
+            
+            Alamofire.request("https://www.urbene-fit.com/welf", method: .get, parameters: parameters)
                 .validate()
                 .responseJSON { response in
                     
@@ -1223,39 +1042,88 @@ class UiTestController: UIViewController {
                             
                         }
                         
-                        if let json = value as? [String: Any] {
-                            //print(json)
-                            for (key, value) in json {
-                                var test : [String]
-                                test = value as! [String]
+                        
+                        do {
+                            let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                            let parseResult = try JSONDecoder().decode(parse.self, from: data)
+                            
+                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "ResultUIViewController") as? ResultUIViewController         else{
                                 
-                                
-                                
-                                
-                                
-                                
-                                //카테고리명을 저장
-                                //ResultViewController.item.init(name: key, sd: test)
-                                RVC.items.append(                            ResultUIViewController.item.init(name: key, sd: test))
-                                //                            for i in 0..<test.count {
-                                //                                print(test[i])
-                                //                            }
-                                
-                                
-                                
+                                return
                                 
                             }
                             
                             
                             
+                            if(parseResult.Status == "200"){
+                                print(parseResult.Status)
+                                for i in 0..<parseResult.Message.count {
+                                    
+                                    print(parseResult.Message[i].welf_name)
+                                    print(parseResult.Message[i].welf_local)
+                                    print(parseResult.Message[i].parent_category)
+                                    print(parseResult.Message[i].welf_category)
+                                    print(parseResult.Message[i].tag)
+                                    
+                                    
+//                                    RVC.items.append(ResultUIViewController.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: parseResult.Message[i].welf_local, parent_category: parseResult.Message[i].parent_category, welf_category: parseResult.Message[i].welf_category, tag: parseResult.Message[i].tag))
+//                                    
+//                                    //
+//                                    //                                RVC.items.append(                            ResultUIViewController.item.init(name: "전체", sd: test))
+//                                    //검색결과의 카테고리들을 중복검사 후 추가
+//                                    if(!RVC.categoryItems.contains(parseResult.Message[i].parent_category)){
+//                                        RVC.categoryItems.append(parseResult.Message[i].parent_category)
+//                                    }
+                                    
+                                    
+                                    
+                                    
+                                }
+                                //검색결과 페이지로 이동
+                                
+                                
+                                
+                                //뷰 이동
+                                RVC.modalPresentationStyle = .fullScreen
+                                
+                                // 상세정보 뷰로 이동
+                                //self.present(RVC, animated: true, completion: nil)
+                                self.navigationController?.pushViewController(RVC, animated: true)
+                                
+                                
+                                
+                            }else{
+                                print(parseResult.Status)
+                                
+                            }
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                        }
+                        catch let DecodingError.dataCorrupted(context) {
+                            print(context)
+                        } catch let DecodingError.keyNotFound(key, context) {
+                            print("Key '\(key)' not found:", context.debugDescription)
+                            print("codingPath:", context.codingPath)
+                        } catch let DecodingError.valueNotFound(value, context) {
+                            print("Value '\(value)' not found:", context.debugDescription)
+                            print("codingPath:", context.codingPath)
+                        } catch let DecodingError.typeMismatch(type, context)  {
+                            print("Type '\(type)' mismatch:", context.debugDescription)
+                            print("codingPath:", context.codingPath)
+                        } catch {
+                            print("error: ", error)
                         }
                         
-                        //뷰 이동
-                        RVC.modalPresentationStyle = .fullScreen
                         
-                        // 결과 페이지로 이동
-                       // self.present(RVC, animated: true, completion: nil)
-                        self.navigationController?.pushViewController(RVC, animated: true)
+                        
+                        
+                        
                     case .failure(let error):
                         print(error)
                     }
@@ -1282,7 +1150,96 @@ class UiTestController: UIViewController {
     }
     
     
+    // 혜택 소개영상을 클릭하면 영상을 보여주는 화면으로 이동
+    @objc func MyTapMethod(sender: UITapGestureRecognizer) {
+        
+        print("사진 터치")
+        
+        
+        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "tagSelectViewController") as? tagSelectViewController         else{
+            
+            return
+            
+        }
+        //뷰 이동
+        RVC.modalPresentationStyle = .fullScreen
+        
+        
+        //선택한 영상의 번호를 스크롤뷰의 x 좌표값을 통해 받아온다.
+        var Index : Int = Int(scrollView.contentOffset.x / scrollView.frame.maxX)
+//        RVC.videoID = ytbList[Index].videoId
+//        RVC.videoTitle = ytbList[Index].title
+//
+
+            
+        
+        //리뷰작성 페이지로 이동
+        //네비게이션바의 타이틀과 이름을 설정 해준다.
+        //네비바 설정
+        let naviLabel = UILabel()
+       // naviLabel.frame = CGRect(x: 63.8, y: 235.4, width: 118, height: 17.3)
+        naviLabel.textAlignment = .center
+        //naviLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
+        //폰트지정 추가
+        
+//        naviLabel.text = "유튜버 혜택리뷰"
+//        naviLabel.font = UIFont(name: "Jalnan", size: 16)
+//        
+//        self.navigationController?.navigationBar.topItem?.titleView = naviLabel
+        self.navigationController?.navigationBar.tintColor = UIColor.black
+        
+        self.navigationController?.pushViewController(RVC, animated: true)
+        
+        
+    }
     
     
+    
+   
+    
+    
+    //페이지 컨트롤
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        print("페이지 컨트롤러")
+        pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.maxX)
+
+        if fmod(scrollView.contentOffset.x, scrollView.frame.minX) == 0 {
+         
+            pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.maxX)
+            print("페이지 fmod컨트롤러")
+            print(Int(scrollView.contentOffset.x / scrollView.frame.maxX))
+            
+        }
+    }
+    
+    //이미지 자르는 메소드
+    func crop(imgUrl : String) -> UIImage? {
+        let imageUrl = URL(string: imgUrl)!
+        let data = try! Data(contentsOf: imageUrl)
+        let image = UIImage(data: data)!
+
+        // Crop rectangle
+        let width = min(image.size.width, image.size.height)
+        let size = CGSize(width: width, height: image.size.height - 40)
+
+        // If you want to crop center of image
+        //let startPoint = CGPoint(x: (image.size.width - width) / 2, y: (image.size.height - width) / 2)
+        let startPoint = CGPoint(x: 0, y: 40)
+        let endPoint = CGPoint(x: image.size.width, y: image.size.height - 38)
+
+        
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+
+        image.draw(in: CGRect(origin: startPoint, size: size))
+        //image.draw(in: CGRect(origin: startPoint, size : endPoint))
+
+        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        
+        
+        
+        return croppedImage
+    }
     
 }

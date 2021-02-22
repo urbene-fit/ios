@@ -42,6 +42,7 @@ class ResultTableViewCell: UITableViewCell {
         let policyName = UILabel()
         policyName.translatesAutoresizingMaskIntoConstraints = false
         policyName.font = UIFont(name: "NanumGothic", size: 18.7)
+        policyName.numberOfLines = 2
         return policyName
     }()
     
@@ -102,8 +103,8 @@ class ResultTableViewCell: UITableViewCell {
             
             
             //마진 설정하는 부분
-            plusImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 26.3),
-            plusImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 278.8),
+            plusImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 24),
+            plusImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 320),
 
             
             policyName.topAnchor.constraint(equalTo: self.topAnchor, constant: 91),
@@ -114,7 +115,7 @@ class ResultTableViewCell: UITableViewCell {
             //크기 지정하는 부분
             plusImg.widthAnchor.constraint(equalToConstant: 29.7),
             plusImg.heightAnchor.constraint(equalToConstant: 30.3),
-            policyName.widthAnchor.constraint(equalToConstant: 204.3),
+            policyName.widthAnchor.constraint(equalToConstant: 400),
             policyName.heightAnchor.constraint(equalToConstant: 58.3),
         ])
     }

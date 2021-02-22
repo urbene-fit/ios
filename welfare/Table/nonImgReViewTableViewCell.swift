@@ -67,6 +67,38 @@ class nonImgReViewTableViewCell: UITableViewCell {
         return content
     }()
     
+    //수정//삭제버튼
+    
+//
+    let modifyBtn: UIButton = {
+        let modifyBtn = UIButton(type: .custom)
+        //content.isEnabled = false
+
+
+        //content.text = "test"
+        modifyBtn.translatesAutoresizingMaskIntoConstraints = false
+        modifyBtn.setTitle("수정", for: .normal)
+        modifyBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
+        modifyBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14 *  DeviceManager.sharedInstance.heightRatio)
+
+
+        return modifyBtn
+    }()
+
+
+    let deleteBtn: UIButton = {
+        let deleteBtn = UIButton(type: .system)
+
+        deleteBtn.translatesAutoresizingMaskIntoConstraints = false
+        deleteBtn.setTitle("삭제", for: .normal)
+        deleteBtn.setTitleColor(UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1), for: .normal)
+
+        deleteBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14 *  DeviceManager.sharedInstance.heightRatio)
+
+
+        return deleteBtn
+    }()
+
     
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -101,6 +133,8 @@ class nonImgReViewTableViewCell: UITableViewCell {
         contentView.addSubview(nickName)
         contentView.addSubview(gradeView)
         contentView.addSubview(content)
+        contentView.addSubview(modifyBtn)
+        contentView.addSubview(deleteBtn)
         
         //하단줄 추가
         let bottomBorder = CALayer()
@@ -163,6 +197,16 @@ class nonImgReViewTableViewCell: UITableViewCell {
    
             content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             
+            //            //수정 삭제 버튼
+                        modifyBtn.topAnchor.constraint(equalTo: self.topAnchor, constant: 23 *  DeviceManager.sharedInstance.heightRatio),
+
+                        modifyBtn.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 300 *  DeviceManager.sharedInstance.widthRatio),
+
+                        deleteBtn.topAnchor.constraint(equalTo: self.topAnchor, constant: 23 *  DeviceManager.sharedInstance.heightRatio),
+
+                        deleteBtn.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 360 *  DeviceManager.sharedInstance.widthRatio),
+
+            
             //크기 지정하는 부분
 //            nickName.widthAnchor.constraint(equalToConstant: 60),
 //            nickName.heightAnchor.constraint(equalToConstant: 20),
@@ -181,6 +225,13 @@ class nonImgReViewTableViewCell: UITableViewCell {
                         content.widthAnchor.constraint(equalToConstant: 30),
                         content.heightAnchor.constraint(equalToConstant: 30),
                         
+            modifyBtn.widthAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.widthRatio),
+            modifyBtn.heightAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.heightRatio),
+            deleteBtn.widthAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.widthRatio),
+            deleteBtn.heightAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.heightRatio),
+
+
+
         
           
         ])

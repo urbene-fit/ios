@@ -14,6 +14,12 @@ class ReViewTableViewCell: UITableViewCell {
     //화면 스크롤 크기
     
     
+    //리뷰 id
+//    var id : String?
+//    weak var delegate : ReViewTableViewCellDelegate?
+
+
+    
     //테이블뷰 셀 프레임지정
     override open var frame: CGRect {
         get {
@@ -25,7 +31,7 @@ class ReViewTableViewCell: UITableViewCell {
             var frame =  newFrame
             //frame.origin.y += 20.7
 //            frame.origin.x += 20
-          frame.size.height -= 20.7
+          frame.size.height -= 20.7 *  DeviceManager.sharedInstance.heightRatio
 //            frame.size.width -= 40
             super.frame = frame
         }
@@ -36,7 +42,7 @@ class ReViewTableViewCell: UITableViewCell {
     let nickName: UILabel = {
         let nickName = UILabel()
         nickName.translatesAutoresizingMaskIntoConstraints = false
-        nickName.font = UIFont(name: "jalan", size: 17.1)
+        nickName.font = UIFont(name: "jalan", size: 17.1 *  DeviceManager.sharedInstance.heightRatio)
         nickName.text = "작성자"
         return nickName
     }()
@@ -50,7 +56,7 @@ class ReViewTableViewCell: UITableViewCell {
             let starImg = UIImage(named: "star_on")
             var starImgView = UIImageView()
             starImgView.setImage(starImg!)
-            starImgView.frame = CGRect(x:(i * 20) + (i * 5), y: 0, width: 20, height: 20)
+            starImgView.frame = CGRect(x:(i * 20)  + (i * 5)   , y: 0, width: 20  , height: 20)
             starImgView.image = starImgView.image?.withRenderingMode(.alwaysOriginal)
             gradeView.addSubview(starImgView)
         }
@@ -64,7 +70,7 @@ class ReViewTableViewCell: UITableViewCell {
         let thumbnail = UIImageView(image:UIImage(named:"man"))
         thumbnail.layer.borderWidth = 0.1
   
-        thumbnail.layer.cornerRadius = 13
+        thumbnail.layer.cornerRadius = 13 *  DeviceManager.sharedInstance.heightRatio
 
         thumbnail.translatesAutoresizingMaskIntoConstraints = false
         return thumbnail
@@ -87,9 +93,15 @@ class ReViewTableViewCell: UITableViewCell {
 
         //content.text = "test"
         content.translatesAutoresizingMaskIntoConstraints = false
-        content.font = UIFont(name: "jalan", size: 12.7)
+        content.font = UIFont(name: "jalan", size: 12.7 *  DeviceManager.sharedInstance.heightRatio)
         return content
     }()
+    
+    
+    //수정//삭제버튼
+    
+//
+
     
     
     
@@ -118,8 +130,8 @@ class ReViewTableViewCell: UITableViewCell {
         
 //        contentView.frame = CGRect(x: 20, y: 20.7, width: 335, height: 186)
         //contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8))
-        contentView.frame = CGRect(x: 0, y: 0, width: 300, height: 400)
-        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0))
+        contentView.frame = CGRect(x: 0, y: 0, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 400 *  DeviceManager.sharedInstance.heightRatio)
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 8 *  DeviceManager.sharedInstance.widthRatio, bottom: 0, right: 0))
         contentView.addSubview(nickName)
         contentView.addSubview(gradeView)
         contentView.addSubview(content)
@@ -127,8 +139,11 @@ class ReViewTableViewCell: UITableViewCell {
 
 
         contentView.addSubview(plusImg)
+//        contentView.addSubview(modifyBtn)
+//        contentView.addSubview(deleteBtn)
+
         let bottomBorder = CALayer()
-                bottomBorder.frame = CGRect(x: 0.0, y: 399, width: 500, height: 1.0)
+                bottomBorder.frame = CGRect(x: 0.0, y: 399 *  DeviceManager.sharedInstance.heightRatio, width: 500 *  DeviceManager.sharedInstance.widthRatio, height: 1.0 *  DeviceManager.sharedInstance.heightRatio)
                 bottomBorder.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
         contentView.layer.addSublayer(bottomBorder)
         
@@ -136,43 +151,59 @@ class ReViewTableViewCell: UITableViewCell {
         
     }
     
+   
+    
+    
+    
     public func autoLayout() {
         //let margin: CGFloat = 10
         
         NSLayoutConstraint.activate([
           
+          
+        
             
             //썸네일 배치
             
-            thumbnail.topAnchor.constraint(equalTo: self.topAnchor, constant: 20),
+            thumbnail.topAnchor.constraint(equalTo: self.topAnchor, constant: 20 *  DeviceManager.sharedInstance.heightRatio),
 
-            thumbnail.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
+            thumbnail.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20 *  DeviceManager.sharedInstance.widthRatio),
 
             
             //닉네임 배치
             
-            nickName.topAnchor.constraint(equalTo: self.topAnchor, constant: 23),
+            nickName.topAnchor.constraint(equalTo: self.topAnchor, constant: 23 *  DeviceManager.sharedInstance.heightRatio),
      
-            nickName.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 110),
+            nickName.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 110 *  DeviceManager.sharedInstance.widthRatio),
             
             
             //별점 부분
-            gradeView.topAnchor.constraint(equalTo: self.topAnchor, constant: 27),
-            gradeView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 260),
+            gradeView.topAnchor.constraint(equalTo: self.topAnchor, constant: 60 *  DeviceManager.sharedInstance.heightRatio),
+            gradeView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 110 *  DeviceManager.sharedInstance.widthRatio),
 
             
           
             
             
-            content.topAnchor.constraint(equalTo: self.topAnchor, constant: 60),
+            content.topAnchor.constraint(equalTo: self.topAnchor, constant: 270 *  DeviceManager.sharedInstance.heightRatio),
    
-            content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 110),
+            content.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20 *  DeviceManager.sharedInstance.widthRatio),
             
             
             //이미지
-            plusImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 180),
+            plusImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 110 *  DeviceManager.sharedInstance.heightRatio),
    
-            plusImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 110),
+            plusImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20 *  DeviceManager.sharedInstance.widthRatio),
+            
+//            //수정 삭제 버튼
+//            modifyBtn.topAnchor.constraint(equalTo: self.topAnchor, constant: 23 *  DeviceManager.sharedInstance.heightRatio),
+//
+//            modifyBtn.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 300 *  DeviceManager.sharedInstance.widthRatio),
+//
+//            deleteBtn.topAnchor.constraint(equalTo: self.topAnchor, constant: 23 *  DeviceManager.sharedInstance.heightRatio),
+//
+//            deleteBtn.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 360 *  DeviceManager.sharedInstance.widthRatio),
+//
             //크기 지정하는 부분
 //            nickName.widthAnchor.constraint(equalToConstant: 60),
 //            nickName.heightAnchor.constraint(equalToConstant: 20),
@@ -180,27 +211,36 @@ class ReViewTableViewCell: UITableViewCell {
 //            gradeView.heightAnchor.constraint(equalToConstant: 20),
 //            plusImg.widthAnchor.constraint(equalToConstant: 370),
 //            plusImg.heightAnchor.constraint(equalToConstant: 270),
-//            content.widthAnchor.constraint(equalToConstant: 400),
-//            content.heightAnchor.constraint(equalToConstant: 100),
             
             
-            thumbnail.widthAnchor.constraint(equalToConstant: 80),
-            thumbnail.heightAnchor.constraint(equalToConstant: 80),
-                        nickName.widthAnchor.constraint(equalToConstant: 100),
-                        nickName.heightAnchor.constraint(equalToConstant: 40),
-                        gradeView.widthAnchor.constraint(equalToConstant: 100),
-                        gradeView.heightAnchor.constraint(equalToConstant: 40),
-                        plusImg.widthAnchor.constraint(equalToConstant: 70),
-                        plusImg.heightAnchor.constraint(equalToConstant: 70),
-                        content.widthAnchor.constraint(equalToConstant: 280),
-                        content.heightAnchor.constraint(equalToConstant: 200),
-                        
-                    
-        
+            content.widthAnchor.constraint(equalToConstant: 400 *  DeviceManager.sharedInstance.widthRatio),
+            content.heightAnchor.constraint(equalToConstant: 100 *  DeviceManager.sharedInstance.heightRatio),
+            
+            
+            thumbnail.widthAnchor.constraint(equalToConstant: 80 *  DeviceManager.sharedInstance.widthRatio),
+            thumbnail.heightAnchor.constraint(equalToConstant: 80 *  DeviceManager.sharedInstance.heightRatio),
+                        nickName.widthAnchor.constraint(equalToConstant: 100 *  DeviceManager.sharedInstance.widthRatio),
+                        nickName.heightAnchor.constraint(equalToConstant: 40 *  DeviceManager.sharedInstance.heightRatio),
+                        gradeView.widthAnchor.constraint(equalToConstant: 100 *  DeviceManager.sharedInstance.widthRatio),
+                        gradeView.heightAnchor.constraint(equalToConstant: 40 *  DeviceManager.sharedInstance.heightRatio),
+                        plusImg.widthAnchor.constraint(equalToConstant: 150 *  DeviceManager.sharedInstance.widthRatio),
+                        plusImg.heightAnchor.constraint(equalToConstant: 150 *  DeviceManager.sharedInstance.heightRatio),
+         
+//
+//            modifyBtn.widthAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.widthRatio),
+//            modifyBtn.heightAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.heightRatio),
+//            deleteBtn.widthAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.widthRatio),
+//            deleteBtn.heightAnchor.constraint(equalToConstant: 50 *  DeviceManager.sharedInstance.heightRatio),
+//
+//
+//
           
         ])
           
     }
+    
+    
+    
     
     //이미지 여부에 따라 셀을 조정
 //    public func autoLayout(_ image : Bool) {
@@ -289,5 +329,18 @@ class ReViewTableViewCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+ 
+    
+    @objc func modify() {
+        print("수정버튼")
+
+    }
+    
+    
+    @objc func delete() {
+        print("수정버튼")
+
+    }
+    
     
 }

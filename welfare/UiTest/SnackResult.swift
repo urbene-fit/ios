@@ -92,7 +92,7 @@ class SnackResult: UIViewController {
         
         
         //나라 메인 이미지
-        print("결과페이지 이미지주소:\(image_url)")
+        //print("결과페이지 이미지주소:\(image_url)")
 //        let imgView = UIImageView()
 //            let img = UIImage(named: "america")
 //            imgView.setImage(img!)

@@ -53,7 +53,7 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
         let LogoImg = UIImage(named: "appLogo")
         appLogo.image = LogoImg
         appLogo.frame = CGRect(x: 22.1, y: 26.7, width: 106, height: 14.3)
-        self.view.addSubview(appLogo)
+        //self.view.addSubview(appLogo)
         
         
         //복지혜택 검색결과
@@ -82,8 +82,13 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
         //searchBar.sizeToFit()
         self.view.addSubview(searchBar)
         
+        
+        //서울특별시 이름을 서울로 바꿔주는 예외처리
+        if(local == "서울특별시"){
+            local = "서울"
+        }
         //지역위 혜택을 요청한다.
-        let parameters = ["local": "부산", "page_number": "2"]
+        let parameters = ["local": local, "page_number": "2"]
         
   
         
@@ -111,7 +116,7 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
                             
                         }
                         
-                        localTbView = UITableView(frame: CGRect(x: 0, y: 390, width: screenWidth, height: 400))
+                        localTbView = UITableView(frame: CGRect(x: 0, y: 300, width: screenWidth, height: screenHeight - 310))
                         
                         //테이블 셀간의 줄 없애기
                         localTbView.separatorStyle = UITableViewCell.SeparatorStyle.none
@@ -140,12 +145,14 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
                         //attributedStr.addAttribute(.foregroundColor, value: UIColor.blue, range: (resultLabel.text! as NSString).range(of: "[0-9]"))
                         attributedStr.addAttribute(.foregroundColor, value: UIColor(red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1.0), range: (resultLabel.text! as NSString).range(of: shu))
                         
-                        
-                        
+                        //줄간격
+                        let paragraphStyle = NSMutableParagraphStyle()
+                        paragraphStyle.lineSpacing = 7
+                        attributedStr.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attributedStr.length))
                         
                         resultLabel.attributedText = attributedStr
                         
-                        resultLabel.font = UIFont(name: "Jalnan", size: 16.1)
+                        resultLabel.font = UIFont(name: "Jalnan", size: 21)
                         
                         
                         
@@ -220,7 +227,7 @@ class mapResultViewController: UIViewController, UITableViewDataSource, UISearch
         
     
         cell.backgroundColor = UIColor.white
-        cell.layer.borderColor = UIColor(red: 227/255.0, green: 227/255.0, blue: 227/255.0, alpha: 1.0).cgColor
+       // cell.layer.borderColor = UIColor(red: 227/255.0, green: 227/255.0, blue: 227/255.0, alpha: 1.0).cgColor
         cell.layer.borderWidth = 1.3
         cell.layer.cornerRadius = 34
         cell.clipsToBounds = true

@@ -15,6 +15,12 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     
     // var areaCounts : [areaCount] = []
     
+    //로그 보낼떄 화면을 알려주는 변수
+    var type : String = "map"
+    
+    private var observer: NSObjectProtocol?
+    
+    
     struct  areaCounts : Decodable {
         let areaCount : [areaCount]
         
@@ -25,6 +31,45 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         let local: String
         let welf_count: Int
     }
+    
+    
+    
+    
+    struct parse: Decodable {
+        let Status : String
+        //반환값이 없을떄 처리
+        let Message : [areaCount]
+    }
+    
+    
+    //데이터 파싱
+    struct SearchList: Decodable {
+        var welf_name : String
+        // var welf_local : String
+        var parent_category : String
+        var welf_category : String
+        var tag : String
+        
+    }
+    
+    
+    struct searchParse: Decodable {
+        let Status : String
+        // let Message : String
+        
+        //반환값이 없을떄 처리
+        let Message : [SearchList]
+    }
+    struct Parse: Decodable {
+        let Status : String
+        // let Message : String
+        
+        //반환값이 없을떄 처리
+        //  let Message : [SearchList]
+    }
+    
+    
+    
     
     //네비게이션 바 변수
     let navBar = UINavigationBar()
@@ -45,15 +90,11 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     
     var cityXYs = [cityXY]()
     
-    
-    
     let titleLabel = UILabel()
     
     
-    //지역위치정보를 관리하는 배열
-    //    var cityXYs   =  [{ "area": "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60},{"area" : "서울", "x" : 30 ,"y" : 60}
-    //
-    //    ]
+    
+    
     
     
     //상단에 지역을 표시하는 라벨
@@ -70,7 +111,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     weak var mask: CAShapeLayer?
     
     var tabBarCnt = UITabBarController()
-
+    
     
     let imgView = UIImageView()
     
@@ -155,264 +196,96 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     var start: CFTimeInterval!          // when the animationㅌ was started
     let duration: CFTimeInterval = 0.5  // how long will the animation take
     
+    //지역버튼들을 관리하는 배열
+    var buttons = [UIButton]()
+    
+    
+    //인치별 높이비율 수치
+    var heightRatio : CGFloat = 0
+    
+    //서버에서 사용하는 지역명
+    var localList = ["서울", "부산", "대구","인천", "광주", "대전", "울산","세종", "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"]
+    
+    
+    
+    //네비게이션 컨트롤러 변경
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        print("검색 : viewDidAppear")
+        //        DuViewController의 view가 사라짐
+        //        ReViewViewController의 view가 화면에 나타남
+        setBarButton()
+    }
+    
+    private func setBarButton() {
+        print("ReViewViewController의 setBarButton")
+        
+        
+        self.navigationController?.navigationBar.topItem?.titleView = nil
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
+        
+        
+        let naviLabel = UILabel()
+        naviLabel.frame = CGRect(x: 63.8  *  DeviceManager.sharedInstance.widthRatio, y: 235.4 *  DeviceManager.sharedInstance.heightRatio, width: 118 *  DeviceManager.sharedInstance.widthRatio, height: 17.3 *  DeviceManager.sharedInstance.heightRatio)
+        naviLabel.textAlignment = .center
+        naviLabel.textColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+        
+        naviLabel.text = "UrBene_Fit"
+        naviLabel.font = UIFont(name: "Bowhouse-Black", size: 30  *  DeviceManager.sharedInstance.heightRatio)
+        self.navigationController?.navigationBar.topItem?.titleView = naviLabel
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("화면비율\(DeviceManager.sharedInstance.heightRatio)")
+        
+        //사용자가 어떤 페이지에서 이탈하지는 체크하기위해, 백그라운드 진입시 로그를 보낸다.
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification,
+                                                          object: nil,
+                                                          queue: .main) {
+            [unowned self] notification in
+            print("지도화면에서 백그라운드로 진입")
+            DeviceManager.sharedInstance.sendLog(content: "지도화면에서 종료", type: type)
+            
+        }
         
         //self.navigationController?.isNavigationBarHidden = true
-
+        print("맵뷰 시작")
+        
+        if DeviceManager.sharedInstance.isFiveIncheDevices() {
+            print("5인치")
+            heightRatio = DeviceManager.sharedInstance.widthRatio
+            
+            
+        }else if DeviceManager.sharedInstance.isFourIncheDevices() {
+            print("4인치")
+        }else if DeviceManager.sharedInstance.isSixIncheDevices() {
+            print("6인치")
+            heightRatio = DeviceManager.sharedInstance.heightRatio
+            
+            
+        }else{
+            print("인치구분안됨")
+            heightRatio = DeviceManager.sharedInstance.heightRatio
+            
+            
+        }
+        
+        //지도상의 지역버튼을 표시해주기 위한 메소드
+        setCity()
+        //레이아웃 셋팅
+        setLayout()
+        
         //화면 스크롤 크기
         var screenWidth = Int(view.bounds.width)
         var screenHeight = Int(view.bounds.height)
         self.view.backgroundColor = UIColor.white
-        
-        cityXYs.append(cityXY.init(cityName: "서울", cityX: 50, cityY: 200))
-        cityXYs.append(cityXY.init(cityName: "강원", cityX: 230, cityY: 220))
-        cityXYs.append(cityXY.init(cityName: "경기", cityX: 140, cityY: 270))
-        cityXYs.append(cityXY.init(cityName: "경남", cityX: 230, cityY: 460))
-        cityXYs.append(cityXY.init(cityName: "경북", cityX: 260, cityY: 350))
-        cityXYs.append(cityXY.init(cityName: "광주", cityX: 120, cityY: 500))
-        cityXYs.append(cityXY.init(cityName: "대구", cityX: 240, cityY: 400))
-        cityXYs.append(cityXY.init(cityName: "대전", cityX: 140, cityY: 340))
-        cityXYs.append(cityXY.init(cityName: "부산", cityX: 330, cityY: 480))
-        cityXYs.append(cityXY.init(cityName: "제주", cityX: 50, cityY: 550))
-
-//       self.tabBarController?.delegate = self
-//        let tab = UITabBar()
-//        tab.frame =  CGRect(x: 0, y: 0, width: view.frame.size.width, height: 500)
-//        view.addSubview(tab)
-//
-//        tabBarCnt = UITabBarController()
-//          tabBarCnt.tabBar.barStyle = .black
-//
-//
-//          let journalVC = UiTestController()
-//          journalVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 1)
-//
-//          tabBarCnt.viewControllers = [journalVC]
-//          self.view.addSubview(tabBarCnt.view)
-//
-        
-        
-        //        //앱 로고
-        //        let appLogo = UIImageView()
-        //        let LogoImg = UIImage(named: "appLogo")
-        //        appLogo.image = LogoImg
-        //        appLogo.frame = CGRect(x: 25, y: 45, width: 116.6, height: 16)
-        //        self.view.addSubview(appLogo)
-        //
-        //
-        //
-        //        //헤더
-        //        let header = UIView()
-        //        let headerLabel = UILabel()
-        //        //헤더에 무슨화면인지 설명
-        //        header.frame = CGRect(x: 0, y: Int(80), width: screenWidth, height: Int(100))
-        //
-        //        //추후 그라데이션 적용
-        //        header.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1)
-        //
-        //        //헤더라벨
-        //        headerLabel.frame = CGRect(x: 0, y: 0, width: screenWidth, height: Int(100))
-        //        headerLabel.textColor = UIColor.white
-        //        //폰트지정 추가
-        //
-        //        headerLabel.text = "지도에서 혜택찾기"
-        //        headerLabel.numberOfLines = 2
-        //
-        //        //라벨 줄간격 조절
-        //        let attrString = NSMutableAttributedString(string: headerLabel.text!)
-        //        let paragraphStyle = NSMutableParagraphStyle()
-        //        paragraphStyle.lineSpacing = 8
-        //        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
-        //        headerLabel.attributedText = attrString
-        //        headerLabel.textAlignment = .center
-        //
-        //
-        //        headerLabel.font = UIFont(name: "Jalnan", size: 28)
-        //        // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
-        //        header.addSubview(headerLabel)
-        //        self.view.addSubview(header)
-        
-        
-        //서치바를 동작하기 위한 대리자 선언
-        //        searchBar.showsScopeBar = true
-        //
-        //        searchBar.delegate = self
-        //
-        //        //네비게이션 바 설정
-        //        navBar.frame = CGRect(x: 0, y: 30, width: view.frame.size.width, height: 80)
-        //        view.addSubview(navBar)
-        //
-        //        let navItem = UINavigationItem()
-        //        //검색시 사용하는 네비게이션의 텍스트 필드
-        //        let Image = UIImage(named: "back")
-        //
-        //        //navItem.leftBarButtonItem = UIBarButtonItem(image: Image, style: .done, target: self, action: nil)
-        //
-        //        // navItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
-        //
-        //
-        //
-        //
-        //
-        //        var backbutton = UIButton(type: .custom)
-        //        backbutton.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        //        backbutton.setImage(UIImage(named: "BackButton.png"), for: .normal) // Image can be downloaded from here below link
-        //        backbutton.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        //        backbutton.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        //        backbutton.setTitleColor(backbutton.tintColor, for: .normal)
-        //
-        //        // You can change the TitleColor
-        //        //backbutton.addTarget(self, action: "backAction", forControlEvents: .TouchUpInside)
-        //        //        backbutton.sizeToFit()
-        //        navItem.leftBarButtonItem = UIBarButtonItem(customView: backbutton)
-        //
-        //
-        //        navBar.setItems([navItem], animated: false)
-        
-        
-        
-        
-        //네비바에 타이틀 설정
-        //컨테이너 뷰
-        //        let titleView = UIView()
-        //        titleView.frame = CGRect(x: 100, y: 20, width: 170, height: 60)
-        //
-        //
-        //
-        //        //로고
-        //        let logoView = UIImageView()
-        //        logoView.setImage(UIImage(named: "newLogo")!)
-        //        logoView.frame = CGRect(x: 0, y: 20, width: 40, height: 40)
-        //        //logoView.image = logoView.image?.withRenderingMode(.alwaysTemplate)
-        //        //logoView.tintColor =  #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1)
-        //
-        //        logoView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        //        logoView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        //        titleView.addSubview(logoView)
-        //
-        //        //라벨
-        ////        let titleLabel = UILabel()
-        ////        titleLabel.font = UIFont(name: "Jalnan", size: 17)
-        ////        titleLabel.text = "너의 혜택은"
-        ////        titleLabel.frame = CGRect(x: 50, y: 0, width: 120, height: 60)
-        ////        titleLabel.textAlignment = .center
-        ////        titleView.addSubview(titleLabel)
-        //
-        //
-        //
-        //        //navItem.titleView = logoView
-        //
-        //
-        //        var plusBtn = UIButton(type: .custom)
-        //        plusBtn.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
-        //        plusBtn.setImage(UIImage(named: "search"), for: .normal) // Image can be downloaded from here below link
-        //        plusBtn.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        //        plusBtn.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        //        plusBtn.setTitleColor(backbutton.tintColor, for: .normal)
-        //
-        //        // You can change the TitleColor
-        //        //backbutton.addTarget(self, action: "backAction", forControlEvents: .TouchUpInside)
-        //        //        backbutton.sizeToFit()
-        //        navItem.rightBarButtonItem = UIBarButtonItem(customView: plusBtn)
-        //
-        //
-        //        navBar.setItems([navItem], animated: false)
-        
-        //지도UI상에 표시할 지도 좌표를 저장한다.
-        
-        //상단 뷰
-        //지역명
-        //라벨
-        areaLabel.font = UIFont(name: "Jalnan", size: 17)
-        areaLabel.frame = CGRect(x: 20, y: 60, width: 220, height: 30)
-        areaLabel.textAlignment = .left
-        self.view.addSubview(areaLabel)
-        
-        
-        //거주지역을 변경해줘야할때 지역변경 화면으로 이동하게 해주는 버튼
-        
-        
-        areaMoveBtn.setTitleColor(UIColor.gray, for: .normal)
-        areaMoveBtn.frame = CGRect(x: 300, y: 560, width: 100, height: 50)
-        areaMoveBtn.setTitle("지역변경", for: .normal)
-        areaMoveBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14.7)
-        
-        
-        //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-        areaMoveBtn.addTarget(self, action: #selector(self.areaMove), for: .touchUpInside)
-        
-        
-        
-        
-        
-        // cityXYs.append(cityXY.init(cityName: "서울", cityX: 50, cityY: 200))
-        
-        
-        
-        //메인 지도 이미지뷰
-        
-        let img = UIImage(named: "newMap")
-        imgView.setImage(img!)
-        imgView.frame = CGRect(x: 0, y: 140, width:screenWidth , height: 550)
-        imgView.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        //        imgView.image = imgView.image?.withRenderingMode(.alwaysTemplate)
-        //imgView.tintColor =  #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
-        self.view.addSubview(imgView)
-        self.view.addSubview(areaMoveBtn)
-
-        // Do any additional setup after loading the view.
-        
-        locationManager.delegate = self
-        // 정확도를 최고로 설정
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        // 위치 데이터를 추적하기 위해 사용자에게 승인 요구
-        locationManager.requestWhenInUseAuthorization()
-        // 위치 업데이트를 시작
-        locationManager.startUpdatingLocation()
-        
-        //테이블뷰 상단에 위치하여 몇개의 정첵이 있는지 보여주는 뷰
-        let discriptionView = UIView()
-        discriptionView.frame = CGRect(x: 0, y: 700, width: screenWidth, height: 60)
-        discriptionView.backgroundColor = #colorLiteral(red: 0.1918275654, green: 0.191522032, blue: 0.1921892762, alpha: 0.4443760702)
-        
-        //라벨
-        titleLabel.font = UIFont(name: "Jalnan", size: 17)
-        titleLabel.textColor = UIColor.white
-        titleLabel.frame = CGRect(x: 20, y: 5, width: 220, height: 50)
-        titleLabel.textAlignment = .left
-        discriptionView.addSubview(titleLabel)
-        
-        
-        //전체보기 버튼
-        let viewBtn = UIButton()
-        
-        viewBtn.frame = CGRect(x: screenWidth - 90, y: 5, width: 80, height: 50)
-        viewBtn.setTitle("보러가기", for: .normal)
-        viewBtn.backgroundColor = UIColor.white
-        viewBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14.7)
-        viewBtn.setTitleColor(UIColor.black, for: .normal)
-        
-        viewBtn.layer.cornerRadius = 23
-        viewBtn.layer.borderWidth = 1.3
-        
-        viewBtn.layer.borderColor = UIColor.white.cgColor
-        
-        viewBtn.addTarget(self, action: #selector(self.moveList), for: .touchUpInside)
-        
-        discriptionView.addSubview(viewBtn)
-        
-        
-        
-        self.view.addSubview(discriptionView)
-        
-        
-        //        let mask = CAShapeLayer()
-        //        mask.fillColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1).cgColor
-        //        mask.strokeColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0).cgColor
-        //        imgView.layer.mask = mask
-        //        self.mask = mask
         
         
     }
@@ -446,93 +319,110 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
             = converter.convertGrid(lon: long, lat: lat)
         
         let findLocation: CLLocation = CLLocation(latitude: lat, longitude: long)
+        print("찾은지역: \(findLocation)")
         let geoCoder: CLGeocoder = CLGeocoder()
         let local: Locale = Locale(identifier: "Ko-kr") // Korea
-        geoCoder.reverseGeocodeLocation(findLocation, preferredLocale: local) { (place, error) in
+        
+        geoCoder.reverseGeocodeLocation(findLocation, preferredLocale: local) { [self] (place, error) in
             if let address: [CLPlacemark] = place {
                 print("(longitude, latitude) = (\(x), \(y))")
                 print("시(도): \(address.last?.administrativeArea)")
                 print("구(군): \(address.last?.locality)")
                 
                 
-                self.local = (address.last?.administrativeArea!)!
+                city = (address.last?.administrativeArea!)!
+                
+                //지역명을 앞에 2글자까지만 남겨준다.
+                let endIdx: String.Index = city.index(city.startIndex, offsetBy: 1)
+                city = String(city[...endIdx])
+                
+                print("자른후:\(city)")
+                self.local = city
                 //지역표시
                 self.areaLabel.text = address.last?.locality!
                 
                 
-                //                    //시 정보 저장
-                //                    self.city =  String((address.last?.administrativeArea)!)
-                //                    //효과 이미지
-                //                    let testView = UIView(frame: CGRect(x: 50, y: 200, width:  100, height: 100))
-                //                         //testView.backgroundColor = #colorLiteral(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 1)
-                //                    testView.backgroundColor = UIColor(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 0.3)
-                //                    //색상고르는 법 Color Literal
-                //                    //let colorLiteral = #colorLiteral(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 1)
-                //
-                //
-                //                    testView.layer.cornerRadius = testView.frame.height/2
-                //                    testView.layer.borderWidth = 1
-                //                    testView.layer.borderColor = UIColor.clear.cgColor
-                //                                // 뷰의 경계에 맞춰준다
-                //                    testView.clipsToBounds = true
-                //
                 //해당지역의 정책갯수를 서버로부터 받아온다.
-                let parameters = ["local": "부산", "page_number": "1"]
+                let parameters = ["local": city, "page_number": "1"]
                 
-                Alamofire.request("http://www.urbene-fit.com/map", method: .get, parameters: parameters)
+                Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: parameters)
                     .validate()
                     .responseJSON { [self] response in
                         
                         switch response.result {
                         case .success(let value):
+                            print("지역명 : \(city)")
+                            print("지도 결과")
                             
                             do {
                                 let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
-                                let areaLists = try JSONDecoder().decode([areaCount].self, from: data)
+                                //let areaLists = try JSONDecoder().decode([areaCount].self, from: data)
                                 
-                                
-                                for i in 1..<areaLists.count {
+                                let areaLists = try JSONDecoder().decode(parse.self, from: data)
+                                if(areaLists.Status == "200"){
                                     
-                                    if("부산" == areaLists[i].local){
-                                        self.count = areaLists[i].welf_count
-                                        self.titleLabel.text = "내 주변 혜택보기 \(areaLists[i].welf_count)개 >"
+                                    //                                print("로컬에서 처리 지역 갯수: \( self.cityXYs.count)개 >")
+                                    //
+                                    //                                print("지역갯수: \(areaLists.count)개 >")
+                                    
+                                    for i in 0..<areaLists.Message.count {
+                                        
+                                        if(city.contains(areaLists.Message[i].local)){
+                                            self.count = areaLists.Message[i].welf_count
+                                            self.titleLabel.text = "내 주변 혜택보기 \(areaLists.Message[i].welf_count)개 >"
+                                            print("지역갯수 : \(areaLists.Message[i].welf_count)")
+                                            
+                                        }
+                                        
+                                        
+                                        print(areaLists.Message[i].local)
+                                        print(areaLists.Message[i].welf_count)
+                                        
+                                        //버튼으로 지역이 클릭가능하게 끔 수정
+                                        var button = UIButton(type: .system)
+                                        //button.frame = CGRect(x: self.cityXYs[i].cityX, y: self.cityXYs[i].cityY, width:  50, height: 50)
+                                        
+                                        //위치를 지역이름과 비교후 추가
+                                        for k in 0..<cityXYs.count{
+                                            if(areaLists.Message[i].local == cityXYs[k].cityName){
+                                                button.frame = CGRect(x: self.cityXYs[k].cityX, y: self.cityXYs[k].cityY, width:  Int(55  *  DeviceManager.sharedInstance.widthRatio), height: Int(55  *  heightRatio))
+                                                button.tag = k
+                                                button.backgroundColor = UIColor(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 0.3)
+                                                
+                                                button.layer.cornerRadius = button.frame.height/2
+                                                button.layer.borderWidth = 1
+                                                button.layer.borderColor = UIColor.clear.cgColor
+                                                button.clipsToBounds = true
+                                                //지역을 클릭했을때 지역의 혜택리스트를 보여주는 페이지로 이동하는 메소드 추가
+                                                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
+                                                //버튼을 구분할 수 있게 태그넘버를 지정해주고 버튼배열에 관리한다.
+                                                
+                                                
+                                                let infoLabel = UILabel()
+                                                infoLabel.frame = CGRect(x: 0, y: 0, width: 58  *  DeviceManager.sharedInstance.widthRatio, height: 58  *  heightRatio)
+                                                infoLabel.numberOfLines = 2
+                                                
+                                                infoLabel.textAlignment = .center
+                                                infoLabel.text = "\(areaLists.Message[i].local)\n(\(areaLists.Message[i].welf_count))"
+                                                infoLabel.font = UIFont(name: "Jalnan", size: 11  *  heightRatio)
+                                                button.addSubview(infoLabel)
+                                                
+                                                if(areaLists.Message[i].local != "전국"){
+                                                    self.view.addSubview(button)
+                                                }
+                                                buttons.append(button)
+                                                
+                                            }
+                                        }
+                                        
+                                        
+                                        
+                                        
                                         
                                     }
                                     
                                     
-                                    print(areaLists[i].local)
-                                    print(areaLists[i].welf_count)
-                                    
-                                    
-//                                    let testView = UIView(frame: CGRect(x: self.cityXYs[i].cityX, y: self.cityXYs[i].cityY, width:  70, height: 70))
-                                    let testView = UIView(frame: CGRect(x: 50, y: 50, width:  70, height: 70))
-                                    testView.backgroundColor = #colorLiteral(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 1)
-                                    testView.backgroundColor = UIColor(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 0.3)
-                                    //색상고르는 법 Color Literal
-                                    //let colorLiteral = #colorLiteral(red: 1, green: 0.2739933722, blue: 0.9001957098, alpha: 1)
-                                    
-                                    
-                                    testView.layer.cornerRadius = testView.frame.height/2
-                                    testView.layer.borderWidth = 1
-                                    testView.layer.borderColor = UIColor.clear.cgColor
-                                    // 뷰의 경계에 맞춰준다
-                                    testView.clipsToBounds = true
-                                    let infoLabel = UILabel()
-                                    infoLabel.frame = CGRect(x: 0, y: 0, width: 70, height: 70)
-                                    infoLabel.numberOfLines = 2
-                                    
-                                    infoLabel.textAlignment = .center
-                                    infoLabel.text = "\(areaLists[i].local)\n  \(areaLists[i].welf_count)개의 혜택"
-                                    infoLabel.font = UIFont(name: "Jalnan", size: 10)
-                                    testView.addSubview(infoLabel)
-                                    self.view.addSubview(testView)
-                                    
-                                    
-                                    
                                 }
-                                
-                                
-                                
                                 
                             }
                             catch let DecodingError.dataCorrupted(context) {
@@ -552,22 +442,6 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                             
                             
                             
-                        //
-                        //                                if let json = value as? [String: Any] {
-                        //                                              print(json)
-                        //                                for (key, value) in json {
-                        //                                    print(value)
-                        //                            //카테고리데이터를 집어넣는다.
-                        ////                                    if(key == "local"){
-                        ////                                    print(value as! String)
-                        ////                                    }
-                        //                        }
-                        //
-                        //
-                        //
-                        //}
-                        
-                        
                         case .failure(let error):
                             print("Error: \(error)")
                             break
@@ -579,28 +453,16 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                 
                 //지역명과 정책수를 알려준다.
                 let infoLabel = UILabel()
-                infoLabel.frame = CGRect(x: 0, y: 25, width: 100, height: 50)
+                infoLabel.frame = CGRect(x: 0, y: 25 *  heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  heightRatio)
                 infoLabel.textAlignment = .center
                 infoLabel.numberOfLines = 2
                 //infoLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
                 //폰트지정 추가
                 
                 infoLabel.text = "\(self.city)\n 정책 231개"
-                infoLabel.font = UIFont(name: "Jalnan", size: 13)
+                infoLabel.font = UIFont(name: "Jalnan", size: 13  *  heightRatio)
                 print(self.city)
-                //                        testView.addSubview(infoLabel)
-                //                         self.view.addSubview(testView)
-                //
                 
-                
-                
-                
-                
-                //                    self.start = CACurrentMediaTime()
-                //
-                //                    let displayLink = CADisplayLink(target: self, selector: #selector(self.handleDisplaylink(_:)))
-                //
-                //                    displayLink.add(to: .main, forMode: .common)
             }
         }
         locationManager.stopUpdatingLocation()
@@ -646,34 +508,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     }
     
     
-    class View2: UIView {
-        override func draw(_ rect: CGRect) {
-            //            let path = UIBezierPath()
-            //
-            //            path.move(to: CGPoint(x: self.frame.width/2, y: 30))
-            //            path.addLine(to: CGPoint(x: self.frame.width/2 - sqrt(2700), y: 120))
-            //            path.addLine(to: CGPoint(x: self.frame.width/2 + sqrt(2700), y: 120))
-            //            path.close()
-            //
-            //            UIColor.black.set()
-            //            path.stroke()
-            //
-            //            UIColor.yellow.set()
-            //            path.fill()
-            
-            // 원 그리는법 1
-            let circlePath = UIBezierPath(roundedRect: CGRect(origin: CGPoint(x: self.frame.width/2-30, y: 60), size: CGSize(width: 60, height: 60)), cornerRadius: 30)
-            UIColor.black.set()
-            circlePath.stroke()
-            UIColor.green.setFill()
-            circlePath.fill()
-            
-            // 원 그리는법 2
-            //        let circlePath = UIBezierPath(arcCenter: CGPoint(x: self.frame.width/2, y: 90), radius: 30, startAngle: 0, endAngle: (135 * .pi) / 180, clockwise: true)
-            //        UIColor.black.set()
-            //        circlePath.stroke()
-        }
-    }
+    
     
     
     //지역변경화면으로 이동하는 메소드
@@ -682,95 +517,426 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         print("지역변경 페이지로 이동하는 버튼 클릭")
         
         
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapSearchViewController") as? mapSearchViewController         else{
-            
-            return
-            
-        }
-        
-        RVC.local = local
-        
-        //뷰 이동
-        RVC.modalPresentationStyle = .overFullScreen
-        
-        //self.present(RVC, animated: true, completion: nil)
-        self.navigationController?.pushViewController(RVC, animated: true)
-
-        
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//        let mainTabBar = storyboard.instantiateViewController(withIdentifier: "tabBarController") as! tabBarController
-//        let tset = mapTestViewController()
-//        mainTabBar.present(tset, animated: false, completion: nil)
-//
-//        self.present(RVC, animated: false) {
-//            mainTabBar.selectedIndex = 1
-//        }
-
-        //mainTabBar.selectedIndex = 1
-       // tabBarController(tabBarController: mainTabBar, didSelectViewController: tset)
-        //self.tabBarController?.present(RVC, animated: true, completion: nil)
-//        self.present(RVC, animated:true, completion:nil)
-//        tabBarController?.selectedViewController = RVC
-//        self.navigationController?.pushViewController(RVC, animated: true)
-        //tabBarController!.selectedIndex = 0
-         
-        //self.selectedIndex = 0
-
-
-
-//        self.tabBarController?.present(RVC, animated: false, completion: nil)
-//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-
-//
-//        let mainTabBar = storyboard.instantiateViewController(withIdentifier: "tabBarController") as! UITabBarController
-//            // mainTabBar.popToViewController(RVC, animated: true)
-//        let viewNumNavController  = mainTabBar.viewControllers![1] as! ViewNumNavigationController
-//
-//        viewNumNavController.popToViewController(RVC, animated: true)
     }
     
     
     //지역혜택 리스트를 보여주는 페이지로 이동
     @objc func moveList(_ sender: UIButton) {
         
-        print("move")
-       // self.dismiss(animated: false, completion: nil)
+        print("혜택지도 결괴페이지로 이동")
+        DeviceManager.sharedInstance.sendLog(content: "혜택지도 결괴페이지로 이동", type: type)
         
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapSearchViewController") as? mapSearchViewController         else{
-            
-            return
-            
-        }
         
-        RVC.local = local
+        //
         
-        //뷰 이동
-        RVC.modalPresentationStyle = .fullScreen
+        let params = ["page_number":"2", "local":"경기", "userAgent" : DeviceManager.sharedInstance.log]
+        //let params = ["type":"category_search", "keyword":"취업·창업"]
+        print(DeviceManager.sharedInstance.log)
         
-        // B 컨트롤러 뷰로 넘어간다.
-        //self.present(RVC, animated: true, completion: nil)
-        self.navigationController?.pushViewController(RVC, animated: true)
         
-//        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapResultViewController") as? mapResultViewController         else{
-//
-//            return
-//
-//        }
-//
-//        RVC.local = local
-//
-//        //뷰 이동
-//        RVC.modalPresentationStyle = .fullScreen
-//
-//        // B 컨트롤러 뷰로 넘어간다.
-//        self.present(RVC, animated: true, completion: nil)
+        Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
+            .validate()
+            .responseJSON { response in
+                
+                switch response.result {
+                case .success(let value):
+                    
+                    //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
+                    
+                    
+                    do {
+                        let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                        let parseResult = try JSONDecoder().decode(Parse.self, from: data)
+                        
+                        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView         else{
+                            
+                            return
+                            
+                        }
+                        
+                        
+                        if(parseResult.Status == "200"){
+                            print(parseResult.Status)
+                            let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
+                            for i in 0..<parseResult.Message.count {
+                                
+                                print(parseResult.Message[i].welf_name)
+                                //print(parseResult.Message[i].welf_local)
+                                print(parseResult.Message[i].parent_category)
+                                print(parseResult.Message[i].welf_category)
+                                print(parseResult.Message[i].tag)
+                                
+                                
+                                var tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
+                                //split
+                                var arr = tag.components(separatedBy: ";;")
+                                
+                                
+                                RVC.items.append(NewResultView.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: self.local, parent_category: parseResult.Message[i].parent_category, welf_category: arr, tag: parseResult.Message[i].tag))
+                                
+                                
+                                //태그 추가
+                                for i in 0..<arr.count {
+                                    if(!RVC.categoryItems.contains(arr[i])){
+                                        RVC.categoryItems.append(arr[i])
+                                    }
+                                }
+                                
+                                
+                                
+                                
+                                //
+                            }
+                            //검색결과 페이지로 이동
+                            
+                            
+                            
+                            //뷰 이동
+                            RVC.modalPresentationStyle = .fullScreen
+                            
+                            // 상세정보 뷰로 이동
+                            //self.present(RVC, animated: true, completion: nil)
+                            self.navigationController?.pushViewController(RVC, animated: true)
+                            
+                            
+                            
+                        }else{
+                            print(parseResult.Status)
+                            
+                            let alert = UIAlertController(title: "알림", message: "현재 준비중인 지역입니다.", preferredStyle: .alert)
+                            
+                            let cancelAction = UIAlertAction(title: "확인", style: .cancel){
+                                
+                                (action : UIAlertAction) -> Void in
+                                
+                                alert.dismiss(animated: false)
+                                
+                            }
+                            
+                            
+                            
+                            alert.addAction(cancelAction)
+                            
+                            
+                            self.present(alert, animated: true, completion: nil)
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    }
+                    catch let DecodingError.dataCorrupted(context) {
+                        print(context)
+                    } catch let DecodingError.keyNotFound(key, context) {
+                        print("Key '\(key)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.valueNotFound(value, context) {
+                        print("Value '\(value)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.typeMismatch(type, context)  {
+                        print("Type '\(type)' mismatch:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch {
+                        print("error: ", error)
+                    }
+                //
+                
+                
+                
+                
+                case .failure(let error):
+                    print(error)
+                }
+                
+                
+                
+            }
+        //
+        
     }
     
     func tabBarController(tabBarController: UITabBarController, didSelectViewController viewController: UIViewController) {
-      
+        
         print("tabbar메소드")
-
-      
+        
+        
     }
+    
+    
+    func setRegionBtn(){
+        
+    }
+    
+    
+    
+    //지역을 클릭했을 경우 지역의 혜택리스트를 보여주는 페이지로 이동하는 메소드
+    @objc func selected(_ sender: UIButton) {
+        // print("지역혜텍리스트 페이지로 이동")
+        
+        //        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapResultViewController") as? mapResultViewController         else{
+        //
+        //            return
+        //
+        //        }
+        //
+        //        RVC.local = cityXYs[sender.tag].cityName
+        //
+        //        //뷰 이동
+        //        RVC.modalPresentationStyle = .fullScreen
+        //
+        //        // B 컨트롤러 뷰로 넘어간다.
+        //        //self.present(RVC, animated: true, completion: nil)
+        //        self.navigationController?.pushViewController(RVC, animated: true)
+        
+        
+        
+        print("혜택지도 결괴페이지로 이동")
+        DeviceManager.sharedInstance.sendLog(content: "혜택지도 결괴페이지로 이동", type: type)
+        
+        print("선택한 지역 : \(cityXYs[sender.tag].cityName)")
+        var selected : String = cityXYs[sender.tag].cityName
+        //
+        
+        let params = ["page_number":"2", "local":selected, "userAgent" : DeviceManager.sharedInstance.log]
+        //let params = ["type":"category_search", "keyword":"취업·창업"]
+        
+        
+        Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
+            .validate()
+            .responseJSON { response in
+                
+                switch response.result {
+                case .success(let value):
+                    
+                    //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
+                    
+                    
+                    do {
+                        let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                        let parseResult = try JSONDecoder().decode(Parse.self, from: data)
+                        
+                        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView         else{
+                            
+                            return
+                            
+                        }
+                        
+                        // print(parseResult.Message)
+                        
+                        
+                        if(parseResult.Status == "200"){
+                            print(parseResult.Status)
+                            
+                            let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
+                            
+                            for i in 0..<parseResult.Message.count {
+                                
+                                print(parseResult.Message[i].welf_name)
+                                print(parseResult.Message[i].parent_category)
+                                print(parseResult.Message[i].welf_category)
+                                print(parseResult.Message[i].tag)
+                                
+                                
+                                var tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
+                                //split
+                                var arr = tag.components(separatedBy: ";;")
+                                
+                                
+                                RVC.items.append(NewResultView.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: selected, parent_category: parseResult.Message[i].parent_category, welf_category: arr, tag: parseResult.Message[i].tag))
+                                
+                                
+                                //태그 추가
+                                for i in 0..<arr.count {
+                                    if(!RVC.categoryItems.contains(arr[i])){
+                                        RVC.categoryItems.append(arr[i])
+                                    }
+                                }
+                                
+                                
+                                
+                                
+                                //
+                            }
+                            // 검색결과 페이지로 이동
+                            
+                            
+                            
+                            //뷰 이동
+                            RVC.modalPresentationStyle = .fullScreen
+                            
+                            // 상세정보 뷰로 이동
+                            //self.present(RVC, animated: true, completion: nil)
+                            self.navigationController?.pushViewController(RVC, animated: true)
+                            
+                            
+                            
+                        }else{
+                            print(parseResult.Status)
+                            
+                            
+                            
+                            let alert = UIAlertController(title: "알림", message: "현재 준비중인 지역입니다.", preferredStyle: .alert)
+                            
+                            let cancelAction = UIAlertAction(title: "확인", style: .cancel){
+                                
+                                (action : UIAlertAction) -> Void in
+                                
+                                alert.dismiss(animated: false)
+                                
+                            }
+                            
+                            
+                            
+                            alert.addAction(cancelAction)
+                            
+                            
+                            self.present(alert, animated: true, completion: nil)
+                            
+                        }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    }
+                    catch let DecodingError.dataCorrupted(context) {
+                        print(context)
+                    } catch let DecodingError.keyNotFound(key, context) {
+                        print("Key '\(key)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.valueNotFound(value, context) {
+                        print("Value '\(value)' not found:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch let DecodingError.typeMismatch(type, context)  {
+                        print("Type '\(type)' mismatch:", context.debugDescription)
+                        print("codingPath:", context.codingPath)
+                    } catch {
+                        print("error: ", error)
+                    }
+                //
+                
+                
+                
+                
+                case .failure(let error):
+                    print(error)
+                }
+                
+                
+                
+            }
+        
+    }
+    
+    
+    func setCity(){
+        
+        cityXYs.append(cityXY.init(cityName: "전국", cityX: Int(CGFloat(20 *  DeviceManager.sharedInstance.widthRatio)), cityY: Int(110 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "강원", cityX: Int(230 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(220 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "경기", cityX: Int(140 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(270 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "경남", cityX: Int(230 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(460 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "경북", cityX: Int(270 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(320 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "광주", cityX: Int(100 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(480 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "대구", cityX: Int(240 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(400 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "대전", cityX: Int(140 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(340 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "부산", cityX: Int(300 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(480 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "서울", cityX: Int(100 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(210 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "세종", cityX: Int(110 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(320 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "울산", cityX: Int(310 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(430 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "인천", cityX: Int(40 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(210 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "전남", cityX: Int(120 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(530 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "전북", cityX: Int(120 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(415 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "충북", cityX: Int(170 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(300 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "충남", cityX: Int(50 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(330 *  heightRatio)))
+        cityXYs.append(cityXY.init(cityName: "제주", cityX: Int(60 *  DeviceManager.sharedInstance.widthRatio), cityY: Int(580 *  heightRatio)))
+        
+    }
+    
+    func setLayout(){
+        //메인 지도 이미지뷰
+        
+        let img = UIImage(named: "newMap")
+        imgView.setImage(img!)
+        
+        imgView.frame = CGRect(x: 0, y: 140 *  DeviceManager.sharedInstance.heightRatio, width: DeviceManager.sharedInstance.width, height: 550 *  heightRatio)
+        
+        self.view.addSubview(imgView)
+        
+        
+        locationManager.delegate = self
+        // 정확도를 최고로 설정
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        // 위치 데이터를 추적하기 위해 사용자에게 승인 요구
+        locationManager.requestWhenInUseAuthorization()
+        // 위치 업데이트를 시작
+        locationManager.startUpdatingLocation()
+        
+        //테이블뷰 상단에 위치하여 몇개의 정첵이 있는지 보여주는 뷰
+        let discriptionView = UIView()
+        discriptionView.frame = CGRect(x: 0, y: CGFloat(751 * heightRatio), width: DeviceManager.sharedInstance.width, height: (60 * heightRatio))
+        discriptionView.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+        
+        //라벨
+        titleLabel.font = UIFont(name: "Jalnan", size: 17  *  heightRatio)
+        titleLabel.textColor = UIColor.white
+        titleLabel.frame = CGRect(x: 20  *  DeviceManager.sharedInstance.widthRatio, y: 5 *  heightRatio, width: 220 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  heightRatio)
+        titleLabel.textAlignment = .left
+        discriptionView.addSubview(titleLabel)
+        
+        
+        //전체보기 버튼
+        let viewBtn = UIButton()
+        
+        viewBtn.frame = CGRect(x: DeviceManager.sharedInstance.width - (200 *  DeviceManager.sharedInstance.widthRatio), y: 700 *  DeviceManager.sharedInstance.heightRatio, width: 200 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  heightRatio)
+        viewBtn.setTitle("내 주변혜택 보기", for: .normal)
+        viewBtn.titleLabel!.font = UIFont(name: "Jalnan", size:14.7 *  heightRatio)
+        viewBtn.setTitleColor(UIColor.white, for: .normal)
+        viewBtn.backgroundColor =  UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+
+        viewBtn.layer.cornerRadius = 23
+        viewBtn.layer.borderWidth = 1.3
+        
+        viewBtn.layer.borderColor = UIColor.white.cgColor
+        
+        viewBtn.addTarget(self, action: #selector(self.moveList), for: .touchUpInside)
+        
+        
+        viewBtn.layer.shadowColor = UIColor.black.cgColor
+        viewBtn.layer.shadowOffset = CGSize(width: 5 *  DeviceManager.sharedInstance.widthRatio, height: 5 *  heightRatio) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
+        
+        viewBtn.layer.shadowOpacity = 1
+        viewBtn.layer.shadowRadius = 1 // 반경?
+        
+        viewBtn.layer.shadowOpacity = 0.5 // alpha값입니다.
+        
+        
+        
+        
+        self.view.addSubview(viewBtn)
+        
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print("지도페이지의 view가 사라지기 전")
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("지도페이지의 view가 사라짐")
+    }
+    
+    
+    
+    
     
 }

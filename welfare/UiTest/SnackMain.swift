@@ -130,7 +130,7 @@ class SnackMain: UIViewController {
         let parameters = ["problemIndex": 1]
         
         
-        Alamofire.request("http://3.34.4.196/backend/android/and_snack_contents.php", method: .post, parameters: parameters)
+        Alamofire.request("http://www.urbene-fit.com/backend/android/and_snack_contents", method: .post, parameters: parameters)
             .validate()
             .responseJSON { response in
                 

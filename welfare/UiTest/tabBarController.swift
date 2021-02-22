@@ -11,18 +11,47 @@ import UIKit
 class tabBarController: UITabBarController, UITabBarControllerDelegate {
     
     
-    
+    private var observer: NSObjectProtocol?
+
 
     override func viewWillAppear(_ animated: Bool) {
            super.viewWillAppear(animated)
-           self.tabBar.backgroundColor = .white
+        //self.tabBar.isTranslucent = false
+
+           //self.tabBar.backgroundColor = #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
+     //   self.tabBarController!.tabBar.barTintColor =  #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         print("텝바 로드")
-        self.tabBar.backgroundColor = .white
+        
+        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
+                                                          object: nil,
+                                                          queue: .main) {
+            [unowned self] notification in
+            
+            print("개인정보 foreground로 돌아오는 경우 ")
+            if(LoginManager.sharedInstance.push){
+                print("푸쉬알람으로 진입")
+                LoginManager.sharedInstance.push = false
+                
+                
+                self.dismiss(animated: true) {
+                    
+                }
+                
+            }
+            
+            
+            
+        }
+            
+            
+        
+        //self.tabBar.backgroundColor = #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
+        //self.tabBarController?.tabBar.barTintColor =  #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
 
         let width = tabBar.bounds.width
             var selectionImage = UIImage(named:"star_on")
@@ -32,7 +61,7 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
             selectionImage?.draw(in: CGRect(x: 0, y: 10, width: 30, height: 30))
             selectionImage = UIGraphicsGetImageFromCurrentImageContext()
             UIGraphicsEndImageContext()
-
+            
            // tabBar.selectionIndicatorImage = selectionImage
         
         // Do any additional setup after loading the view.
@@ -64,12 +93,12 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
 //        //firstViewController.tabBarItem.withRenderingMode(.alwaysOriginal)
 //        firstViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 200, left: 200, bottom: 200, right: 200); mapResultViewController
 //
-        let secondViewController = UiTestController()
-        
-      let third = mapResultViewController()
-
-
-        secondViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .more, tag: 1)
+//        let secondViewController = UiTestController()
+//
+//      let third = mapResultViewController()
+//
+//
+//        secondViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .more, tag: 1)
 
         //let tabBarList = [UINavigationController(rootViewController:firstViewController), UINavigationController(rootViewController:secondViewController)]
 
@@ -79,15 +108,15 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
         //let vc1 = UINavigationController(rootViewController: mapTestViewController()) as!
         
         var vc1 = self.storyboard?.instantiateViewController(withIdentifier: "main") as! UINavigationController
-        var vc2 = self.storyboard?.instantiateViewController(withIdentifier: "map") as! UINavigationController
-        var vc3 =  self.storyboard?.instantiateViewController(withIdentifier: "snack") as! UINavigationController
+        var vc2 = self.storyboard?.instantiateViewController(withIdentifier: "search") as! UINavigationController
+        var vc3 =  self.storyboard?.instantiateViewController(withIdentifier: "alram") as! UINavigationController
         var vc4 =  self.storyboard?.instantiateViewController(withIdentifier: "info") as! UINavigationController
         let tabBarList = [vc1,vc2,vc3,vc4]
         viewControllers = tabBarList
         
-        vc1 = tabSizeFit(imgname: "homeIcon",viewController: vc1)
-        vc2 = tabSizeFit(imgname: "mapIcon",viewController: vc2)
-        vc3 = tabSizeFit(imgname: "mbtiIcon",viewController: vc3)
+        vc1 = tabSizeFit(imgname: "home",viewController: vc1)
+        vc2 = tabSizeFit(imgname: "searchIcon",viewController: vc2)
+        vc3 = tabSizeFit(imgname: "alramIcon",viewController: vc3)
         vc4 = tabSizeFit(imgname: "infoIcon",viewController: vc4)
 
 //        vc1.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
@@ -100,14 +129,14 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
     
 
     
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "cameraVC") as! mapSearchViewController
-            present(vc, animated: true, completion: nil)
-
-
-        return true
-    }
+//    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+//
+//        let vc = self.storyboard?.instantiateViewController(withIdentifier: "cameraVC") as! mapSearchViewController
+//            present(vc, animated: true, completion: nil)
+//
+//
+//        return true
+//    }
     
     /*
     // MARK: - Navigation
@@ -129,6 +158,8 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
             UIGraphicsBeginImageContext(tabSize)
             selectionImage?.draw(in: CGRect(x: 0, y: 0, width: 25, height: 25))
             selectionImage = UIGraphicsGetImageFromCurrentImageContext()
+            
+        
             UIGraphicsEndImageContext()
             viewController.tabBarItem.title = ""
            // tabBar.selectionIndicatorImage = selectionImage

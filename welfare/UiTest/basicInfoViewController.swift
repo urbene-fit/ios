@@ -10,6 +10,7 @@
 //우선 스크롤 뷰
 
 import UIKit
+import Alamofire
 
 class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerViewDelegate, UIPickerViewDataSource , UNUserNotificationCenterDelegate {
     
@@ -108,12 +109,42 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
     let myField = PastelessTextField()
 
     
+    //기본정보 입력후 서버로부터 받는 키워드들을 파싱하는 구조체
+    struct parse: Decodable {
+        let Status : String
+        //반환값이 없을떄 처리
+        let Message : [keyWordList]
+    }
+    
+    struct keyWordList: Decodable {
+       let interest : String
+       
+        
+    }
+    
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //상단 상태바 설정(ios13버전 이상)
+        let statusBar1 =  UIView()
+        statusBar1.frame = UIApplication.shared.statusBarFrame
+        statusBar1.backgroundColor =  UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+        UIApplication.shared.keyWindow?.addSubview(statusBar1)
         
+        //기본정보 입력화면은 한번만 보여준다
+        UserDefaults.standard.set("true", forKey:"basicInfo")
+
+        let naviLabel = UILabel()
+        naviLabel.frame = CGRect(x: 63.8, y: 235.4, width: 118, height: 17.3)
+        naviLabel.textAlignment = .center
+        naviLabel.textColor = UIColor.white
+        
+        naviLabel.text = "기본정보"
+        naviLabel.font = UIFont(name: "Jalnan", size: 22  *  DeviceManager.sharedInstance.heightRatio)
+        self.navigationController?.navigationBar.topItem?.titleView = naviLabel
         
         let center = UNUserNotificationCenter.current()
         
@@ -126,357 +157,7 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
         print("테스트")
         print(screenWidth)
 
-        //임시 디바이스 크기별 레이아웃 조정
-        if(screenWidth == 375){
-        
-        
-        //상단 라벨 고민
-        //맞춤알림을 받기 위한 당신의 정보를 입력해주세요
-        //맞춤알림을 받아보세요
-        
-        let LogoImg = UIImage(named: "appLogo")
-        appLogo.image = LogoImg
-        appLogo.frame = CGRect(x: 22.1, y: 26.7, width: 106, height: 14.3)
-        self.view.addSubview(appLogo)
-        //m_Scrollview.addSubview(appLogo)
-        
-        
-        //헤더에 무슨화면인지 설명
-        header.frame = CGRect(x: 0, y: Int(67.7), width: screenWidth, height: 66)
-        
-        //추후 그라데이션 적용
-        header.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1)
-        
-        //헤더라벨
-        headerLabel.frame = CGRect(x: 0, y: 0, width: screenWidth, height: 66)
-        headerLabel.textColor = UIColor.white
-        //폰트지정 추가
-        
-        headerLabel.text = "당신이 놓치고있는 혜택은?"
-        headerLabel.numberOfLines = 2
-        
-        //라벨 줄간격 조절
-        let attrString = NSMutableAttributedString(string: headerLabel.text!)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 8
-        attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
-        headerLabel.attributedText = attrString
-        headerLabel.textAlignment = .center
-        
-        
-        headerLabel.font = UIFont(name: "Jalnan", size: 22)
-        // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
-        header.addSubview(headerLabel)
-        self.view.addSubview(header)
-        
-        //나이 입력(숫자만 입력가능)
-        //타이틀 라벨
-        //            let ageInput = UITextField()
-        //            ageInput.frame = CGRect(x: 0, y: 100, width: 200, height: 200)
-        //ageInput.keyboardType = .numberPad
-        // Set Delegate to itself
-        
-        //titleLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
-        //폰트지정 추가
-        
-        //정보를 입력하라는 라벨
-        let mainLabel = UILabel()
-        mainLabel.frame = CGRect(x: 0, y: 160, width: screenWidth, height: 30)
-        mainLabel.textAlignment = .center
-        //titleLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
-        //폰트지정 추가
-        
-        mainLabel.text = "당신의 나이,성별,거주지역을 입력해주세요"
-        mainLabel.font = UIFont(name: "Jalnan", size: 16.7)
-        
-        self.view.addSubview(mainLabel)
-        
-        //나이(만) 라벨
-        let firstAge = UILabel()
-        firstAge.frame = CGRect(x: 122.5, y: 240, width: 30, height: 30)
-        //firstAge.frame = CGRect(x: 5, y: 15, width: 30, height: 30)
-
-        firstAge.textAlignment = .left
-        //titleLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
-        //폰트지정 추가
-        
-        firstAge.text = "만"
-        firstAge.font = UIFont(name: "Jalnan", size: 17)
-        
-
-      self.view.addSubview(firstAge)
-        //m_Scrollview.addSubview(firstAge)
-        
-        myField.frame = CGRect(x: 162.5, y: 220, width: 70, height: 70)
-        //var myField: UITextField = UITextField (frame:CGRect(x: screenWidth/2 - 60, y: 220, width: 120, height: 60))
-        //m_Scrollview.addSubview(myField)
-        myField.layer.cornerRadius = 3.3
-        myField.layer.borderWidth = 1
-         //myField.layer.borderColor =  UIColor(displayP3Red: 72/255.0, green:18/255.0, blue: 165/255.0, alpha: 1).cgColor
-        myField.clipsToBounds = true
-        myField.keyboardType = .numberPad
-        
-        //입력위치 설정
-     myField.beginFloatingCursor(at: CGPoint(x: 30.0, y: 0))
-
-        //숫자입력 폰트
-        myField.font = UIFont(name: "Jalnan", size: 22)
-
-        //입력한 숫자가 텍스트필드의 좌측에 붙지 않게 패딩을 준다.
-        myField.addLeftPadding()
-
-        
-        
-     
-        
-        //나이(세) 라벨
-        let secLabel = UILabel()
-        //secLabel.frame = CGRect(x: 60, y: 15, width: 30, height: 30)
-        secLabel.frame = CGRect(x: 222.5, y: 240, width: 30, height: 30)
-
-        secLabel.textAlignment = .right
-        //폰트지정 추가
-        
-        secLabel.text = "세"
-        //secLabel.textColor = UIColor(displayP3Red: 251/255.0, green: 251/255.0, blue: 251/255.0, alpha: 1)
-        secLabel.font = UIFont(name: "Jalnan", size: 17)
-        
-//        myField.addSubview(firstAge)
-//
-//        myField.addSubview(secLabel)
-        
-        self.view.addSubview(secLabel)
-        //m_Scrollview.addSubview(secLabel)
-        self.myField.delegate = self
-             self.view.addSubview(myField)
-       //checkMaxLength(textField: myField, maxLength: 4)
-
-        
-        // myField.becomeFirstResponder()
-        
-        
-        //성별 선택
-        //성별 라벨
-        let sexLabel = UILabel()
-        sexLabel.frame = CGRect(x: 20, y: 200, width: 30, height: 30)
-        sexLabel.textAlignment = .center
-        //폰트지정 추가
-        
-        sexLabel.text = "성별"
-        sexLabel.font = UIFont(name: "TTCherryblossomR", size: 17)
-        
-        //self.view.addSubview(sexLabel)
-        //m_Scrollview.addSubview(sexLabel)
-        
-        //성별 선택 버튼
-        
-        //남자
-        var manBtn = UIButton(type: .system)
-        
-        //manBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        manBtn.frame = CGRect(x:25, y: 305, width: Int(150), height: 130)
-        //button.setTitle(LabelName[i], for: .normal)
-        //이미지 및 라벨 추가
-        let manImg = UIImage(named: "man")
-        var manImgView = UIImageView()
-        
-        manImgView.setImage(manImg!)
-        manImgView.frame = CGRect(x: 55, y: 38.1, width: 38.8, height: 38.8)
-        manImgView.image = manImgView.image?.withRenderingMode(.alwaysOriginal)
-        
-        
-        //라벨
-        var manLabel = UILabel()
-        
-        manLabel.frame = CGRect(x: 40, y: 88, width: 55, height: 18.7)
-        manLabel.textAlignment = .center
-        
-        //폰트지정 추가
-        manLabel.text = "남자"
-            manLabel.font = UIFont(name: "Jalnan", size: 16.1)
-        
-        //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
-        sexLabels.append(manLabel)
-        sexImgs.append(manImgView)
-        
-        
-        manBtn.addSubview(manImgView)
-        manBtn.addSubview(manLabel)
-        
-        
-        manBtn.setTitleColor(UIColor.black, for: .normal)
-        manBtn.backgroundColor = .white
-        manBtn.layer.cornerRadius = 14
-        manBtn.layer.borderWidth = 2.7
-        manBtn.layer.borderColor = UIColor.white.cgColor
-        
-        //성별 선택시 선택한 성별을 저장해주는 메소드
-        manBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        manBtn.tag = 0
-        sexBtns.append(manBtn)
-        
-        self.view.addSubview(manBtn)
-        //m_Scrollview.addSubview(manBtn)
-        
-        //여자
-        var womanBtn = UIButton(type: .system)
-        
-        womanBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        womanBtn.frame = CGRect(x:200, y: 305, width: Int(150), height: 130)
-        //button.setTitle(LabelName[i], for: .normal)
-        //이미지 및 라벨 추가
-        let womanImg = UIImage(named: "woman")
-        var womanImgView = UIImageView()
-        
-        womanImgView.setImage(womanImg!)
-        womanImgView.frame = CGRect(x: 50, y: 34.7, width: 35.3, height: 35.3)
-        womanImgView.image = womanImgView.image?.withRenderingMode(.alwaysOriginal)
-        
-        
-        //라벨
-        var womanLabel = UILabel()
-        
-        womanLabel.frame = CGRect(x: 40, y: 80, width: 50, height: 17)
-        womanLabel.textAlignment = .center
-        
-        //폰트지정 추가
-        womanLabel.text = "여자"
-        womanLabel.font = UIFont(name: "Jalnan", size: 14.7)
-        
-        
-        //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
-        sexLabels.append(womanLabel)
-        sexImgs.append(womanImgView)
-        
-        womanBtn.addSubview(womanImgView)
-        womanBtn.addSubview(womanLabel)
-        
-        
-        womanBtn.setTitleColor(UIColor.black, for: .normal)
-        womanBtn.backgroundColor = .white
-        womanBtn.layer.cornerRadius = 14
-        womanBtn.layer.borderWidth = 2.7
-        womanBtn.layer.borderColor = UIColor.white.cgColor
-        womanBtn.tag = 1
-        sexBtns.append(womanBtn)
-        //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-        //womanBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        
-        
-        self.view.addSubview(womanBtn)
-        // m_Scrollview.addSubview(womanBtn)
-        
-        
-        //지역선택
-        //시,도,구.군,동,읍,면 구분
-        var areaLabel = UILabel()
-        
-        areaLabel.frame = CGRect(x: 0, y: 370, width: Double(screenWidth), height: 20)
-        areaLabel.textAlignment = .left
-        
-        //폰트지정 추가
-        areaLabel.text = "지역선택"
-        areaLabel.font = UIFont(name: "Jalnan", size: 14.7)
-        //self.view.addSubview(areaLabel)
-        // m_Scrollview.addSubview(areaLabel)
-        
-        
-        //상위지역 선택버튼 추가하는 부분
-        //        for i in 0..<10 {
-        //            var button = UIButton(type: .system)
-        //
-        //            //홀수번호
-        //            if(i%2==0){
-        //                buttons.append(button)
-        //
-        //                button.tag = i
-        //                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        //                button.frame = CGRect(x:20, y:380 + Double(Int(50) * i/2), width: 161.3, height: 50)
-        //                button.setTitle(areas[i], for: .normal)
-        //                button.setTitleColor(UIColor.black, for: .normal)
-        //                button.backgroundColor = .white
-        //                button.layer.cornerRadius = 14
-        //                button.layer.borderWidth = 2.7
-        //                button.layer.borderColor = UIColor.white.cgColor
-        //                m_Scrollview.addSubview(button)
-        //
-        //                //짝수번호
-        //            }else if(i != 0 && i%2==1){
-        //                buttons.append(button)
-        //
-        //                button.tag = i
-        //                button.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-        //                button.frame = CGRect(x:193.7, y:380 + Double(Int(50) * (i - 1)/2), width: 161.3, height: 50)
-        //                button.setTitle(areas[i], for: .normal)
-        //                button.setTitleColor(UIColor.black, for: .normal)
-        //                button.backgroundColor = .white
-        //                button.layer.cornerRadius = 14
-        //                button.layer.borderWidth = 2.7
-        //                button.layer.borderColor = UIColor.white.cgColor
-        //                m_Scrollview.addSubview(button)
-        //
-        //            }
-        //
-        //
-        //
-        //
-        //        }
-        
-        
-        //스피너 추가
-        let label: UILabel = UILabel.init(frame: CGRect(x: 20, y: 0, width: 50, height: 30))
-        label.text = "시/도"
-        label.textAlignment = .center
-        //pickerView.addSubview(label)
-        // Specify the size.
-        pickerView.frame = CGRect(x: 50, y: 445, width: screenWidth - 100, height: Int(100.0))
-        // Set the backgroundColor.
-        
-        pickerView.layer.borderWidth = 2.3
-        pickerView.layer.cornerRadius = 14
-
-        pickerView.layer.borderColor =  UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1).cgColor
-
-        pickerView.backgroundColor = .white
-        
        
-        
-        // Set the delegate.
-        pickerView.delegate = self
-        // Set the dataSource.
-        pickerView.dataSource = self
-        
-        // m_Scrollview.addSubview(self.pickerView)
-        self.view.addSubview(pickerView)
-        
-        //최종확인 버튼
-        
-        
-        
-        
-        enterBtn.setTitle("확인", for: .normal)
-        enterBtn.frame = CGRect(x: 20, y: screenHeight - 60, width: 335, height: Int(53.7))
-        
-        enterBtn.titleLabel!.font = UIFont(name: "Jalnan", size:17)
-        enterBtn.layer.cornerRadius = 4.3
-        enterBtn.layer.borderWidth = 1.3
-        enterBtn.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1)
-        enterBtn.layer.borderColor =  UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1).cgColor
-        //선택결과 페이지로 이동하는 메소드
-        enterBtn.addTarget(self, action: #selector(self.move), for: .touchUpInside)
-        
-        self.view.addSubview(enterBtn)
-        
-        
-        //메인 스크롤뷰를 기본뷰에 추가해준다.
-        //        m_Scrollview.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
-        //        m_Scrollview.contentSize = CGSize(width:screenWidth, height: 1747)
-        //        self.view.addSubview(m_Scrollview)
-        //
-        
-            
-            //임시 실제디바이스 크기별 레이아웃 조정
-        }else{
          
             
             //상단 라벨 고민
@@ -485,19 +166,19 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             
             let LogoImg = UIImage(named: "appLogo")
             appLogo.image = LogoImg
-            appLogo.frame = CGRect(x: 25, y: 45, width: 116.6, height: 16)
-            self.view.addSubview(appLogo)
+            appLogo.frame = CGRect(x: 25 *  DeviceManager.sharedInstance.widthRatio, y: 45 *  DeviceManager.sharedInstance.heightRatio, width: 116.6 *  DeviceManager.sharedInstance.widthRatio, height: 16 *  DeviceManager.sharedInstance.heightRatio)
+            //self.view.addSubview(appLogo)
             //m_Scrollview.addSubview(appLogo)
             
             
             //헤더에 무슨화면인지 설명
-            header.frame = CGRect(x: 0, y: Int(80), width: screenWidth, height: Int(100))
+        header.frame = CGRect(x: 0, y: 80 *  DeviceManager.sharedInstance.heightRatio , width: CGFloat(screenWidth), height: 100 *  DeviceManager.sharedInstance.heightRatio)
             
             //추후 그라데이션 적용
             header.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1)
             
             //헤더라벨
-            headerLabel.frame = CGRect(x: 0, y: 0, width: screenWidth, height: Int(100))
+            headerLabel.frame = CGRect(x: 0, y: 0, width: CGFloat(screenWidth), height: 100 *  DeviceManager.sharedInstance.heightRatio)
             headerLabel.textColor = UIColor.white
             //폰트지정 추가
             
@@ -513,10 +194,10 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             headerLabel.textAlignment = .center
             
             
-            headerLabel.font = UIFont(name: "Jalnan", size: 28)
+            headerLabel.font = UIFont(name: "Jalnan", size: 28 *  DeviceManager.sharedInstance.widthRatio)
             // inquiryLabel.font = UIFont(name: "NanumGothicBold", size: 13.7)
             header.addSubview(headerLabel)
-            self.view.addSubview(header)
+           // self.view.addSubview(header)
             
             //나이 입력(숫자만 입력가능)
             //타이틀 라벨
@@ -530,7 +211,8 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             
             //정보를 입력하라는 라벨
             let mainLabel = UILabel()
-            mainLabel.frame = CGRect(x: 0, y: 191, width: screenWidth, height: 40)
+            //mainLabel.frame = CGRect(x: 0, y: 191, width: screenWidth, height: 40)
+            mainLabel.frame = CGRect(x: 0, y: 91 *  DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth), height: 40 *  DeviceManager.sharedInstance.heightRatio)
             mainLabel.textAlignment = .center
             //titleLabel.textColor = UIColor(displayP3Red: 93/255.0, green: 33/255.0, blue: 210/255.0, alpha: 1)
             //폰트지정 추가
@@ -538,11 +220,11 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             mainLabel.text = "당신의 나이,성별,거주지역을 입력해주세요"
             mainLabel.font = UIFont(name: "Jalnan", size: 19)
             
-            self.view.addSubview(mainLabel)
+           // self.view.addSubview(mainLabel)
             
-            //나이(만) 라벨
+            //나이(만) 라벨 UI잠시 수정으로 100 뺌
             let firstAge = UILabel()
-            firstAge.frame = CGRect(x: 142.7, y: 270, width: 33, height: 33)
+            firstAge.frame = CGRect(x: 142.7 * DeviceManager.sharedInstance.widthRatio, y: 170 * DeviceManager.sharedInstance.heightRatio, width: 33 * DeviceManager.sharedInstance.widthRatio, height: 33 * DeviceManager.sharedInstance.heightRatio)
             //firstAge.frame = CGRect(x: 5, y: 15, width: 30, height: 30)
 
             firstAge.textAlignment = .left
@@ -550,26 +232,26 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             //폰트지정 추가
             
             firstAge.text = "만"
-            firstAge.font = UIFont(name: "Jalnan", size: 19)
+            firstAge.font = UIFont(name: "Jalnan", size: 19 * DeviceManager.sharedInstance.heightRatio)
             
 
           self.view.addSubview(firstAge)
             //m_Scrollview.addSubview(firstAge)
             
-            myField.frame = CGRect(x: 171.5, y: 252, width: 71, height: 71)
+            myField.frame = CGRect(x: 171.5 * DeviceManager.sharedInstance.widthRatio, y: 152 * DeviceManager.sharedInstance.heightRatio, width: 71 * DeviceManager.sharedInstance.widthRatio, height: 71 * DeviceManager.sharedInstance.heightRatio)
             //var myField: UITextField = UITextField (frame:CGRect(x: screenWidth/2 - 60, y: 220, width: 120, height: 60))
             //m_Scrollview.addSubview(myField)
-            myField.layer.cornerRadius = 3.3
+            myField.layer.cornerRadius = 3.3 * DeviceManager.sharedInstance.heightRatio
             myField.layer.borderWidth = 1
              //myField.layer.borderColor =  UIColor(displayP3Red: 72/255.0, green:18/255.0, blue: 165/255.0, alpha: 1).cgColor
             myField.clipsToBounds = true
             myField.keyboardType = .numberPad
             
             //입력위치 설정
-         myField.beginFloatingCursor(at: CGPoint(x: 33.0, y: 0))
+         myField.beginFloatingCursor(at: CGPoint(x: 33.0 * DeviceManager.sharedInstance.widthRatio, y: 0))
 
             //숫자입력 폰트
-            myField.font = UIFont(name: "Jalnan", size: 25)
+            myField.font = UIFont(name: "Jalnan", size: 25 * DeviceManager.sharedInstance.heightRatio)
 
             //입력한 숫자가 텍스트필드의 좌측에 붙지 않게 패딩을 준다.
             myField.addLeftPadding()
@@ -581,14 +263,14 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             //나이(세) 라벨
             let secLabel = UILabel()
             //secLabel.frame = CGRect(x: 60, y: 15, width: 30, height: 30)
-            secLabel.frame = CGRect(x: 237.7, y: 270, width: 33, height: 33)
+            secLabel.frame = CGRect(x: 237.7 * DeviceManager.sharedInstance.widthRatio, y: 170 * DeviceManager.sharedInstance.heightRatio, width: 33 * DeviceManager.sharedInstance.widthRatio, height: 33 * DeviceManager.sharedInstance.heightRatio)
 
             secLabel.textAlignment = .right
             //폰트지정 추가
             
             secLabel.text = "세"
             //secLabel.textColor = UIColor(displayP3Red: 251/255.0, green: 251/255.0, blue: 251/255.0, alpha: 1)
-            secLabel.font = UIFont(name: "Jalnan", size: 19)
+            secLabel.font = UIFont(name: "Jalnan", size: 19 * DeviceManager.sharedInstance.heightRatio)
             
     //        myField.addSubview(firstAge)
     //
@@ -607,12 +289,12 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             //성별 선택
             //성별 라벨
             let sexLabel = UILabel()
-            sexLabel.frame = CGRect(x: 22, y: 220, width: 33, height: 33)
+            sexLabel.frame = CGRect(x: 22 * DeviceManager.sharedInstance.widthRatio, y: 220 * DeviceManager.sharedInstance.heightRatio, width: 33 * DeviceManager.sharedInstance.widthRatio, height: 33 * DeviceManager.sharedInstance.heightRatio)
             sexLabel.textAlignment = .center
             //폰트지정 추가
             
             sexLabel.text = "성별"
-            sexLabel.font = UIFont(name: "TTCherryblossomR", size: 18.7)
+            sexLabel.font = UIFont(name: "TTCherryblossomR", size: 18.7 * DeviceManager.sharedInstance.heightRatio)
             
             //self.view.addSubview(sexLabel)
             //m_Scrollview.addSubview(sexLabel)
@@ -623,42 +305,45 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             var manBtn = UIButton(type: .system)
             
             //manBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-            manBtn.frame = CGRect(x:20, y: 350, width: Int(161), height: 187)
-            //button.setTitle(LabelName[i], for: .normal)
-            //이미지 및 라벨 추가
-            let manImg = UIImage(named: "man")
-            var manImgView = UIImageView()
+//            manBtn.frame = CGRect(x:20 * DeviceManager.sharedInstance.widthRatio, y: 250 * DeviceManager.sharedInstance.heightRatio, width: 161 * DeviceManager.sharedInstance.widthRatio, height: 187 * DeviceManager.sharedInstance.heightRatio)
+//            //button.setTitle(LabelName[i], for: .normal)
+//            //이미지 및 라벨 추가
+//            let manImg = UIImage(named: "man")
+//            var manImgView = UIImageView()
+//
+//            manImgView.setImage(manImg!)
+//            manImgView.frame = CGRect(x: 25 * DeviceManager.sharedInstance.widthRatio, y: 25 * DeviceManager.sharedInstance.heightRatio, width: 111 * DeviceManager.sharedInstance.widthRatio, height: 136 * DeviceManager.sharedInstance.heightRatio)
+//            manImgView.image = manImgView.image?.withRenderingMode(.alwaysOriginal)
+//
+//
+//            //라벨
+//            var manLabel = UILabel()
+//
+//            manLabel.frame = CGRect(x: 13 * DeviceManager.sharedInstance.widthRatio, y: 161 * DeviceManager.sharedInstance.heightRatio, width: 136 * DeviceManager.sharedInstance.widthRatio, height: 25 * DeviceManager.sharedInstance.heightRatio)
+//            manLabel.textAlignment = .center
+//
+//            //폰트지정 추가
+//            manLabel.text = "남자"
+//            manLabel.font = UIFont(name: "Jalnan", size: 16.1 * DeviceManager.sharedInstance.heightRatio)
+//
+//            //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
+//            sexLabels.append(manLabel)
+//            sexImgs.append(manImgView)
+//
+//                          manBtn.addSubview(manLabel)
+
+//            manBtn.addSubview(manImgView)
+        
+        manBtn.frame = CGRect(x:26 * DeviceManager.sharedInstance.widthRatio, y: 280 * DeviceManager.sharedInstance.heightRatio, width: 161 * DeviceManager.sharedInstance.widthRatio, height: 70 * DeviceManager.sharedInstance.heightRatio)
             
-            manImgView.setImage(manImg!)
-            manImgView.frame = CGRect(x: 25, y: 25, width: 111, height: 136)
-            manImgView.image = manImgView.image?.withRenderingMode(.alwaysOriginal)
-            
-            
-            //라벨
-            var manLabel = UILabel()
-            
-            manLabel.frame = CGRect(x: 13, y: 161, width: 136, height: 25)
-            manLabel.textAlignment = .center
-            
-            //폰트지정 추가
-            manLabel.text = "남자"
-            manLabel.font = UIFont(name: "Jalnan", size: 16.1)
-            
-            //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
-            sexLabels.append(manLabel)
-            sexImgs.append(manImgView)
-            
-            
-            manBtn.addSubview(manImgView)
-            manBtn.addSubview(manLabel)
-            
-            
+        manBtn.setTitle("남자", for: .normal)
+
             manBtn.setTitleColor(UIColor.black, for: .normal)
             manBtn.backgroundColor = .white
-            manBtn.layer.cornerRadius = 14
-            manBtn.layer.borderWidth = 2.7
-            manBtn.layer.borderColor = UIColor.white.cgColor
-            
+        manBtn.layer.cornerRadius = 8 * DeviceManager.sharedInstance.heightRatio
+            manBtn.layer.borderWidth = 1
+            //manBtn.layer.borderColor = UIColor.gray.cgColor
+        manBtn.titleLabel?.font = UIFont(name: "Jalnan", size: 19 * DeviceManager.sharedInstance.heightRatio)!
             //성별 선택시 선택한 성별을 저장해주는 메소드
             manBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
             manBtn.tag = 0
@@ -671,44 +356,53 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             var womanBtn = UIButton(type: .system)
             
             womanBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
-            womanBtn.frame = CGRect(x:220,  y: 350, width: Int(161), height: 187)
+            //womanBtn.frame = CGRect(x:220 * DeviceManager.sharedInstance.widthRatio,  y: 250 * DeviceManager.sharedInstance.heightRatio, width: 161 * DeviceManager.sharedInstance.widthRatio, height: 187 * DeviceManager.sharedInstance.heightRatio)
+        
+        womanBtn.frame = CGRect(x:226 * DeviceManager.sharedInstance.widthRatio,  y: 280 * DeviceManager.sharedInstance.heightRatio, width: 161 * DeviceManager.sharedInstance.widthRatio, height: 70 * DeviceManager.sharedInstance.heightRatio)
+        
+        
+        
             //button.setTitle(LabelName[i], for: .normal)
             //이미지 및 라벨 추가
             let womanImg = UIImage(named: "woman")
             var womanImgView = UIImageView()
             
-            womanImgView.setImage(womanImg!)
-            womanImgView.frame = CGRect(x: 25, y: 25, width: 111, height: 136)
+//            womanImgView.setImage(womanImg!)
+//            womanImgView.frame = CGRect(x: 25 * DeviceManager.sharedInstance.widthRatio, y: 25 * DeviceManager.sharedInstance.heightRatio, width: 111 * DeviceManager.sharedInstance.widthRatio, height: 136 * DeviceManager.sharedInstance.heightRatio)
+//
+//
+//            womanImgView.image = womanImgView.image?.withRenderingMode(.alwaysOriginal)
+//
+//
+//            //라벨
+//            var womanLabel = UILabel()
+//
+//            womanLabel.frame = CGRect(x: 13 * DeviceManager.sharedInstance.widthRatio, y: 161 * DeviceManager.sharedInstance.heightRatio, width: 136 * DeviceManager.sharedInstance.widthRatio, height: 25 * DeviceManager.sharedInstance.heightRatio)
+//            womanLabel.textAlignment = .center
+//
+//            //폰트지정 추가
+//            womanLabel.text = "여자"
+//            womanLabel.font = UIFont(name: "Jalnan", size: 16.1 * DeviceManager.sharedInstance.heightRatio)
+//
+//
+//            //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
+//            sexLabels.append(womanLabel)
+//            sexImgs.append(womanImgView)
+//
+//            womanBtn.addSubview(womanImgView)
+//            womanBtn.addSubview(womanLabel)
+            
+            
+        
+        womanBtn.setTitle("여자", for: .normal)
 
-            
-            womanImgView.image = womanImgView.image?.withRenderingMode(.alwaysOriginal)
-            
-            
-            //라벨
-            var womanLabel = UILabel()
-            
-            womanLabel.frame = CGRect(x: 13, y: 161, width: 136, height: 25)
-            womanLabel.textAlignment = .center
-            
-            //폰트지정 추가
-            womanLabel.text = "여자"
-            womanLabel.font = UIFont(name: "Jalnan", size: 16.1)
-            
-            
-            //각 성별을 나타내는 라벨과 이미지뷰를 각각 관리해주는 자료구조에 추가한다.
-            sexLabels.append(womanLabel)
-            sexImgs.append(womanImgView)
-            
-            womanBtn.addSubview(womanImgView)
-            womanBtn.addSubview(womanLabel)
-            
-            
             womanBtn.setTitleColor(UIColor.black, for: .normal)
             womanBtn.backgroundColor = .white
-            womanBtn.layer.cornerRadius = 14
-            womanBtn.layer.borderWidth = 2.7
-            womanBtn.layer.borderColor = UIColor.white.cgColor
+        womanBtn.layer.cornerRadius = 8 * DeviceManager.sharedInstance.heightRatio
+            womanBtn.layer.borderWidth = 1
+            //womanBtn.layer.borderColor = UIColor.gray.cgColor
             womanBtn.tag = 1
+        womanBtn.titleLabel?.font = UIFont(name: "Jalnan", size: 19 * DeviceManager.sharedInstance.heightRatio)!
             sexBtns.append(womanBtn)
             //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
             //womanBtn.addTarget(self, action: #selector(self.selected), for: .touchUpInside)
@@ -722,30 +416,30 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             //시,도,구.군,동,읍,면 구분
             var areaLabel = UILabel()
             
-            areaLabel.frame = CGRect(x: 0, y: 407, width: Double(screenWidth), height: 22)
+            areaLabel.frame = CGRect(x: 0, y: 407 * DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth), height: 22 * DeviceManager.sharedInstance.heightRatio)
             areaLabel.textAlignment = .left
             
             //폰트지정 추가
             areaLabel.text = "지역선택"
-            areaLabel.font = UIFont(name: "Jalnan", size: 17.7)
+            areaLabel.font = UIFont(name: "Jalnan", size: 17.7 * DeviceManager.sharedInstance.heightRatio)
             //self.view.addSubview(areaLabel)
             // m_Scrollview.addSubview(areaLabel)
             
             
             
             //스피너 추가
-            let label: UILabel = UILabel.init(frame: CGRect(x: 22, y: 0, width: 55, height: 33))
+            let label: UILabel = UILabel.init(frame: CGRect(x: 22 * DeviceManager.sharedInstance.widthRatio, y: 0, width: 55 * DeviceManager.sharedInstance.widthRatio, height: 33 * DeviceManager.sharedInstance.heightRatio))
             label.text = "시/도"
             label.textAlignment = .center
             //pickerView.addSubview(label)
             // Specify the size.
-            pickerView.frame = CGRect(x: 50, y: 580, width: screenWidth - 100, height: Int(150.0))
+        pickerView.frame = CGRect(x: 50 * DeviceManager.sharedInstance.widthRatio, y: 450 * DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth) - 100 * DeviceManager.sharedInstance.widthRatio, height: 150.0 * DeviceManager.sharedInstance.heightRatio)
             // Set the backgroundColor.
             
             pickerView.layer.borderWidth = 2.3
-            pickerView.layer.cornerRadius = 14
+            pickerView.layer.cornerRadius = 14 * DeviceManager.sharedInstance.heightRatio
 
-            pickerView.layer.borderColor =  UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1).cgColor
+        pickerView.layer.borderColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1).cgColor
 
             pickerView.backgroundColor = .white
             
@@ -765,13 +459,13 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             
             
             enterBtn.setTitle("확인", for: .normal)
-            enterBtn.frame = CGRect(x: 22, y: screenHeight - 100, width: screenWidth - 44, height: Int(66))
+            enterBtn.frame = CGRect(x: 22 * DeviceManager.sharedInstance.widthRatio, y:  CGFloat(screenHeight) - 210 * DeviceManager.sharedInstance.heightRatio, width: CGFloat(screenWidth) - 44 * DeviceManager.sharedInstance.widthRatio, height: 66 * DeviceManager.sharedInstance.heightRatio)
             
-            enterBtn.titleLabel!.font = UIFont(name: "Jalnan", size:16.1)
+            enterBtn.titleLabel!.font = UIFont(name: "Jalnan", size:16.1 * DeviceManager.sharedInstance.heightRatio)
             enterBtn.layer.cornerRadius = 4.3
             enterBtn.layer.borderWidth = 1.3
-            enterBtn.backgroundColor = UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1)
-            enterBtn.layer.borderColor =  UIColor(displayP3Red: 111/255.0, green: 82/255.0, blue: 232/255.0, alpha: 1).cgColor
+            enterBtn.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+            enterBtn.layer.borderColor =  UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1).cgColor
             //선택결과 페이지로 이동하는 메소드
             enterBtn.addTarget(self, action: #selector(self.move), for: .touchUpInside)
             
@@ -781,7 +475,7 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
             
             
             
-        }
+        
             
             
         
@@ -837,7 +531,7 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
         }
         
         //선택 해제하는 경우
-        if(self.sexBtns[sender.tag].backgroundColor == UIColor(displayP3Red: 72/255.0, green:18/255.0, blue: 165/255.0, alpha: 1)){
+        if(self.sexBtns[sender.tag].backgroundColor == UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)){
             
             gender = ""
 
@@ -855,21 +549,21 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
         }else if(self.sexBtns[sender.tag].backgroundColor == UIColor.white){
             
             //성별 저장
-            gender = sexLabels[sender.tag].text!
-            sexImgs[sender.tag].tintColor = UIColor.white
-            sexImgs[sender.tag].image = sexImgs[sender.tag].image?.withRenderingMode(.alwaysTemplate)
-            
-            sexLabels[sender.tag].textColor = UIColor.white
-            sexBtns[sender.tag].backgroundColor = UIColor(displayP3Red: 72/255.0, green:18/255.0, blue: 165/255.0, alpha: 1)
-            sexBtns[sender.tag].layer.borderColor = UIColor(displayP3Red: 72/255.0, green:18/255.0, blue: 165/255.0, alpha: 1).cgColor
-            
-            //다른 성별을 선택해제한다.
-            sexImgs[remove].image = sexImgs[remove].image?.withRenderingMode(.alwaysOriginal)
-                 
-                 sexLabels[remove].textColor = UIColor.black
-                 sexBtns[remove].backgroundColor = UIColor.white
-                 sexBtns[remove].setTitleColor(UIColor.black, for: .normal)
-                 sexBtns[remove].layer.borderColor = UIColor.white.cgColor
+            gender = "남자"
+//            sexImgs[sender.tag].tintColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+//            sexImgs[sender.tag].image = sexImgs[sender.tag].image?.withRenderingMode(.alwaysTemplate)
+//
+//            sexLabels[sender.tag].textColor = UIColor.white
+//            sexBtns[sender.tag].backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+//            sexBtns[sender.tag].layer.borderColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1).cgColor
+//
+//            //다른 성별을 선택해제한다.
+//            sexImgs[remove].image = sexImgs[remove].image?.withRenderingMode(.alwaysOriginal)
+//
+//                 sexLabels[remove].textColor = UIColor.black
+//                 sexBtns[remove].backgroundColor = UIColor.white
+//                 sexBtns[remove].setTitleColor(UIColor.black, for: .normal)
+//                 sexBtns[remove].layer.borderColor = UIColor.white.cgColor
             
             
             
@@ -891,40 +585,154 @@ class basicInfoViewController: UIViewController, UITextFieldDelegate, UIPickerVi
         //정보입력 확인 버튼을 누르면 필요한 정보들이 다 입력되었는지 체크
         age = self.myField.text!
         
-
+        //나이를 애초에 입력하지 않은 경우 널값이 떠버림
+        //나이를
+//        guard let ageRange : Int = Int(age) else{
+//            return
+//        }
         
-        
-        //정보를 다 입력했을 경우
+        //정보를 다 입력했을 경우 && 나이를 터무니 없는 숫자를 입력하지 않았을 경우&& ageRange < 120
         if(age != "" && gender != "" && district != "" ){
             
-            
-            //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
-            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "interestViewController") as? interestViewController         else{
-                
-                return
-                
-            }
-            
-            RVC.modalPresentationStyle = .fullScreen
-            
-            // 관심사 선택 페이지로 이동
-           // self.present(RVC, animated: true, completion: nil)
-            self.navigationController?.pushViewController(RVC, animated: true)
+ 
+            let ageRange : Int = Int(age)!
+            if(ageRange < 100){
+            print("정보를 제대로 다 입력")
 
-            
+            //서버로 입력한 개인정보를 전송
+                let parameters = ["login_token": "eyJhbGciOiJzaGEyNTYiLCJ0eXAiOiJKd3QifS57ImlkZW50aWZpZXIiOiIwMDAxMzEuNWZkZmEwNjEzODE0NDgyNmJlNmJlZjdkNzhiZTg0ZWUuMDIyMiIsInRva2VuX21ha2UiOiIyMDIwLTEyLTA4IDE1OjQ0OjA0In0uMWJlNjBlZDBiMjFlNjBiNzIzMWFkNzg2MTg4Njk2ODBhNDU4YWI0N2Q4MDk0NTE5OTA2ZTc5MGU5YWEyMTVlNA==", "nickName":"닉네임","age" : age, "gender" : gender, "city" : district ]
+
+                Alamofire.request("https://www.urbene-fit.com/user", method: .post, parameters: parameters)
+                    .validate()
+                    .responseJSON { response in
+                        
+                        switch response.result {
+                        case .success(let value):
+                            
+                            
+                            
+                            
+                            
+                            //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
+                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "tagSelectViewController") as? tagSelectViewController         else{
+                                
+                                return
+                                
+                            }
+                            
+                            //print(value)
+                            do {
+                                let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                                let parseResult = try JSONDecoder().decode(parse.self, from: data)
+                                
+                                print(parseResult.Message[0].interest)
+                                
+                                let interestArr = parseResult.Message[0].interest.components(separatedBy: ",")
+
+                                for i in 0..<interestArr.count {
+
+                                    RVC.interst.append(interestArr[i])
+                                    print(interestArr[i])
+
+                                }
+                                // 관심사 선택 페이지로 이동
+                                            self.navigationController?.pushViewController(RVC, animated: true)
+//
+                                
+                            }
+                            catch let DecodingError.dataCorrupted(context) {
+                                print(context)
+                            } catch let DecodingError.keyNotFound(key, context) {
+                                print("Key '\(key)' not found:", context.debugDescription)
+                                print("codingPath:", context.codingPath)
+                            } catch let DecodingError.valueNotFound(value, context) {
+                                print("Value '\(value)' not found:", context.debugDescription)
+                                print("codingPath:", context.codingPath)
+                            } catch let DecodingError.typeMismatch(type, context)  {
+                                print("Type '\(type)' mismatch:", context.debugDescription)
+                                print("codingPath:", context.codingPath)
+                            } catch {
+                                print("error: ", error)
+                            }
+//
+                            
+                            
+                            
+                           
+                        case .failure(let error):
+                            print(error)
+                        }
+                    }
+                
+                
+//            //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
+//            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "interestViewController") as? interestViewController         else{
+//
+//                return
+//
+//            }
+//
+//            RVC.modalPresentationStyle = .fullScreen
+//
+//            // 관심사 선택 페이지로 이동
+//           // self.present(RVC, animated: true, completion: nil)
+//            self.navigationController?.pushViewController(RVC, animated: true)
+                
+                
+                //나이를 장난으로 많이 입력한 경우
+            }else{
+                                let alert = UIAlertController(title: "기본 정보", message: "나이를 제대로 입력해주세요", preferredStyle: UIAlertController.Style.alert)
+                                let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                
+                                }
+                                alert.addAction(okAction)
+                
+                                present(alert, animated: false, completion: nil)
+            }
             
             //모든 정보를 입력하지 않은 경우
-        }else{
-            let alert = UIAlertController(title: "기본 정보", message: "기본정보를 다 입력해주세요", preferredStyle: UIAlertController.Style.alert)
-            let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+    
+            
+            
+        }else if(age == "" ){
+                let alert = UIAlertController(title: "기본 정보", message: "나이를  입력해주세요", preferredStyle: UIAlertController.Style.alert)
+                let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                    
+                }
+                alert.addAction(okAction)
                 
-            }
-            alert.addAction(okAction)
+                present(alert, animated: false, completion: nil)
+            }else if(gender == "" ){
+                let alert = UIAlertController(title: "기본 정보", message: "성별을 선택해주세요", preferredStyle: UIAlertController.Style.alert)
+                let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                    
+                }
+                alert.addAction(okAction)
+                
+                present(alert, animated: false, completion: nil)
+            }else if(district == "" ){
+                let alert = UIAlertController(title: "기본 정보", message: "지역을 선택해주세요", preferredStyle: UIAlertController.Style.alert)
+                let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+                    
+                }
+                alert.addAction(okAction)
+                
+                present(alert, animated: false, completion: nil)
             
-            present(alert, animated: false, completion: nil)
+          }
+                //else if(ageRange > 120 ){
+//                let alert = UIAlertController(title: "기본 정보", message: "나이를 제대로 입력해주세요", preferredStyle: UIAlertController.Style.alert)
+//                let okAction = UIAlertAction(title: "OK", style: .default) { (action) in
+//
+//                }
+//                alert.addAction(okAction)
+//
+//                present(alert, animated: false, completion: nil)
+//            }
+ 
+          
             
-            
-        }
+        
         
     }
     
