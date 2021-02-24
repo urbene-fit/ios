@@ -107,7 +107,7 @@ class privateViewController: UIViewController, MessagingDelegate {
             print("비 로그인 상태")
 
         
-            
+            setNonMember()
             setLoginBtn()
 
         }
@@ -193,6 +193,26 @@ class privateViewController: UIViewController, MessagingDelegate {
         
     }
     
+    
+    @objc func goAgreement() {
+
+        //이용약관으로 이동
+
+
+            print("이용약관 버튼 클릭")
+
+            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "clauseViewController") as? clauseViewController         else{
+
+                return
+
+            }
+            //뷰 이동
+            RVC.modalPresentationStyle = .fullScreen
+            self.navigationController?.pushViewController(RVC, animated: true)
+
+            //개인정보처리방침화면으로 이동
+        }
+    
     //개인정보처리방침 또는 이용약관으로 이동
     @objc func alert(_ sender: UIButton) {
 
@@ -201,25 +221,7 @@ class privateViewController: UIViewController, MessagingDelegate {
 
 
             print("이용약관 버튼 클릭")
-//        let alert = UIAlertController(title: "알림", message: "현재 준비중인 컨텐츠입니다.", preferredStyle: .alert)
-//
-//        let cancelAction = UIAlertAction(title: "확인", style: .cancel){
-//
-//            (action : UIAlertAction) -> Void in
-//
-//            alert.dismiss(animated: false)
-//
-//        }
-//
-//
-//
-//        alert.addAction(cancelAction)
-//
-//
-//        self.present(alert, animated: true, completion: nil)
-//        }else{
-//
-//        }
+
             guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "clauseViewController") as? clauseViewController         else{
 
                 return
@@ -264,121 +266,6 @@ class privateViewController: UIViewController, MessagingDelegate {
         
         
         
-//        let alert = UIAlertController(title: "이용정보 알림 수신",
-//                                      message: "모바일 기기의 설정 > 너의혜택은에서 설정 가능합니다.",
-//                                      preferredStyle: UIAlertController.Style.alert)
-//
-//
-//
-//
-//        let okAction = UIAlertAction(title: "확인", style: .cancel, handler: nil)
-//        // alert.addAction(okAction)
-//
-//
-//
-//        let settingsAction = UIAlertAction(title: "알림설정 바꾸러 가기", style: .default, handler: { _ in
-//            // Take the user to Settings app to possibly change permission.
-//            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
-//            if UIApplication.shared.canOpenURL(settingsUrl) {
-//                UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-//                    // Finished opening URL
-//                    self.pushSet = true
-//                })
-//            }
-//        })
-//        settingsAction.setValue(UIColor.black, forKey: "titleTextColor")
-//        alert.addAction(settingsAction)
-//
-//        self.present(alert, animated: true, completion: nil)
-        
-        
-       // var types : UIRemoteNotificationType = UIApplication.shared.enabledRemoteNotificationTypes()
-        
-        
-        //        UIRemoteNotificationType types =
-        //            [[UIApplication sharedApplication] enabledRemoteNotificationTypes]
-        //
-        //
-        //  let notificationType = UIApplication.shared.currentUserNotificationSettings!.types
-        
-        
-        //        if notificationType == UIUserNotificationType.None {
-        //                // Push notifications are disabled in setting by user.
-        //            print("알림불가")
-        //            }else{
-        //          // Push notifications are enabled in setting by user.
-        //                print("알림불가")
-        //
-        //        }
-        
-        
-        
-        
-        
-        
-        //푸쉬허용변경여부를 서버에 보낸다.
-        
-        //        var parameters = Parameters()
-        //
-        //        //허용일경우
-        //        if(pushSwicth.isOn){
-        //            parameters = ["login_token": "eyJhbGciOiJzaGEyNTYiLCJ0eXAiOiJKd3QifS57ImlkZW50aWZpZXIiOiIwMDAxMzEuNWZkZmEwNjEzODE0NDgyNmJlNmJlZjdkNzhiZTg0ZWUuMDIyMiIsInRva2VuX21ha2UiOiIyMDIwLTEyLTA4IDE1OjQ0OjA0In0uMWJlNjBlZDBiMjFlNjBiNzIzMWFkNzg2MTg4Njk2ODBhNDU4YWI0N2Q4MDk0NTE5OTA2ZTc5MGU5YWEyMTVlNA==","is_push" : "true"]
-        //
-        ////            if #available(iOS 10.0, *) {
-        ////                // For iOS 10 display notification (sent via APNS)
-        ////                UNUserNotificationCenter.current().delegate = self
-        ////
-        ////                let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-        ////                UNUserNotificationCenter.current().requestAuthorization(
-        ////                    options: authOptions,
-        ////                    completionHandler: {_, _ in })
-        ////            } else {
-        ////                let settings: UIUserNotificationSettings =
-        ////                    UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-        ////                UIApplication.shared.registerUserNotificationSettings(settings)
-        ////            }
-        ////
-        ////
-        ////            UIApplication.shared.registerForRemoteNotifications()
-        //
-        //
-        //
-        //        //아닐경우
-        //        }else{
-        //            parameters = ["login_token": "eyJhbGciOiJzaGEyNTYiLCJ0eXAiOiJKd3QifS57ImlkZW50aWZpZXIiOiIwMDAxMzEuNWZkZmEwNjEzODE0NDgyNmJlNmJlZjdkNzhiZTg0ZWUuMDIyMiIsInRva2VuX21ha2UiOiIyMDIwLTEyLTA4IDE1OjQ0OjA0In0uMWJlNjBlZDBiMjFlNjBiNzIzMWFkNzg2MTg4Njk2ODBhNDU4YWI0N2Q4MDk0NTE5OTA2ZTc5MGU5YWEyMTVlNA==","is_push" : "false"]
-        //        }
-        ////
-        ////
-        //
-        //       // let parameters = ["login_token": idToken]
-        //        Alamofire.request("https://www.urbene-fit.com/user", method: .put, parameters: parameters)
-        //            .validate()
-        //            .responseJSON { [self] response in
-        //                switch response.result {
-        //                case .success(let value):
-        //                print("성공")
-        //
-        //                    if let json = value as? [String: Any] {
-        //                        //print(json)
-        //                        for (key, value) in json {
-        //                            print(key)
-        //                            print(value)
-        //                            if(key == "is_push"){
-        //
-        //                                print("푸쉬변경: \(value)")
-        //                        }
-        //                    }
-        //                    }
-        //                case .failure(let error):
-        //                    print("Error: \(error)")
-        //                    break
-        //
-        //
-        //                }
-        //            }
-        
-        //
-        //
     }
     
     private func setBarButton() {
@@ -660,7 +547,7 @@ class privateViewController: UIViewController, MessagingDelegate {
         
         loginBtn.addTarget(self, action: #selector(self.goLogin), for: .touchUpInside)
         //  ktBtn.frame = CGRect(x: 0, y: 0, width: screenWidth - 80, height: 60)
-        loginBtn.frame = CGRect(x: 40 * DeviceManager.sharedInstance.widthRatio, y: CGFloat(DeviceManager.sharedInstance.height) - (200 * DeviceManager.sharedInstance.heightRatio), width: CGFloat(DeviceManager.sharedInstance.width) - 80 * DeviceManager.sharedInstance.widthRatio, height: 60 *  DeviceManager.sharedInstance.heightRatio)
+        loginBtn.frame = CGRect(x: 40 * DeviceManager.sharedInstance.widthRatio, y: 300 *  DeviceManager.sharedInstance.heightRatio , width: CGFloat(DeviceManager.sharedInstance.width) - 80 * DeviceManager.sharedInstance.widthRatio, height: 60 *  DeviceManager.sharedInstance.heightRatio)
         //appleLoginStackView.frame = CGRect(x: 40, y: 500, width: screenWidth - 80, height: 60)
         // appleLoginStackView.addSubview(ktBtn)
         
@@ -789,10 +676,11 @@ class privateViewController: UIViewController, MessagingDelegate {
         
         
         //프로필 라벨
-        profileLabel.frame = CGRect(x: 120 *  DeviceManager.sharedInstance.widthRatio, y: 120 *  DeviceManager.sharedInstance.heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        profileLabel.frame = CGRect(x: 120 *  DeviceManager.sharedInstance.widthRatio, y: 120 *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
         //profileLabel.textAlignment = .right
        // profileLabel.text = "김동현"
         profileLabel.font = UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+
         self.view.addSubview(profileLabel)
         
         
@@ -800,18 +688,7 @@ class privateViewController: UIViewController, MessagingDelegate {
         snsLabel.frame = CGRect(x: 120 *  DeviceManager.sharedInstance.widthRatio, y: 140 *  DeviceManager.sharedInstance.heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
         snsLabel.textColor = UIColor(displayP3Red: 125/255.0, green: 125/255.0, blue: 125/255.0, alpha: 1)
         
-        //디바이스에 저장된 로그인 플랫폼 정보를 이용하여 뷰에 반영해준다.
-//        var platform = UserDefaults.standard.string(forKey: "platform")
-//
-//        if(platform == "apple"){
-//            platform = "애플 계정"
-//        }else if(platform == "kakao"){
-//            platform = "카카오 계정"
-//        }else{
-//            platform = "구글 계정"
-//        }
-//
-        //snsLabel.text = "비로그인"
+
         snsLabel.font = UIFont(name: "Jalnan", size: 13 *  DeviceManager.sharedInstance.heightRatio)
         
         self.view.addSubview(snsLabel)
@@ -853,11 +730,19 @@ class privateViewController: UIViewController, MessagingDelegate {
        
         
         //푸쉬 알림 설정
-        let pushLabel = UILabel()
-      //  pushLabel.frame = CGRect(x: 20 * DeviceManager.sharedInstance.widthRatio, y: 310 *  DeviceManager.sharedInstance.heightRatio, width: 300  * DeviceManager.sharedInstance.widthRatio, height: 30  * DeviceManager.sharedInstance.heightRatio)
-        pushLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 240  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        pushLabel.text = "푸쉬알림 설정"
-        pushLabel.font = UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+        let pushLabel =  UIButton(type: .system)
+
+        pushLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 240  *  DeviceManager.sharedInstance.heightRatio, width: 200 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        pushLabel.setTitle("푸쉬알림 설정", for: .normal)
+        pushLabel.setTitleColor(UIColor.black, for: .normal)
+        pushLabel.titleLabel?.font =  UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+        pushLabel.contentHorizontalAlignment = .left
+
+        
+
+        pushLabel.addTarget(self, action: #selector(self.push), for: .touchUpInside)
+
+        
         self.view.addSubview(pushLabel)
         
         
@@ -872,13 +757,7 @@ class privateViewController: UIViewController, MessagingDelegate {
         pushBtn.frame = CGRect(x: DeviceManager.sharedInstance.width - (80 * DeviceManager.sharedInstance.widthRatio), y: 230 *  DeviceManager.sharedInstance.heightRatio, width: 40 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  DeviceManager.sharedInstance.heightRatio)
         
         
-        //디바이스에 설정된 푸쉬허용유무에 따라 이미지를 바꿔준다.
-//        let swicthiImg = UIImageView(image: UIImage(named: "switch_off")!)
-//        swicthiImg.frame =  CGRect(x: 10, y: 0 , width: 60, height: 50)
-//        pushBtn.addSubview(swicthiImg)
-        //settingBtn.tintColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-       // settingBtn.addTarget(self, action: #selector(self.mapPage), for: .touchUpInside)
-       
+
         //푸쉬 알림 스위치
         pushBtn.addTarget(self, action: #selector(self.push), for: .touchUpInside)
         
@@ -889,36 +768,31 @@ class privateViewController: UIViewController, MessagingDelegate {
         
         
         
-        //혜택유형
-        let typeLabel = UILabel()
-        typeLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 380 *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        typeLabel.text = "혜택 유형"
-        typeLabel.font = UIFont(name: "Jalnan", size: 19)
-        //self.view.addSubview(typeLabel)
-        
-        let typeBtn = UIButton(type: .system)
-        
-        typeBtn.frame = CGRect(x: DeviceManager.sharedInstance.width - (70 * DeviceManager.sharedInstance.widthRatio), y: 380 *  DeviceManager.sharedInstance.heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        
-        var typeNextImg = UIImageView(image: UIImage(named: "next")!)
-        typeNextImg.frame =  CGRect(x: 10 *  DeviceManager.sharedInstance.widthRatio, y: 0 , width: 30 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        typeBtn.addSubview(typeNextImg)
-        //settingBtn.tintColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-       // settingBtn.addTarget(self, action: #selector(self.mapPage), for: .touchUpInside)
-       // typeBtn.addTarget(self, action: #selector(self.alert), for: .touchUpInside)
-
-        //self.view.addSubview(typeBtn)
+     
         
 
 
         //이용약관(위치)
-        let locAgreementLabel = UILabel()
-        //locAgreementLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 450 *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        let locAgreementLabel = UIButton(type: .system)
+
         
-        locAgreementLabel.frame   = CGRect(x: 20 * DeviceManager.sharedInstance.widthRatio, y: 310 *  DeviceManager.sharedInstance.heightRatio, width: 300  * DeviceManager.sharedInstance.widthRatio, height: 30  * DeviceManager.sharedInstance.heightRatio)
-        locAgreementLabel.text = "이용약관"
-        locAgreementLabel.font = UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+        locAgreementLabel.frame   = CGRect(x: 20 * DeviceManager.sharedInstance.widthRatio, y: 310 *  DeviceManager.sharedInstance.heightRatio, width: 200  * DeviceManager.sharedInstance.widthRatio, height: 30  * DeviceManager.sharedInstance.heightRatio)
+        locAgreementLabel.setTitle("이용약관", for: .normal)
+        locAgreementLabel.setTitleColor(UIColor.black, for: .normal)
+        locAgreementLabel.titleLabel?.font =  UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+        locAgreementLabel.contentHorizontalAlignment = .left
+
+        
+        locAgreementLabel.tag = 1
+
+        locAgreementLabel.addTarget(self, action: #selector(self.alert), for: .touchUpInside)
+
+       
         self.view.addSubview(locAgreementLabel)
+        
+
+        
+        
 
         let locBtn = UIButton(type: .system)
         
@@ -935,12 +809,23 @@ class privateViewController: UIViewController, MessagingDelegate {
         self.view.addSubview(locBtn)
 
         //(개인정보)
-        let policyLabel = UILabel()
-        //policyLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 520 *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        let policyLabel = UIButton(type: .system)
+  
+        policyLabel.frame  = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 380 *  DeviceManager.sharedInstance.heightRatio, width: 200 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        policyLabel.contentHorizontalAlignment = .left
+
+
         
-        policyLabel.frame  = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 380 *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        policyLabel.text = "개인정보처리방침"
-        policyLabel.font = UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+       
+        policyLabel.setTitle("개인정보처리방침", for: .normal)
+        policyLabel.setTitleColor(UIColor.black, for: .normal)
+        policyLabel.titleLabel?.font =  UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+
+        
+        policyLabel.tag = 2
+
+        policyLabel.addTarget(self, action: #selector(self.alert), for: .touchUpInside)
+        
         self.view.addSubview(policyLabel)
 
         let policyBtn = UIButton(type: .system)
@@ -964,6 +849,57 @@ class privateViewController: UIViewController, MessagingDelegate {
         self.view.addSubview(versionLabel)
         
         
+    }
+    
+    
+    //비회원 화면 세팅
+    func  setNonMember(){
+        
+        //푸쉬 알림 설정
+        let pushLabel =  UIButton(type: .system)
+
+        pushLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 120  *  DeviceManager.sharedInstance.heightRatio, width: 120 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        pushLabel.setTitle("푸쉬알림 설정", for: .normal)
+        pushLabel.setTitleColor(UIColor.black, for: .normal)
+        pushLabel.titleLabel?.font =  UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+
+        
+
+        pushLabel.addTarget(self, action: #selector(self.push), for: .touchUpInside)
+        pushLabel.contentHorizontalAlignment = .left
+
+        
+        self.view.addSubview(pushLabel)
+        
+        
+ 
+        
+        
+        
+        pushBtn  = UIButton(type: .system)
+        
+        //pushBtn.frame = CGRect(x: DeviceManager.sharedInstance.width - (80 * DeviceManager.sharedInstance.widthRatio), y: 300 *  DeviceManager.sharedInstance.heightRatio, width: 40 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  DeviceManager.sharedInstance.heightRatio)
+        
+        pushBtn.frame = CGRect(x: DeviceManager.sharedInstance.width - (80 * DeviceManager.sharedInstance.widthRatio), y: 110 *  DeviceManager.sharedInstance.heightRatio, width: 40 *  DeviceManager.sharedInstance.widthRatio, height: 50 *  DeviceManager.sharedInstance.heightRatio)
+        
+        
+
+        //푸쉬 알림 스위치
+        pushBtn.addTarget(self, action: #selector(self.push), for: .touchUpInside)
+        
+        
+        //스위치버튼이미지 설정
+        setSwitch()
+        self.view.addSubview(pushBtn)
+        
+        
+        //버전정보
+        let versionLabel = UILabel()
+        versionLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 190 *  DeviceManager.sharedInstance.heightRatio, width: DeviceManager.sharedInstance.width - 20, height: 30 *  DeviceManager.sharedInstance.heightRatio)
+        versionLabel.text = "버전정보                                            1.0.0"
+        versionLabel.font = UIFont(name: "Jalnan", size: 19 *  DeviceManager.sharedInstance.heightRatio)
+        self.view.addSubview(versionLabel)
+
     }
     
     //알람설정후 개인정보설정화면으로 돌아올경우를 감지하기 위해

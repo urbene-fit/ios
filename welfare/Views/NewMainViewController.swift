@@ -427,9 +427,9 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             
             let moveBtn = UIButton(type: .system)
             
-            moveBtn.setTitle("혜택찾기", for: .normal)
+            moveBtn.setTitle("혜택 추천 받으러 가기", for: .normal)
            
-            moveBtn.frame = CGRect(x: 110 * DeviceManager.sharedInstance.widthRatio , y: 130 *  heightRatio, width: 90 *  DeviceManager.sharedInstance.widthRatio, height:  50 *  heightRatio)
+            moveBtn.frame = CGRect(x: 110 * DeviceManager.sharedInstance.widthRatio , y: 130 *  heightRatio, width: 200 *  DeviceManager.sharedInstance.widthRatio, height:  50 *  heightRatio)
             
             moveBtn.titleLabel!.font = UIFont(name: "Jalnan", size:16.1 *  heightRatio)
             moveBtn.layer.cornerRadius = 13 *  heightRatio

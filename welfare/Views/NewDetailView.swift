@@ -1242,8 +1242,8 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
         var applyLabel = UILabel()
         //nameUI.backgroundColor = UIColor.white
         applyLabel.frame = CGRect(x:20 *  DeviceManager.sharedInstance.widthRatio, y: 230 *  DeviceManager.sharedInstance.heightRatio, width: 100 *  DeviceManager.sharedInstance.widthRatio,  height: 30 *  DeviceManager.sharedInstance.heightRatio)
-        applyLabel.font = UIFont(name: "Jalnan", size: 13 *  DeviceManager.sharedInstance.heightRatio)
-        applyLabel.text = "신청난이도"
+        applyLabel.font = UIFont(name: "Jalnan", size: 15 *  DeviceManager.sharedInstance.heightRatio)
+        applyLabel.text = "신청 난이도"
         applyLabel.textAlignment = .center
 //        applyLabel.layer.borderWidth = 0.1
 //        applyLabel.layer.cornerRadius = 13 * DeviceManager.sharedInstance.heightRatio

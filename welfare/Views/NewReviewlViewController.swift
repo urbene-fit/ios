@@ -104,7 +104,7 @@ class NewReviewlViewController: UIViewController, UITextViewDelegate, UITextFiel
         
         //        DuViewController의 view가 사라짐
         //        ReViewViewController의 view가 화면에 나타남
-        print("ReViewViewController의 viewDidAppear")
+        print("newReViewViewController의 viewDidAppear")
         setBarButton(modify: modify)
         //수정화면일 시 이전데이터들을 넣어준다.
         if(modify){
@@ -119,7 +119,7 @@ class NewReviewlViewController: UIViewController, UITextViewDelegate, UITextFiel
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print("ReViewViewController의 viewDidLoad")
+        print("newReViewViewController의 viewDidLoad")
 
         
         //닉네임
