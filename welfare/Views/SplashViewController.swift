@@ -2,16 +2,12 @@
  루트화면으로 사용될 스플래쉬화면
  
  앱시작시/로딩시/FCM을 통해 들어올떄 사용되는 화면
- 
- 
- 
  */
 
 import UIKit
 import Alamofire
 
 class SplashViewController: UIViewController {
-    
     
     
     //로그인 검증시 사용할 파라미터 값
@@ -26,31 +22,22 @@ class SplashViewController: UIViewController {
         var Check : String?
         var nickName : String?
         var login_id : Int?
-
-        
     }
+    
+    
     //다른 기종에서 문제가 발생해서 viewdidappear 에서 구현
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         set()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        
     }
+    
     
     //로그인
     func Login(parameters: Parameters){
-        
-        
-        
-        
-        
         
         //서버통신
         Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: parameters)
@@ -65,21 +52,17 @@ class SplashViewController: UIViewController {
                         let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
                         let parseResult = try JSONDecoder().decode(parse.self, from: data)
                         if(parseResult.Status == "200"){
-                            
-                         
-                            
                             LoginManager.sharedInstance.token = parseResult.Token!
                             LoginManager.sharedInstance.checkInfo = Bool(parseResult.Check!)!
                             
                             LoginManager.sharedInstance.loginId = parseResult.login_id!
-
+                            
                             print("로그인 성공")
                             print("관심사 입력여부:\(parseResult.Check!)")
                             print("로그인 아이디 : \(parseResult.login_id)")
                             LoginManager.sharedInstance.memberGetSession()
-
-//
-                        moveMain()
+                            
+                            moveMain()
                         }else{
                             moveMain()
                         }
@@ -98,10 +81,7 @@ class SplashViewController: UIViewController {
                         print("codingPath:", context.codingPath)
                     } catch {
                         print("error: ", error)
-                    }
-                    
-                    
-                    
+                    }        
                 case .failure(let error):
                     print(error)
                 }
@@ -119,12 +99,9 @@ class SplashViewController: UIViewController {
         self.present(mainTabBar, animated: true, completion: nil)
     }
     
+    
     func set(){
         self.view.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-        
-        
-        
-        
         
         let logoLabel = UILabel()
         logoLabel.frame = CGRect(x: 0, y: view.bounds.height/2 - 50, width: view.bounds.width, height: 100)
@@ -135,27 +112,13 @@ class SplashViewController: UIViewController {
         logoLabel.font = UIFont(name: "Bowhouse-Black", size: 60  *  DeviceManager.sharedInstance.heightRatio)
         self.view.addSubview(logoLabel)
         print("스플래쉬")
-        //  moveMain()
-        // Do any additional setup after loading the view.
-        //
         
         
         //이정표(메인/다른페이지)로 이동
-        
-        
-        
-        
-        //로그인 & 기본정보 체크 & 로그인토큰 & FCM토큰 저장
-        
-        //이메일
         var check = UserDefaults.standard.string(forKey: "check")
         var platform = UserDefaults.standard.string(forKey: "platform")
         var identifier = UserDefaults.standard.string(forKey: "identifier")
         var fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
-        
-        
-        //        print("체크 : \(check!)")
-        //        print("토크 : \(fcmToken!)")
         
         
         //로그인을 한 적 없으면
@@ -164,37 +127,20 @@ class SplashViewController: UIViewController {
             
             moveMain()
             LoginManager.sharedInstance.getSession()
-
             
             //애플로그인인지 다른로그인지에 따라 구분해서 확인한다.
         }else if(platform == "apple"){
-            
             print("ios자동 로그인함")
-            
-            
             
             PARAM = [ "platform":platform!, "identifier":check!, "fcm_token":fcmToken!,"osType": "ios"]
             
-            //
-            //            print(PARAM["identifier"])
-            //            print(PARAM["platform"])
-            //            print(PARAM["osType"])
             Login(parameters: PARAM)
-            //다른 플랫폼의 경우
+            // 다른 플랫폼의 경우
         }else{
-            //            print(platform!)
-            //            print("다른 플랫폼 자동 로그인함")
-            
+            // print("다른 플랫폼 자동 로그인함")
             PARAM = ["platform":platform!,"email":check!, "fcm_token":fcmToken!,"osType": "ios"]
             
-            
             Login(parameters: PARAM)
-            //            moveMain()
-            
         }
-        
-        
-        
     }
-    
 }

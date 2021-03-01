@@ -30,7 +30,7 @@ class LoginManager {
     //세션파싱
     struct parse: Decodable {
         let SessionId : String
- 
+        
     }
     
     //회원 세션 ID를 가져오는 메소드
@@ -42,28 +42,28 @@ class LoginManager {
         
         let parameters = ["type": "main"]
         
-                let headers = [
-                    "LoginToken": token
-                  ]
-    
+        let headers = [
+            "LoginToken": token
+        ]
+        
         
         Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
-
+                
                 
                 switch response.result {
                 case .success(let value):
- 
+                    
                     do {
-
+                        
                         let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
                         let parseResult = try JSONDecoder().decode(parse.self, from: data)
-
+                        
                         self.sessionID = parseResult.SessionId
                         print("세션아이디 : \(self.sessionID)")
                         print("로그쌓음")
-
+                        
                     }catch let DecodingError.dataCorrupted(context) {
                         print(context)
                     } catch let DecodingError.keyNotFound(key, context) {
@@ -78,7 +78,7 @@ class LoginManager {
                     } catch {
                         print("error: ", error)
                     }
-
+                    
                     
                     
                 case .failure(let error):
@@ -97,27 +97,27 @@ class LoginManager {
         
         let parameters = ["type": "main"]
         
-                let headers = [
-                    "LoginToken": token
-                  ]
-    
+        let headers = [
+            "LoginToken": token
+        ]
+        
         
         Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
-
+                
                 print("세션받는 메소드")
-
-//        Alamofire.request("https://www.urbene-fit.com/log", method: .get, parameters: parameters)
-//            .validate()
-//            .responseJSON {  response in
-//
+                
+                //        Alamofire.request("https://www.urbene-fit.com/log", method: .get, parameters: parameters)
+                //            .validate()
+                //            .responseJSON {  response in
+                //
                 switch response.result {
                 case .success(let value):
                     do {
                         let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
                         let parseResult = try JSONDecoder().decode(parse.self, from: data)
-
+                        
                         self.sessionID = parseResult.SessionId
                         print("세션아이디 : \(self.sessionID)")
                         print("로그쌓음")
@@ -134,17 +134,10 @@ class LoginManager {
                         print("codingPath:", context.codingPath)
                     } catch {
                         print("error: ", error)
-                    }
-                    
-                    
-                    
+                    }   
                 case .failure(let error):
                     print(error)
                 }
-                
-            }//
-        
+            }
     }
 }
-
-

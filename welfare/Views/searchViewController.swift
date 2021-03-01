@@ -567,7 +567,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Value: \(firstItems[indexPath.row])")
         
-        guard let uvc = self.storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as? DetailViewController         else{
+        guard let uvc = self.storyboard?.instantiateViewController(withIdentifier: "NewDetailView") as? NewDetailView         else{
             
             return
             

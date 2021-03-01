@@ -6,37 +6,29 @@ import Alamofire
 import DeviceKit
 
 
-//let sharedDeviceManager = DeviceManager(widthRatio: CGFLOAT_MAX, heightRatio: CGFLOAT_MAX)
-
-//let sharedDeviceManager = DeviceManager(widthRatio: CGFloat, heightRatio: <#CGFloat#>)
-
 public enum DeviceGroup {
-   case fourInches
-   case fiveInches
-   case xSeries
-   case iPads
-   public var rawValue: [Device] {
-      switch self {
-      case .fourInches:
-         return [.iPhone5s, .iPhoneSE]
-      case .fiveInches:
-        return [.iPhone6, .iPhone6s, .iPhone7, .iPhone8, .simulator(.iPhone8), .simulator(.iPhone7)]
-      case .xSeries:
-         return Device.allXSeriesDevices
-      case .iPads:
-         return Device.allPads
-      }
-   }
+    case fourInches
+    case fiveInches
+    case xSeries
+    case iPads
+    public var rawValue: [Device] {
+        switch self {
+        case .fourInches:
+            return [.iPhone5s, .iPhoneSE]
+        case .fiveInches:
+            return [.iPhone6, .iPhone6s, .iPhone7, .iPhone8, .simulator(.iPhone8), .simulator(.iPhone7)]
+        case .xSeries:
+            return Device.allXSeriesDevices
+        case .iPads:
+            return Device.allPads
+        }
+    }
 }
+
 
 class DeviceManager {
     
-    
-  
-    
     static let sharedInstance = DeviceManager()
-    
-    
     
     var widthRatio : CGFloat = 0.0
     var heightRatio : CGFloat = 0.0
@@ -57,41 +49,30 @@ class DeviceManager {
     
     //4인치 5인치 기종들을 구분하기 위한 메소드
     func isFourIncheDevices() -> Bool {
-         return Device.current.isOneOf(DeviceGroup.fourInches.rawValue)
-      }
-      
-      func isFiveIncheDevices() -> Bool {
-          return Device.current.isOneOf(DeviceGroup.fiveInches.rawValue)
-      }
+        return Device.current.isOneOf(DeviceGroup.fourInches.rawValue)
+    }
+    
+    func isFiveIncheDevices() -> Bool {
+        return Device.current.isOneOf(DeviceGroup.fiveInches.rawValue)
+    }
     
     func isSixIncheDevices() -> Bool {
         return Device.current.isOneOf(DeviceGroup.xSeries.rawValue)
     }
-      
-      func isIPadDevices() -> Bool {
-         return Device.current.isOneOf(DeviceGroup.iPads.rawValue)
-      }
+    
+    func isIPadDevices() -> Bool {
+        return Device.current.isOneOf(DeviceGroup.iPads.rawValue)
+    }
     
     
     
     //로그로 보낼 정보
-
-
-    
-
-//    init(widthRatio : CGFloat, heightRatio : CGFloat){
-//        self.widthRatio = widthRatio
-//        self.heightRatio = heightRatio
-//
-//    }
-    
     //로그 보내는 메소드
     //헤더에 사용자 인증용 로그인 토큰과 접속상태에서 행동을 추천하기 위한 세션아이디를 보낸다.
     //바디에서 요청타입(type)을 통해 어떤 화면에서 요청을 하는지 구분
     //Action을 통해 해당화면에서 어떤 요청을 했는지 구분
     //keyword를 통해 사용자가 파라미터로 전달한 정보를 저장
     //userAgent 사용자의 기기정보를 저장
-    
     func sendLog (content : String, type : String){
         
         let parameters = ["os_type": systemVersion, "os_version": modelName, "login_token": LoginManager.sharedInstance.token, "content": content, "type": type]
@@ -99,40 +80,18 @@ class DeviceManager {
         let headers = ["LoginToken": LoginManager.sharedInstance.token,"SessionId": LoginManager.sharedInstance.sessionID]
         
         
-    
-        
         Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
-
-                
-                //print(response)
                 print("로그쌓음")
             }
     }
-    
-    
-    
-//    func isFourIncheDevices() -> Bool {
-//       return Device.current.isOneOf(DeviceGroup.fourInches.rawValue)
-//    }
-//    func isIPadDevices() -> Bool {
-//       return Device.current.isOneOf(DeviceGroup.iPads.rawValue)
-//    }
-    
-    
-   
-    
-    
-    
-    
-    
-    
 }
+
 
 //기기정보 받기 위한 장치
 public extension UIDevice {
-
+    
     static let modelName: String = {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -143,8 +102,6 @@ public extension UIDevice {
         }
         
         
-        
-
         func mapToDevice(identifier: String) -> String { // swiftlint:disable:this cyclomatic_complexity
             #if os(iOS)
             switch identifier {
@@ -217,11 +174,7 @@ public extension UIDevice {
             }
             #endif
         }
-
+        
         return mapToDevice(identifier: identifier)
     }()
-
 }
-
-
-

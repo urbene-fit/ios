@@ -1,112 +1,63 @@
-//
 //  tabBarController.swift
 //  welfare
 //
 //  Created by 김동현 on 2020/11/30.
 //  Copyright © 2020 com. All rights reserved.
-//
+
 
 import UIKit
 
+
 class tabBarController: UITabBarController, UITabBarControllerDelegate {
     
-    
+    // NotificationCenter: 미리 등록된 observer 들에게 notification 을 전달하는 역할의 클래스
+    // 참고: https://jinshine.github.io/2018/07/05/iOS/NotificationCenter/
+    let notiCenter = NotificationCenter.default
+    // NSObjectProtocol : addObserver에 반환값이 있는 메서드를 사용할때 해제 해주어야 할 프로퍼티
     private var observer: NSObjectProtocol?
-
-
+    
+    
     override func viewWillAppear(_ animated: Bool) {
-           super.viewWillAppear(animated)
-        //self.tabBar.isTranslucent = false
-
-           //self.tabBar.backgroundColor = #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
-     //   self.tabBarController!.tabBar.barTintColor =  #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
-       }
+        super.viewWillAppear(animated)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         print("텝바 로드")
         
-        observer = NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
-                                                          object: nil,
-                                                          queue: .main) {
-            [unowned self] notification in
+        
+        // Observer 등록
+        observer = notiCenter.addObserver(forName: UIApplication.willEnterForegroundNotification,// UIApplication.willEnterForegroundNotification 가 나타나기 직전에 알려줘라
+                                          object: nil,// object는 어떤객체를 전달할지
+                                          queue: .main) {// queue는 스레드 using은 수행할 로직.
             
+            // 캡처리스트
+            // unowned self: 순환 참조를 해결할 수 있는 방법, unowned self는 옵셔널이 아니기 때문에 힙에 있지 않는다면 crash가 발생
+            [unowned self] notification in
             print("개인정보 foreground로 돌아오는 경우 ")
             if(LoginManager.sharedInstance.push){
                 print("푸쉬알람으로 진입")
                 LoginManager.sharedInstance.push = false
                 
-                
+                // ??
                 self.dismiss(animated: true) {
-                    
                 }
-                
             }
-            
-            
-            
         }
-            
-            
         
-        //self.tabBar.backgroundColor = #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
-        //self.tabBarController?.tabBar.barTintColor =  #colorLiteral(red: 0.9372549057, green: 0.1913873077, blue: 0.2772851493, alpha: 1)
-
+        // ??
         let width = tabBar.bounds.width
-            var selectionImage = UIImage(named:"star_on")
-            let tabSize = CGSize(width: width/5, height: 50)
-
-            UIGraphicsBeginImageContext(tabSize)
-            selectionImage?.draw(in: CGRect(x: 0, y: 10, width: 30, height: 30))
-            selectionImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-           // tabBar.selectionIndicatorImage = selectionImage
+        let tabSize = CGSize(width: width/5, height: 50)
+        UIGraphicsBeginImageContext(tabSize)
         
-        // Do any additional setup after loading the view.
-        let firstViewController = mapTestViewController()
-        firstViewController.tabBarItem.image = selectionImage
-      //  firstViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
-        var bookImg = UIImage()
-
-        bookImg = UIImage(named: "star_on")!
-     bookImg.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
+        // 추천 혜택 이미지 크기 조절?
+        var selectionImage = UIImage(named:"star_on")
+        selectionImage?.draw(in: CGRect(x: 0, y: 10, width: 30, height: 30))
+        selectionImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
         
-     //   firstViewController.tabBarItem.image =
-//       // bookImg.drawInRect(CGRectMake(0, 0, 10, 10))
-//        let transform = CGAffineTransform(scaleX: 10, y: 10)
-//        let size = bookImg.size.applying(transform)
-//        bookImg.draw(in: CGRect(origin: .zero, size: size))
-//        firstViewController.tabBarItem.image = bookImg
-//
-//        firstViewController.tabBarItem.image = UIImage(named: "star_on")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
-//        firstViewController.tabBarItem.selectedImage = UIImage(named: "star_on ")?.withRenderingMode(UIImage.RenderingMode.alwaysOriginal)
-//        firstViewController.tabBarItem.title = ""
-//        firstViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
-////
-//        bookImg.widthAnchor.constraint(equalToConstant: 16.0).isActive = true
-//
-//        bookImg.heightAnchor.constraint(equalToConstant: 16.0).isActive = true
-
-//        firstViewController.tabBarItem = UITabBarItem(title:"혜택지도", image: bookImg, selectedImage: bookImg)
-//        //firstViewController.tabBarItem.withRenderingMode(.alwaysOriginal)
-//        firstViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 200, left: 200, bottom: 200, right: 200); mapResultViewController
-//
-//        let secondViewController = UiTestController()
-//
-//      let third = mapResultViewController()
-//
-//
-//        secondViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .more, tag: 1)
-
-        //let tabBarList = [UINavigationController(rootViewController:firstViewController), UINavigationController(rootViewController:secondViewController)]
-
+        
         //탭바컨트롤의 하위뷰로 포함되는 뷰들에 네비게이션컨트롤러를 추가해준다.
-        //viewControllers = tabBarList.map { UINavigationController(rootViewController: $0)}
-        
-        //let vc1 = UINavigationController(rootViewController: mapTestViewController()) as!
-        
         var vc1 = self.storyboard?.instantiateViewController(withIdentifier: "main") as! UINavigationController
         var vc2 = self.storyboard?.instantiateViewController(withIdentifier: "search") as! UINavigationController
         var vc3 =  self.storyboard?.instantiateViewController(withIdentifier: "alram") as! UINavigationController
@@ -118,56 +69,25 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
         vc2 = tabSizeFit(imgname: "searchIcon",viewController: vc2)
         vc3 = tabSizeFit(imgname: "alramIcon",viewController: vc3)
         vc4 = tabSizeFit(imgname: "infoIcon",viewController: vc4)
-
-//        vc1.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 0)
-//        vc2.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 1)
-//        vc3.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 2)
-//        vc3.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 3)
-
-
     }
     
-
     
-//    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-//
-//        let vc = self.storyboard?.instantiateViewController(withIdentifier: "cameraVC") as! mapSearchViewController
-//            present(vc, animated: true, completion: nil)
-//
-//
-//        return true
-//    }
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
-    //탭바에 추가되는 이미지 크기를 조정해주는 메소드
+    // 탭바에 추가되는 이미지 크기를 조정해주는 메소드
     func tabSizeFit(imgname : String, viewController : UINavigationController) -> UINavigationController{
-            
-            let width = tabBar.bounds.width
-            var selectionImage = UIImage(named:imgname)
-            let tabSize = CGSize(width: 25, height: 25)
-
-            UIGraphicsBeginImageContext(tabSize)
-            selectionImage?.draw(in: CGRect(x: 0, y: 0, width: 25, height: 25))
-            selectionImage = UIGraphicsGetImageFromCurrentImageContext()
-            
+        //let width = tabBar.bounds.width
+        var selectionImage = UIImage(named:imgname)
+        let tabSize = CGSize(width: 25, height: 25)
         
-            UIGraphicsEndImageContext()
-            viewController.tabBarItem.title = ""
-           // tabBar.selectionIndicatorImage = selectionImage
+        UIGraphicsBeginImageContext(tabSize)
+        selectionImage?.draw(in: CGRect(x: 0, y: 0, width: 25, height: 25))
+        selectionImage = UIGraphicsGetImageFromCurrentImageContext()
+        
+        UIGraphicsEndImageContext()
+        viewController.tabBarItem.title = ""
         
         // Do any additional setup after loading the view.
         viewController.tabBarItem.image = selectionImage
         
         return viewController
     }
-
 }
