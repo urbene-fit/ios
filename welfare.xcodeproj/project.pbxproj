@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		70315EB325ED290900860C7E /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 70315EB225ED290900860C7E /* CropViewController */; };
+		70315EB525ED290900860C7E /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 70315EB425ED290900860C7E /* TOCropViewController */; };
 		79951C6A484495132566A74D /* Pods_welfare.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83398A0C3E6FAC31E23F3278 /* Pods_welfare.framework */; };
 		E3197B78257CBF680001C50F /* notifyListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3197B77257CBF680001C50F /* notifyListViewController.swift */; };
 		E3197B7A257CC29C0001C50F /* alramTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3197B79257CC29C0001C50F /* alramTableViewCell.swift */; };
@@ -146,10 +148,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E3586CFE25CBCF740000D817 /* KakaoOpenSDK.framework in Frameworks */,
+				70315EB525ED290900860C7E /* TOCropViewController in Frameworks */,
 				E3B2427F25760138009FA416 /* KakaoCommon.framework in Frameworks */,
 				E3B2427D257600A5009FA416 /* KakaoLink.framework in Frameworks */,
 				E35C7334253596480022AD8E /* PushKit.framework in Frameworks */,
 				E35C7332253596410022AD8E /* UserNotifications.framework in Frameworks */,
+				70315EB325ED290900860C7E /* CropViewController in Frameworks */,
 				E3B2428125760142009FA416 /* KakaoMessageTemplate.framework in Frameworks */,
 				79951C6A484495132566A74D /* Pods_welfare.framework in Frameworks */,
 			);
@@ -341,6 +345,10 @@
 			dependencies = (
 			);
 			name = welfare;
+			packageProductDependencies = (
+				70315EB225ED290900860C7E /* CropViewController */,
+				70315EB425ED290900860C7E /* TOCropViewController */,
+			);
 			productName = welfare;
 			productReference = E394BC3F24D07EC000B77E48 /* welfare.app */;
 			productType = "com.apple.product-type.application";
@@ -370,6 +378,9 @@
 				Base,
 			);
 			mainGroup = E394BC3624D07EC000B77E48;
+			packageReferences = (
+				70315EB125ED290900860C7E /* XCRemoteSwiftPackageReference "TOCropViewController" */,
+			);
 			productRefGroup = E394BC4024D07EC000B77E48 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -880,6 +891,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		70315EB125ED290900860C7E /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		70315EB225ED290900860C7E /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70315EB125ED290900860C7E /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		70315EB425ED290900860C7E /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 70315EB125ED290900860C7E /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E394BC3724D07EC000B77E48 /* Project object */;
 }

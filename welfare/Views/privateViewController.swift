@@ -910,7 +910,7 @@ class privateViewController: UIViewController, MessagingDelegate {
             
             [unowned self] notification in
             // background에서 foreground로 돌아오는 경우 실행 될 코드
-            print("개인정보 foreground로 돌아오는 경우 ")
+            debugPrint("privateViewController - 개인정보 foreground로 돌아오는 경우 ")
             print("푸쉬 셋 상태 : \(pushSet)")
             if(pushSet){
                 

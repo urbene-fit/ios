@@ -163,6 +163,10 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     // fileprivate 는 하나의 스위프트 파일( .swift ) 내부에서만 접근이 가능한 접근제어 수준
     fileprivate func configureAutolayouts() {
         
+        // 맨 위쪽 화면 뷰 UI 화면 - 로그인 안했을 경우: 로그인 요청 화면, 로그인 했을 경우: 맞춤 혜택 정보 출력
+        setTop()
+        
+        
         //유튜브 리스트를 보여주는 뷰, 유튜브 정보 받아오기
         Alamofire.request("https://www.urbene-fit.com/youtube", method: .get)
             .validate()
@@ -246,10 +250,6 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
                     debugPrint(error)
                 }
             }
-        
-        
-        // 맨 위쪽 화면 뷰 UI 화면
-        setTop()
         
         
         // 지도 UI
@@ -450,7 +450,7 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
                             }
                             
                             
-                            // ??
+                            // 맞춤 혜택 정보 배경 UI 설정 값
                             Personalized_scroll.frame = CGRect(x: 0, y: 170 *  heightRatio, width: self.view.frame.width, height: 330 *  heightRatio)
                             Personalized_scroll.contentSize.width = (DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) + 30) * CGFloat(PersonalizedList.count) + 30
                             Personalized_scroll.backgroundColor = UIColor.white
@@ -539,8 +539,10 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             mainImg.backgroundColor = UIColor.clear
             mainImg.setImage(flipImageLeftRight(UIImage(named: "main")!)!)
             MainUi.addSubview(mainImg)
+            m_Scrollview.addSubview(MainUi)
+            m_Scrollview.addSubview(bannerLabel)
             
-            
+            // 지도 UI - 버튼
             let moveBtn = UIButton(type: .system)
             moveBtn.setTitle("혜택 추천 받으러 가기", for: .normal)
             moveBtn.frame = CGRect(x: 110 * DeviceManager.sharedInstance.widthRatio , y: 130 *  heightRatio, width: 200 *  DeviceManager.sharedInstance.widthRatio, height:  50 *  heightRatio)
@@ -557,11 +559,26 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             moveBtn.layer.shadowOpacity = 1
             moveBtn.layer.shadowRadius = 1 // 반경?
             moveBtn.layer.shadowOpacity = 0.5 // alpha값입니다.
-            
-            m_Scrollview.addSubview(MainUi)
-            m_Scrollview.addSubview(bannerLabel)
             m_Scrollview.addSubview(moveBtn)
         }
+    }
+    
+    
+    // 지도화면으로 이동
+    @objc func mapPage(_ sender: UIButton) {
+        debugPrint("혜택지도 페이지로 이동")
+        DeviceManager.sharedInstance.sendLog(content: "혜택지도 페이지로 이동", type: type)
+        
+        
+        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapTestViewController") as? mapTestViewController else{
+            return
+        }
+        
+        RVC.modalPresentationStyle = .fullScreen
+        
+        //혜택 상세보기 페이지로 이동
+        //self.present(RVC, animated: true, completion: nil)
+        self.navigationController?.pushViewController(RVC, animated: true)
     }
     
     
@@ -575,12 +592,15 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         // Crop rectangle
         let width = min(image.size.width, image.size.height)
         let size = CGSize(width: width, height: image.size.height )
-        
-        
+                
         //뷰상에 이미지를 배치하는 위치
         let startPoint = CGPoint(x: 0, y: -45 * DeviceManager.sharedInstance.heightRatio)
-        let endPoint = CGPoint(x: image.size.width , y: image.size.height  - (38 * DeviceManager.sharedInstance.heightRatio))
         
+        // UIGraphicsBeginImageContextWithOptions:
+        // size: 새 비트 맵 컨텍스트의 크기 (포인트로 측정)입니다. 이것은 함수가 반환하는 이미지의 크기를 나타냅니다 . 비트 맵의 ​​크기 (픽셀)를 얻으려면 너비 및 높이 값에 매개 변수 의 값을 곱해야합니다
+        // opaque: 비트 맵이 불투명한지 여부를 나타내는 부울 플래그입니다. 비트 맵이 완전히 불투명하다는 것을 알고있는 경우 true알파 채널을 무시하고 비트 맵의 ​​저장소를 최적화하도록 지정하십시오.
+        // 지정 false은 부분적으로 투명한 픽셀을 처리하기 위해 비트 맵에 알파 채널이 포함되어야 함을 의미합니다.
+        // scale: 비트 맵에 적용 할 배율입니다. 값을 지정 하면 배율이 장치 기본 화면의 배율로 설정됩니다.0.0
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         
         image.draw(in: CGRect(origin: startPoint, size: size))
@@ -625,24 +645,6 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             //self.present(RVC, animated: true, completion: nil)
             self.navigationController?.pushViewController(RVC, animated: true)
         }
-    }
-    
-    
-    // 지도화면으로 이동
-    @objc func mapPage(_ sender: UIButton) {
-        debugPrint("혜택지도 페이지로 이동")
-        DeviceManager.sharedInstance.sendLog(content: "혜택지도 페이지로 이동", type: type)
-        
-        
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "mapTestViewController") as? mapTestViewController else{
-            return
-        }
-        
-        RVC.modalPresentationStyle = .fullScreen
-        
-        //혜택 상세보기 페이지로 이동
-        //self.present(RVC, animated: true, completion: nil)
-        self.navigationController?.pushViewController(RVC, animated: true)
     }
     
     

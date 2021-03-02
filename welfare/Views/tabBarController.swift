@@ -34,7 +34,7 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
             // 캡처리스트
             // unowned self: 순환 참조를 해결할 수 있는 방법, unowned self는 옵셔널이 아니기 때문에 힙에 있지 않는다면 crash가 발생
             [unowned self] notification in
-            print("개인정보 foreground로 돌아오는 경우 ")
+            debugPrint("tabBarController - 개인정보 foreground로 돌아오는 경우 ")
             if(LoginManager.sharedInstance.push){
                 print("푸쉬알람으로 진입")
                 LoginManager.sharedInstance.push = false
