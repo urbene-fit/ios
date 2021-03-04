@@ -358,7 +358,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     
     // 레이아웃 UI 생성
     func setLayout(){
-        debugPrint("setLayout 실행")
+        debugPrint("map - setLayout 실행")
         
         // 지도 UI - 지도 이미지
         let img = UIImage(named: "newMap")
@@ -556,49 +556,17 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     }
     
     
-    // ??
-    @objc func handleDisplaylink(_ displayLink: CADisplayLink) {
-        // calculate, based upon elapsed time, how far along we are
-        
-        let percent = CGFloat(min(1, (CACurrentMediaTime() - start) / duration))
-        
-        // update the path based upon what percent of the animation has been completed
-        
-        debugPrint("percent: \(percent)!")
-        
-        //원을 그리는 화면을  반복해준다.
-        // for i in 0 ..< 10 {
-        updatePath(percent: percent)
-        //   }
-        // if we're done, stop display link and go ahead and remove mask now that it's not needed any more
-        
-        if percent >= 1 {
-            displayLink.invalidate()
-            imgView.layer.mask = nil
-        }
-    }
-    
-    
-    // 지역변경화면으로 이동하는 메소드, 최종확인 버튼 mapSearchViewController
-    @objc func areaMove(_ sender: UIButton) {
-        debugPrint("지역변경 페이지로 이동하는 버튼 클릭")
-    }
-    
-    
     // 지역혜택 리스트를 보여주는 페이지로 이동
     @objc func moveList(_ sender: UIButton) {
-        debugPrint("혜택지도 결괴페이지로 이동")
+        debugPrint("지역혜택 리스트를 보여주는 페이지로 이동")
         DeviceManager.sharedInstance.sendLog(content: "혜택지도 결괴페이지로 이동", type: type)
         
-        let params = ["page_number":"2", "local":"경기", "userAgent" : DeviceManager.sharedInstance.log]
-        //let params = ["type":"category_search", "keyword":"취업·창업"]
-        debugPrint(DeviceManager.sharedInstance.log)
         
+        let params = ["page_number":"2", "local":"경기", "userAgent" : DeviceManager.sharedInstance.log]
         
         Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
             .validate()
             .responseJSON { response in
-                
                 switch response.result {
                 case .success(let value):
                     
@@ -639,7 +607,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                             //self.present(RVC, animated: true, completion: nil)
                             self.navigationController?.pushViewController(RVC, animated: true)
                         } else {
-                            debugPrint(parseResult.Status)
+                            debugPrint("Status:",parseResult.Status)
                             
                             let alert = UIAlertController(title: "알림", message: "현재 준비중인 지역입니다.", preferredStyle: .alert)
                             let cancelAction = UIAlertAction(title: "확인", style: .cancel){
@@ -674,15 +642,13 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
     
     // 지역을 클릭했을 경우 지역의 혜택리스트를 보여주는 페이지로 이동하는 메소드
     @objc func selected(_ sender: UIButton) {
-        debugPrint("혜택지도 결괴페이지로 이동")
+        debugPrint("map - 선택한 지역(\(cityXYs[sender.tag].cityName)) 결과 페이지로 이동" )
+        
+        // 로그 기록
         DeviceManager.sharedInstance.sendLog(content: "혜택지도 결괴페이지로 이동", type: type)
         
-        debugPrint("선택한 지역 : \(cityXYs[sender.tag].cityName)")
         let selected : String = cityXYs[sender.tag].cityName
-        
         let params = ["page_number":"2", "local":selected, "userAgent" : DeviceManager.sharedInstance.log]
-        //let params = ["type":"category_search", "keyword":"취업·창업"]
-        
         
         Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
             .validate()
@@ -695,12 +661,14 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                         let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
                         let parseResult = try JSONDecoder().decode(Parse.self, from: data)
                         
+                        // instantiateViewController: toryboard 파일로 부터 데이터를 불러와서 view controller를 생성
+                        // 이 메소드가 호출될 때마다, init(coder: ) method 를 통해 매번 새로운 view controller 인스턴스를 생성한다
                         guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView else{
                             return
                         }
                         
-                        
-                        if(parseResult.Status == "200"){
+                        switch parseResult.Status {
+                        case "200":
                             debugPrint("parseResult.Status:",parseResult.Status)
                             
                             let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
@@ -709,10 +677,10 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                                 let tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
                                 let split = tag.components(separatedBy: ";;")
                                 
+                                // NewResultView 클래스에 있는 items 배열 안에 조회한 혜택 정보들 저장
                                 RVC.items.append(NewResultView.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: selected, parent_category: parseResult.Message[i].parent_category, welf_category: split, tag: parseResult.Message[i].tag))
                                 
-                                
-                                //태그 추가
+                                // 태그 추가
                                 for i in 0..<split.count {
                                     if(!RVC.categoryItems.contains(split[i])){
                                         RVC.categoryItems.append(split[i])
@@ -728,7 +696,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                             // 상세정보 뷰로 이동
                             //self.present(RVC, animated: true, completion: nil)
                             self.navigationController?.pushViewController(RVC, animated: true)
-                        } else {
+                        default:
                             debugPrint("parseResult.Status:",parseResult.Status)
                             
                             let alert = UIAlertController(title: "알림", message: "현재 준비중인 지역입니다.", preferredStyle: .alert)
@@ -737,7 +705,6 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                                 (action : UIAlertAction) -> Void in
                                 alert.dismiss(animated: false)
                             }
-                            
                             
                             alert.addAction(cancelAction)
                             self.present(alert, animated: true, completion: nil)
