@@ -1,12 +1,12 @@
-//
 //  clauseViewController.swift
 //  welfare
 //
 //  Created by 김동현 on 2021/01/26.
 //  Copyright © 2021 com. All rights reserved.
-//
+
 
 import UIKit
+
 
 class clauseViewController: UIViewController {
 
@@ -16,16 +16,12 @@ class clauseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        debugPrint("이용약관 페이지")
 
         
-        print("이용약관 페이지")
-
-        // Do any additional setup after loading the view.
         //최상단 라벨
         let topLabel = UILabel()
         topLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 0  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         topLabel.text = "너의 혜택은 이용약관"
         topLabel.font = UIFont(name: "Jalnan", size:19 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(topLabel)
@@ -33,8 +29,6 @@ class clauseViewController: UIViewController {
         //총칙 라벨
         let generalLabel = UILabel()
         generalLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 40  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         generalLabel.text = "제1장 총칙"
         generalLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(generalLabel)
@@ -50,8 +44,6 @@ class clauseViewController: UIViewController {
         //2번째 조항(약관효력)
         let secLabel = UILabel()
         secLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 190  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         secLabel.text = "제 2조 (약관의 효력 및 변경)"
         secLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(secLabel)
@@ -67,8 +59,6 @@ class clauseViewController: UIViewController {
         //3번째 조항(준칙)
         let thirdLabel = UILabel()
         thirdLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 340  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         thirdLabel.text = "제 3조 (약관 외 준칙)"
         thirdLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(thirdLabel)
@@ -84,8 +74,6 @@ class clauseViewController: UIViewController {
         //4번째 조항(용어의 정의)
         let fourthLabel = UILabel()
         fourthLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 490  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         fourthLabel.text = "제 4조 (용어의 정의)"
         fourthLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(fourthLabel)
@@ -101,8 +89,6 @@ class clauseViewController: UIViewController {
         //5번째 조항(이용계약의 성립)
         let fifthLabel = UILabel()
         fifthLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 640  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         fifthLabel.text = "제5조 (이용계약의 성립)"
         fifthLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(fifthLabel)
@@ -119,8 +105,6 @@ class clauseViewController: UIViewController {
         //6번째 조항(회원정보 사용에 대한 동의))
         let sixthLabel = UILabel()
         sixthLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 790  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         sixthLabel.text = "제6조 (회원정보 사용에 대한 동의)"
         sixthLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(sixthLabel)
@@ -137,8 +121,6 @@ class clauseViewController: UIViewController {
         //7번째 조항(사용자의 정보 보안)
         let seventhLabel = UILabel()
         seventhLabel.frame = CGRect(x: 20 *  DeviceManager.sharedInstance.widthRatio, y: 940  *  DeviceManager.sharedInstance.heightRatio, width: 300 *  DeviceManager.sharedInstance.widthRatio, height: 30 *  DeviceManager.sharedInstance.heightRatio)
-//        settingLabel.text = "계정설정"
-//        settingLabel.font = UIFont(name: "Jalnan", size: 19)
         seventhLabel.text = "제7조 (사용자의 정보 보안)"
         seventhLabel.font = UIFont(name: "Jalnan", size:16 *  DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.addSubview(seventhLabel)
@@ -346,8 +328,6 @@ class clauseViewController: UIViewController {
         nineteenthText.text = "1. 당 사이트는 서비스에 표출된 어떠한 의견이나 정보에 대해 확신이나 대표할 의무가 없으며 회원이나 제3자에 의해 표출된 의견을 승인하거나 반대하거나 수정하지 않습니다. 당 사이트는 어떠한 경우라도 회원이 서비스에 담긴 정보에 의존해 얻은 이득이나 입은 손해에 대해 책임이 없습니다.\n2. 당 사이트는 회원간 또는 회원과 제3자간에 서비스를 매개로 하여 물품거래 혹은 금전적 거래 등과 관련하여 어떠한 책임도 부담하지 아니하고, 회원이 서비스의 이용과 관련하여 기대하는 이익에 관하여 책임을 부담하지 않습니다."
         m_Scrollview.addSubview(nineteenthText)
         
-        //바보짓 지렸다
-        //for i in 0..<
         
         //마지막  조항(관할법원)
         let lastLabel = UILabel()
@@ -381,32 +361,10 @@ class clauseViewController: UIViewController {
         
         //safelayout 문제로 안됨
         m_Scrollview.frame = CGRect(x: 0, y: 20 *  DeviceManager.sharedInstance.heightRatio, width: DeviceManager.sharedInstance.width, height: DeviceManager.sharedInstance.height)
-        //
-        //            m_Scrollview.contentSize = CGSize(width:screenWidth, height: 1242 *  Int(DeviceManager.sharedInstance.heightRatio))
         
-        //m_Scrollview.frame = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)
         //태그숫자에 따라 스크롤뷰 길이 변동되게 추후 수정
         var contentHeight : Int =  Int(2790 * DeviceManager.sharedInstance.heightRatio)
         m_Scrollview.contentSize = CGSize(width:DeviceManager.sharedInstance.width, height: 3100 * DeviceManager.sharedInstance.heightRatio)
         self.view.addSubview(m_Scrollview)
-        
-
-        
-        
-        
-        
-        
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

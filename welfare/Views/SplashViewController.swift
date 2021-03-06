@@ -7,6 +7,7 @@
 import UIKit
 import Alamofire
 
+
 class SplashViewController: UIViewController {
     
     
@@ -31,6 +32,7 @@ class SplashViewController: UIViewController {
         set()
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -38,14 +40,11 @@ class SplashViewController: UIViewController {
     
     //로그인
     func Login(parameters: Parameters){
-        
-        //서버통신
         Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: parameters)
             .validate()
             .responseJSON { [self] response in
                 
                 //메인화면으로 이동한다
-                
                 switch response.result {
                 case .success(let value):
                     do {
@@ -57,42 +56,38 @@ class SplashViewController: UIViewController {
                             
                             LoginManager.sharedInstance.loginId = parseResult.login_id!
                             
-                            print("로그인 성공")
-                            print("관심사 입력여부:\(parseResult.Check!)")
-                            print("로그인 아이디 : \(parseResult.login_id)")
+                            debugPrint("로그인 성공")
                             LoginManager.sharedInstance.memberGetSession()
                             
                             moveMain()
                         }else{
                             moveMain()
                         }
-                        
                     }
                     catch let DecodingError.dataCorrupted(context) {
-                        print(context)
+                        debugPrint(context)
                     } catch let DecodingError.keyNotFound(key, context) {
-                        print("Key '\(key)' not found:", context.debugDescription)
-                        print("codingPath:", context.codingPath)
+                        debugPrint("Key '\(key)' not found:", context.debugDescription)
+                        debugPrint("codingPath:", context.codingPath)
                     } catch let DecodingError.valueNotFound(value, context) {
-                        print("Value '\(value)' not found:", context.debugDescription)
-                        print("codingPath:", context.codingPath)
+                        debugPrint("Value '\(value)' not found:", context.debugDescription)
+                        debugPrint("codingPath:", context.codingPath)
                     } catch let DecodingError.typeMismatch(type, context)  {
-                        print("Type '\(type)' mismatch:", context.debugDescription)
-                        print("codingPath:", context.codingPath)
+                        debugPrint("Type '\(type)' mismatch:", context.debugDescription)
+                        debugPrint("codingPath:", context.codingPath)
                     } catch {
-                        print("error: ", error)
+                        debugPrint("error: ", error)
                     }        
                 case .failure(let error):
-                    print(error)
+                    debugPrint(error)
                 }
-                
             }//resoponse 종료괄호
     }
     
     
+    //로그인 및 기본정보 입력여부 체크후 메인화면으로 이동
     func moveMain(){
-        print("메인이동")
-        //로그인 및 기본정보 입력여부 체크후 메인화면으로 이동
+        debugPrint("메인이동")
         
         let mainTabBar = self.storyboard?.instantiateViewController(withIdentifier: "tabBarController") as! UITabBarController
         mainTabBar.modalPresentationStyle = .fullScreen
@@ -107,39 +102,27 @@ class SplashViewController: UIViewController {
         logoLabel.frame = CGRect(x: 0, y: view.bounds.height/2 - 50, width: view.bounds.width, height: 100)
         logoLabel.textAlignment = .center
         logoLabel.textColor = UIColor.white
-        
         logoLabel.text = "UrBene_Fit"
         logoLabel.font = UIFont(name: "Bowhouse-Black", size: 60  *  DeviceManager.sharedInstance.heightRatio)
         self.view.addSubview(logoLabel)
-        print("스플래쉬")
+        debugPrint("스플래쉬")
         
         
         //이정표(메인/다른페이지)로 이동
-        var check = UserDefaults.standard.string(forKey: "check")
-        var platform = UserDefaults.standard.string(forKey: "platform")
-        var identifier = UserDefaults.standard.string(forKey: "identifier")
-        var fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
+        let check = UserDefaults.standard.string(forKey: "check")
+        let platform = UserDefaults.standard.string(forKey: "platform")
+        let fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
         
         
-        //로그인을 한 적 없으면
-        if(platform == nil){
-            print("비로그인 상태")
-            
+        switch platform {
+        case nil: // 비로그인 상태
             moveMain()
             LoginManager.sharedInstance.getSession()
-            
-            //애플로그인인지 다른로그인지에 따라 구분해서 확인한다.
-        }else if(platform == "apple"){
-            print("ios자동 로그인함")
-            
+        case "apple": // ios자동 로그인함
             PARAM = [ "platform":platform!, "identifier":check!, "fcm_token":fcmToken!,"osType": "ios"]
-            
             Login(parameters: PARAM)
-            // 다른 플랫폼의 경우
-        }else{
-            // print("다른 플랫폼 자동 로그인함")
+        default:// 다른 플랫폼의 경우
             PARAM = ["platform":platform!,"email":check!, "fcm_token":fcmToken!,"osType": "ios"]
-            
             Login(parameters: PARAM)
         }
     }

@@ -1,8 +1,3 @@
-import UIKit
-import Alamofire
-import Kingfisher
-
-
 /*
  1.리스트 결과화면 또는 리뷰 작성/수정/뒤로가기 또는 알림선택을 통해서 상세페이지 화면으로 들ㅇ어온다.
  
@@ -16,6 +11,11 @@ import Kingfisher
  리뷰는 작성/수정/삭제/처음 들어올 경우 리뷰정보를 갱신한다.
  생명주기에 따라 변수가 새로 호출되지않거나, 기존의 정보를 계속 가지고 있는 경우
  */
+import UIKit
+import Alamofire
+import Kingfisher
+
+
 class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegate{
     
     //카테고리 결과페이지에서 선택한 정책을 저장하는 변수
@@ -964,11 +964,8 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
         let  badPv: UIProgressView = UIProgressView(frame: CGRect(x:220 *  DeviceManager.sharedInstance.widthRatio, y:455 *  DeviceManager.sharedInstance.heightRatio, width:100  *  DeviceManager.sharedInstance.widthRatio, height:30 *  DeviceManager.sharedInstance.heightRatio))
         badPv.progressTintColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
         badPv.trackTintColor = UIColor.lightGray
-        // Set the coordinates.
         badPv.layer.position = CGPoint(x: 220 *  DeviceManager.sharedInstance.widthRatio, y: 475 *  DeviceManager.sharedInstance.heightRatio)
-        // Set the height of the bar (1.0 times horizontally, 2.0 times vertically).
         badPv.transform = CGAffineTransform(scaleX: 1.0, y: 2.0)
-        // Set the progress degree (0.0 to 1.0).
         badPv.progress = 0.0 // Add an animation.
         badPv.setProgress(Float(helpLessRatio), animated: true)
         reviewGradeView.addSubview(badPv)

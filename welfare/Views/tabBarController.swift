@@ -21,9 +21,10 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
         super.viewWillAppear(animated)
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("텝바 로드")
+        debugPrint("텝바 로드")
         
         
         // Observer 등록
@@ -36,7 +37,7 @@ class tabBarController: UITabBarController, UITabBarControllerDelegate {
             [unowned self] notification in
             debugPrint("tabBarController - 개인정보 foreground로 돌아오는 경우 ")
             if(LoginManager.sharedInstance.push){
-                print("푸쉬알람으로 진입")
+                debugPrint("푸쉬알람으로 진입")
                 LoginManager.sharedInstance.push = false
                 
                 // ??

@@ -18,7 +18,6 @@ class privacyPolicyViewController: UIViewController {
     var privacyTitle : [String] = ["수집하는 회원의 개인정보","개인정보의 수집 및 이용목적","개인정보를 수집하는 방법","개인정보의 보유 및 이용기간","개인정보 파기절차 및 방법","회원 개인정보 정확성을 위한 내용","회원의 개인정보안전을 위해 취해질 수 있는 서비스 일시 중단조치","제 3자와의 정보공유 및 제공 관련 내용","회원의 개인정보 비밀유지를 위한 내용","회원이 자신의 개인정보를 보호하기 위해 알아야 할 사항","인지 못한 회원의 개인정보 및 기타 불만사항에 관한 처리","개인정보 취급자의 제한에 관한 내용","개인정보 취급자의 제한에 관한 내용","개인정보관리책임자 및 담당자의 연락처","고지의 의무","개인정보 자동수집 장치의 설치·운영 및 거부"]
     
     //서브타이틀
-    
     var subTitle : [String] = ["수집하는 개인정보의 항목/개인정보 수집방법","알림 서비스를 위해 일부 회원정보를 활용합니다./회원관리를 위해 일부 회원 정보를 활용합니다./마케팅 및 광고에 활용"," ","회사 내부 방침에 의한 정보보유 사유/회원이 직접 개인정보의 보존을 요청한 경우 또는 회사가 개별적으로 회원의 동의를 얻은 경우/관련법령에 의한 정보보유 사유","파기절차/파기기준/파기방법회원"," "," "," "," "," "," "," "," "," ","회사는 이용자에게 특화된 맞춤서비스를 제공하기 위해서 이용자들의 정보를 수시로 저장하고 찾아내는 '세션(session)' 또는 '쿠키(cookie)' 등을 운용합니다./이용자가 쿠키 설치를 거부하는 경우 로그인이 필요한 일부 서비스 이용에 어려움이 있을 수 있습니다."," "]
     
     //내용
@@ -482,29 +481,8 @@ class privacyPolicyViewController: UIViewController {
         m_Scrollview.addSubview(Label56)
 
 
-        
-        
-    
-        
-        
-            
         m_Scrollview.frame = CGRect(x: 0, y: 20 *  DeviceManager.sharedInstance.heightRatio, width: DeviceManager.sharedInstance.width, height: DeviceManager.sharedInstance.height)
         m_Scrollview.contentSize = CGSize(width:DeviceManager.sharedInstance.width, height: 6200 * DeviceManager.sharedInstance.heightRatio)
         self.view.addSubview(m_Scrollview)
-
-        
-        
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
