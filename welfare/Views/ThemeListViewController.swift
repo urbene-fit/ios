@@ -29,30 +29,7 @@ class ThemeListViewController: UIViewController {
         createNavUI()
         
         // 테마 키워드 - 카테고리 버튼 UI 생성
-        for i in 0..<12 {
-            let xInt = i % 3
-            let yInt = ceil(Double((i)/3))
-            
-            let button = UIButton(type: .system)
-            button.frame = CGRect(x: CGFloat((20 + (130 * xInt)))  * DeviceManager.sharedInstance.widthRatio, y: CGFloat(240 + (60 * yInt))  * DeviceManager.sharedInstance.heightRatio, width: 110 * DeviceManager.sharedInstance.widthRatio, height: 40 * DeviceManager.sharedInstance.heightRatio)
-            buttons.append(button)
-            
-            button.tag = i
-            button.setTitle("# \(LabelName[i])", for: .normal)
-            button.tintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-            button.titleLabel?.font = UIFont(name: "Jalnan", size: 12 *  DeviceManager.sharedInstance.heightRatio)!
-            button.setTitleColor(UIColor.white, for: .normal)
-            button.backgroundColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-            button.layer.cornerRadius = 17 *  DeviceManager.sharedInstance.heightRatio
-            button.layer.borderWidth = 0.1
-            button.layer.borderColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1).cgColor
-            
-            //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-            button.addTarget(self, action: #selector(self.move), for: .touchUpInside)
-            
-            //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들에 대해 변형해준다.
-            self.view.addSubview(button)
-        }
+        createListUI()
     }
     
     // 테마 키워드 카테고리 버튼 누를 경우 실행
@@ -62,13 +39,13 @@ class ThemeListViewController: UIViewController {
     
     
     // 홈 화면 네비게이션 바 생성
-    private func createNavUI() {
+    func createNavUI() {
         debugPrint("ThemeListViewController의 setBarButton")
         
-        // 네비게이션바 색 변경 - 참고: https://hyerios.tistory.com/46
-//        self.navigationController?.navigationBar.barTintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-//        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)]
-//        self.navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)]
+        //        self.navigationController?.navigationBar.topItem?.titleView = nil
+        //        self.navigationController?.navigationBar.shadowImage = nil
+        //        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        //        self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         
         
         let naviLabel = UILabel()
@@ -77,6 +54,44 @@ class ThemeListViewController: UIViewController {
         naviLabel.textColor = .white
         naviLabel.text = "혜택모아"
         naviLabel.font = UIFont(name: "Jalnan", size: 25  *  DeviceManager.sharedInstance.heightRatio)
-        self.navigationController?.navigationBar.topItem?.titleView = naviLabel
+        
+        // 참고: https://philosopher-chan.tistory.com/1083?category=903020
+        
+        self.navigationItem.title = "혜택모아"
+        self.navigationController?.navigationBar.barTintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
+        
+    }
+    
+    
+    // 테마 키워드 - 카테고리 버튼 UI 생성
+    func createListUI() {
+        for i in 0..<12 {
+            let xInt = i % 3
+            let yInt = ceil(Double((i)/3))
+            
+            let button = UIButton(type: .system)
+            button.frame = CGRect(x: CGFloat((20 + (130 * xInt)))  * DeviceManager.sharedInstance.widthRatio,
+                                  // y: CGFloat(240 + (60 * yInt))  * DeviceManager.sharedInstance.heightRatio,
+                                  y: 0,
+                                  width: 110 * DeviceManager.sharedInstance.widthRatio, height: 40 * DeviceManager.sharedInstance.heightRatio)
+            buttons.append(button)
+            
+            button.tag = i
+            button.setTitle("# \(LabelName[i])", for: .normal)
+            button.tintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
+            button.titleLabel?.font = UIFont(name: "Jalnan", size: 12 *  DeviceManager.sharedInstance.heightRatio)!
+            button.backgroundColor = UIColor.white
+            
+            button.setTitleColor(UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1), for: .normal)
+            button.layer.cornerRadius = 17 *  DeviceManager.sharedInstance.heightRatio
+            button.layer.borderWidth = 2
+            button.layer.borderColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1).cgColor
+            
+            //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
+            button.addTarget(self, action: #selector(self.move), for: .touchUpInside)
+            
+            //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들에 대해 변형해준다.
+            self.view.addSubview(button)
+        }
     }
 }

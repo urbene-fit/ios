@@ -171,6 +171,20 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     private func setBarButton() {
         debugPrint("검색 - setBarButton 실행")
         
+        self.navigationController?.navigationBar.topItem?.titleView = nil
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "혜택모아", style: .plain, target: self, action: nil)
+        
+        // 뒤로가기 폰트 설정
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Jalnan", size: 20)!], for: .normal)
+        
+        // 백버튼 색상 변경
+        self.navigationController?.navigationBar.tintColor = .white
+
+        
+        
         // 네비게이션바 색 변경 - 참고: https://hyerios.tistory.com/46
         self.navigationController?.navigationBar.barTintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)]
@@ -288,7 +302,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         
         //뷰 이동
-        RVC.modalPresentationStyle = .fullScreen
+        RVC.modalPresentationStyle = .overFullScreen
         
         // 상세정보 뷰로 이동
         self.navigationController?.pushViewController(RVC, animated: true)

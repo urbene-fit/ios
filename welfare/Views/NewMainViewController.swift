@@ -142,10 +142,6 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     }
     
     
-    
-    
-    
-    
     var items: [item] = []
     
     
@@ -1006,18 +1002,7 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         print("현재 페이지 : \(nowPage)")
         
     }
-    
-    //콜렉션뷰 셀크기 조정
-    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
-    //     {
-    //        return CGSize(width: 300.0, height: 300.0)
-    //     }
-    
 }
-
-
-
-
 
 
 // 유튜브 영상 클릭시 매개변수로 값 받기 위한 목적으로 클래스 생성
@@ -1067,9 +1052,6 @@ extension NewMainViewController: UIPageViewControllerDataSource {
         let nextVC = instantiateViewController(index: nextIndex, color: backgroundColors[nextIndex])
         return nextVC
     }
-    
-    
-    
 }
 
 extension NewMainViewController: UIPageViewControllerDelegate {
@@ -1162,11 +1144,6 @@ class CarouselLayout: UICollectionViewFlowLayout {
     
     private func setupLayout() {
         guard let collectionView = self.collectionView else {return}
-        
-        //        let collectionViewSize = collectionView.bounds.size
-        //
-        //        let xInset = (collectionViewSize.width - self.itemSize.width) / 2
-        //        let yInset = (collectionViewSize.height - self.itemSize.height) / 2
         
         
         let xInset = (DeviceManager.sharedInstance.width - self.itemSize.width) / 2
