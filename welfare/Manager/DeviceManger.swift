@@ -80,7 +80,7 @@ class DeviceManager {
         let headers = ["LoginToken": LoginManager.sharedInstance.token,"SessionId": LoginManager.sharedInstance.sessionID]
         
         
-        Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        Alamofire.request("https://www.hyemo.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
                 print("로그쌓음")

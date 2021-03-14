@@ -273,7 +273,7 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
         Img.tintColor = .clear
         shareBtn.addSubview(Img)
         shareBtn.addTarget(self, action: #selector(self.sendlink), for: .touchUpInside)
-        m_Scrollview.addSubview(shareBtn)
+        //m_Scrollview.addSubview(shareBtn)
         
         
         // 상단 - 메뉴 버튼(내용,리뷰) UI 추가
@@ -345,7 +345,7 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
         
         //서버에 혜택 상세내용을 요청
         let params = ["type":"detail", "local" : selectedLocal , "welf_name" : selectedPolicy,  "login_token" : LoginManager.sharedInstance.token]
-        Alamofire.request("https://www.urbene-fit.com/welf", method: .get, parameters: params)
+        Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
             .validate()
             .responseJSON { [self] response in
                 switch response.result {
@@ -651,7 +651,7 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
         
         // 혜택 리뷰 정보 요청, 1번 작업
         let parameters : Parameters = ["type": "list","welf_id": welf_id]
-        Alamofire.request("https://www.urbene-fit.com/review", method: .get, parameters: parameters)
+        Alamofire.request("https://www.hyemo.com/review", method: .get, parameters: parameters)
             .validate()
             .responseJSON { [self] response in
                 switch response.result {
@@ -1200,7 +1200,7 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
             debugPrint("삭제id: \(id)")
             
             let parameters  : Parameters = ["login_token": LoginManager.sharedInstance.token,"review_id": review_id, "type" : "delete"]
-            Alamofire.request("https://www.urbene-fit.com/review", method: .post, parameters: parameters)
+            Alamofire.request("https://www.hyemo.com/review", method: .post, parameters: parameters)
                 .validate()
                 .responseJSON { response in
                     switch response.result {
@@ -1249,9 +1249,9 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
             feedTemplateBuilder.content = KMTContentObject(builderBlock: { (contentBuilder) in
                 contentBuilder.title = "당신이 놓치고 있는 혜택"
                 contentBuilder.desc = self.selectedPolicy
-                contentBuilder.imageURL = URL(string: "https://www.urbene-fit.com/images/about_1.jpg")!
+                contentBuilder.imageURL = URL(string: "https://www.hyemo.com/images/about_1.jpg")!
                 contentBuilder.link = KMTLinkObject(builderBlock: { (linkBuilder) in
-                    linkBuilder.mobileWebURL = URL(string: "https://www.urbene-fit.com")
+                    linkBuilder.mobileWebURL = URL(string: "https://www.hyemo.com")
                 })
             })
             
@@ -1266,7 +1266,7 @@ class NewDetailView: UIViewController, UITableViewDataSource, UITableViewDelegat
             feedTemplateBuilder.addButton(KMTButtonObject(builderBlock: { (buttonBuilder) in
                 buttonBuilder.title = "웹으로 보기"
                 buttonBuilder.link = KMTLinkObject(builderBlock: { (linkBuilder) in
-                    linkBuilder.mobileWebURL = URL(string: "https://www.urbene-fit.com")
+                    linkBuilder.mobileWebURL = URL(string: "https://www.hyemo.com")
                 })
             }))
             feedTemplateBuilder.addButton(KMTButtonObject(builderBlock: { (buttonBuilder) in

@@ -43,6 +43,11 @@
 		E394BC4A24D07EC000B77E48 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E394BC4824D07EC000B77E48 /* Main.storyboard */; };
 		E394BC4C24D07EC300B77E48 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E394BC4B24D07EC300B77E48 /* Assets.xcassets */; };
 		E394BC4F24D07EC300B77E48 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E394BC4D24D07EC300B77E48 /* LaunchScreen.storyboard */; };
+		E3969DE525FDE6BD009AE97F /* newInterestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3969DE425FDE6BD009AE97F /* newInterestViewController.swift */; };
+		E3969DE725FDE6E8009AE97F /* PushManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3969DE625FDE6E8009AE97F /* PushManger.swift */; };
+		E3969E0825FDE8A1009AE97F /* recommendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3969E0725FDE8A1009AE97F /* recommendCell.swift */; };
+		E3969E0A25FDE8BA009AE97F /* interestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3969E0925FDE8BA009AE97F /* interestCell.swift */; };
+		E3969E0E25FDEB06009AE97F /* present.json in Resources */ = {isa = PBXBuildFile; fileRef = E3969E0D25FDEB05009AE97F /* present.json */; };
 		E3AE09EB2590B6F5000BA79A /* DeviceManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3AE09EA2590B6F5000BA79A /* DeviceManger.swift */; };
 		E3B08FE7259A2B5D00978FE2 /* LoginManger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B08FE6259A2B5D00978FE2 /* LoginManger.swift */; };
 		E3B08FE9259B530B00978FE2 /* newInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B08FE8259B530B00978FE2 /* newInfoViewController.swift */; };
@@ -119,6 +124,11 @@
 		E394BC4B24D07EC300B77E48 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E394BC4E24D07EC300B77E48 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E394BC5024D07EC300B77E48 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E3969DE425FDE6BD009AE97F /* newInterestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = newInterestViewController.swift; sourceTree = "<group>"; };
+		E3969DE625FDE6E8009AE97F /* PushManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushManger.swift; sourceTree = "<group>"; };
+		E3969E0725FDE8A1009AE97F /* recommendCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = recommendCell.swift; sourceTree = "<group>"; };
+		E3969E0925FDE8BA009AE97F /* interestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = interestCell.swift; sourceTree = "<group>"; };
+		E3969E0D25FDEB05009AE97F /* present.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = present.json; sourceTree = "<group>"; };
 		E3AE09EA2590B6F5000BA79A /* DeviceManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManger.swift; sourceTree = "<group>"; };
 		E3B08FE6259A2B5D00978FE2 /* LoginManger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginManger.swift; sourceTree = "<group>"; };
 		E3B08FE8259B530B00978FE2 /* newInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = newInfoViewController.swift; sourceTree = "<group>"; };
@@ -167,6 +177,7 @@
 			children = (
 				E3AE09EA2590B6F5000BA79A /* DeviceManger.swift */,
 				E3B08FE6259A2B5D00978FE2 /* LoginManger.swift */,
+				E3969DE625FDE6E8009AE97F /* PushManger.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -237,6 +248,7 @@
 				E361FB5625748E7A0008F67E /* tabBarController.swift */,
 				E3E079DF2599C01B0031F0E8 /* SplashViewController.swift */,
 				E3ED0C052591BA9D00DF17AA /* NewMainViewController.swift */,
+				E3969DE425FDE6BD009AE97F /* newInterestViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -259,6 +271,7 @@
 		E394BC3624D07EC000B77E48 = {
 			isa = PBXGroup;
 			children = (
+				E3969E0D25FDEB05009AE97F /* present.json */,
 				E3B242762575F432009FA416 /* KakaoOpenSDK-Bridging-Header.h */,
 				E394BC4124D07EC000B77E48 /* welfare */,
 				E394BC4024D07EC000B77E48 /* Products */,
@@ -278,6 +291,7 @@
 		E394BC4124D07EC000B77E48 /* welfare */ = {
 			isa = PBXGroup;
 			children = (
+				E3969DD925FDE3C0009AE97F /* collection */,
 				E3586D0125CBD84A0000D817 /* Module */,
 				E394BC5024D07EC300B77E48 /* Info.plist */,
 				E3586CDD25CBC6E10000D817 /* delegate */,
@@ -304,6 +318,15 @@
 				83398A0C3E6FAC31E23F3278 /* Pods_welfare.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E3969DD925FDE3C0009AE97F /* collection */ = {
+			isa = PBXGroup;
+			children = (
+				E3969E0725FDE8A1009AE97F /* recommendCell.swift */,
+				E3969E0925FDE8BA009AE97F /* interestCell.swift */,
+			);
+			path = collection;
 			sourceTree = "<group>";
 		};
 		E3B242772575F4BB009FA416 /* etc */ = {
@@ -411,6 +434,7 @@
 				E3E079E52599CC120031F0E8 /* Bowhouse-Bold.otf in Resources */,
 				E3F40B88255A88AE00B4D4EE /* tvN Enjoystories Bold.ttf in Resources */,
 				E3E079E72599CC120031F0E8 /* Bowhouse-Regular.otf in Resources */,
+				E3969E0E25FDEB06009AE97F /* present.json in Resources */,
 				E394BC4A24D07EC000B77E48 /* Main.storyboard in Resources */,
 				E3E079E62599CC120031F0E8 /* Bowhouse-Black.otf in Resources */,
 			);
@@ -490,7 +514,9 @@
 				E3197B7F257F9AB50001C50F /* privateViewController.swift in Sources */,
 				E35B58D125AD56D50052621B /* YtbCell.swift in Sources */,
 				E38DE7A9259DBB4A00A3DB62 /* NewResultCell.swift in Sources */,
+				E3969E0825FDE8A1009AE97F /* recommendCell.swift in Sources */,
 				E3E079E02599C01B0031F0E8 /* SplashViewController.swift in Sources */,
+				E3969DE525FDE6BD009AE97F /* newInterestViewController.swift in Sources */,
 				E320D22825C0392700F9B66D /* clauseViewController.swift in Sources */,
 				E361FB5725748E7B0008F67E /* tabBarController.swift in Sources */,
 				E3B24286257640D7009FA416 /* LoginViewController.swift in Sources */,
@@ -505,10 +531,12 @@
 				E321CC6625AC1B6F00D1BAC1 /* NewReview.swift in Sources */,
 				E3ED0C08259331F400DF17AA /* ReviewBtnImgCell.swift in Sources */,
 				E394BC4524D07EC000B77E48 /* SceneDelegate.swift in Sources */,
+				E3969E0A25FDE8BA009AE97F /* interestCell.swift in Sources */,
 				E3B08FE7259A2B5D00978FE2 /* LoginManger.swift in Sources */,
 				E361FB4F256E6C060008F67E /* mapTestViewController.swift in Sources */,
 				E37F8E2525E6051000E3957C /* searchViewController.swift in Sources */,
 				E37B2DE025B2DF51000FE96C /* NewModdableReview.swift in Sources */,
+				E3969DE725FDE6E8009AE97F /* PushManger.swift in Sources */,
 				E35DB19225A1941400D19898 /* NewDetailView.swift in Sources */,
 				E3197B78257CBF680001C50F /* notifyListViewController.swift in Sources */,
 			);
@@ -658,7 +686,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = welfare/welfare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = JUH3Q3SWFH;
+				DEVELOPMENT_TEAM = ZL4VV288VW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -751,7 +779,7 @@
 					"\"UserNotifications\"",
 					"-all_Load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourBenefit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UrBeneFit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "KakaoOpenSDK-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -768,7 +796,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = welfare/welfare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = JUH3Q3SWFH;
+				DEVELOPMENT_TEAM = ZL4VV288VW;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -861,7 +889,7 @@
 					"\"UserNotifications\"",
 					"-all_Load",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourBenefit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UrBeneFit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "KakaoOpenSDK-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

@@ -450,7 +450,7 @@ class NewReviewlViewController: UIViewController, UITextViewDelegate, UITextFiel
             ]
             
             //서버통신
-            Alamofire.request("https://www.urbene-fit.com/review", method: .post, parameters: PARAM)
+            Alamofire.request("https://www.hyemo.com/review", method: .post, parameters: PARAM)
                 .validate()
                 .responseJSON { [self] response in
                     
@@ -537,7 +537,7 @@ class NewReviewlViewController: UIViewController, UITextViewDelegate, UITextFiel
             ]
             
             //서버통신
-            Alamofire.request("https://www.urbene-fit.com/review", method: .post, parameters: PARAM)
+            Alamofire.request("https://www.hyemo.com/review", method: .post, parameters: PARAM)
                 .validate()
                 .responseJSON { response in
                     

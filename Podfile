@@ -18,7 +18,8 @@ pod 'Firebase/Core'
 pod "youtube-ios-player-helper", "~> 1.0.2"
 pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
 pod 'DeviceKit', '~> 4.0'
-
+pod 'lottie-ios'
+pod 'Gemini'
 
 # add pods for desired Firebase products
 # https://firebase.google.com/docs/ios/setup#available-pods

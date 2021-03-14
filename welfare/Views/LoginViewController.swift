@@ -212,7 +212,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
             ]
             
             //서버통신
-            Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: PARAM)
+            Alamofire.request("https://www.hyemo.com/login", method: .post, parameters: PARAM)
                 .validate()
                 .responseJSON { response in
                     
@@ -238,7 +238,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                                     
                                     DeviceManager.sharedInstance.sendLog(content: "기본정보 입력페이지로 이동", type: self.type)
                                     
-                                    guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInfoViewController") as? newInfoViewController else{
+                                    guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInterestViewController") as? newInterestViewController else{
                                         return
                                     }
                                     
@@ -432,7 +432,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                     ]
                     
                     //서버통신
-                    Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: PARAM)
+                    Alamofire.request("https://www.hyemo.com/login", method: .post, parameters: PARAM)
                         .validate()
                         .responseJSON { [self] response in
                             
@@ -456,7 +456,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                                             DeviceManager.sharedInstance.sendLog(content: "기본정보 입력페이지로 이동",type: self.type)
                                             debugPrint("기본정보 입력페이지로 이동")
                                             
-                                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInfoViewController") as? newInfoViewController else{
+                                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInterestViewController") as? newInterestViewController else{
                                                 return
                                             }
                                             
@@ -514,7 +514,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                     
                     
                     //서버통신
-                    Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: PARAM)
+                    Alamofire.request("https://www.hyemo.com/login", method: .post, parameters: PARAM)
                         .validate()
                         .responseJSON { response in
                             
@@ -538,7 +538,7 @@ class LoginViewController: UIViewController, ASAuthorizationControllerDelegate, 
                                             DeviceManager.sharedInstance.sendLog(content: "기본정보 입력페이지로 이동", type: self.type)
                                             debugPrint("기본정보 입력페이지로 이동")
                                             
-                                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInfoViewController") as? newInfoViewController else{
+                                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "newInterestViewController") as? newInterestViewController else{
                                                 return
                                             }
                                             

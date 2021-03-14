@@ -178,7 +178,7 @@ class tagSelectViewController: UIViewController {
             
             
             let parameters = ["login_token": LoginManager.sharedInstance.token,"type":"interest", "interest":string]
-            Alamofire.request("https://www.urbene-fit.com/user", method: .put, parameters: parameters)
+            Alamofire.request("https://www.hyemo.com/user", method: .put, parameters: parameters)
                 .validate()
                 .responseJSON { response in
                     switch response.result {

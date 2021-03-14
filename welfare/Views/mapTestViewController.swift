@@ -439,7 +439,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
                 //해당지역의 정책갯수를 서버로부터 받아온다.
                 let parameters = ["local": city, "page_number": "1"]
                 
-                Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: parameters)
+                Alamofire.request("https://www.hyemo.com/map", method: .get, parameters: parameters)
                     .validate()
                     .responseJSON { [self] response in
                         
@@ -564,7 +564,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         
         let params = ["page_number":"2", "local":"경기", "userAgent" : DeviceManager.sharedInstance.log]
         
-        Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
+        Alamofire.request("https://www.hyemo.com/map", method: .get, parameters: params)
             .validate()
             .responseJSON { response in
                 switch response.result {
@@ -650,7 +650,7 @@ class mapTestViewController: UIViewController, CLLocationManagerDelegate, MKMapV
         let selected : String = cityXYs[sender.tag].cityName
         let params = ["page_number":"2", "local":selected, "userAgent" : DeviceManager.sharedInstance.log]
         
-        Alamofire.request("https://www.urbene-fit.com/map", method: .get, parameters: params)
+        Alamofire.request("https://www.hyemo.com/map", method: .get, parameters: params)
             .validate()
             .responseJSON { response in
                 switch response.result {

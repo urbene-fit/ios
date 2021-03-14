@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>UrBeneFit</string>
+	<string>혜택모아</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -35,7 +35,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao4eff32acd98a158f8ac354224bbc53d9</string>
+				<string>kakao48ba6b88ff463ad2fed9932cdb356d48</string>
 			</array>
 		</dict>
 	</array>
@@ -52,7 +52,7 @@
 	<key>GoogleUtilitiesAppDelegateProxyEnabled</key>
 	<false/>
 	<key>KAKAO_APP_KEY</key>
-	<string>4eff32acd98a158f8ac354224bbc53d9</string>
+	<string>48ba6b88ff463ad2fed9932cdb356d48</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -117,6 +117,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>

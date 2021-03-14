@@ -40,7 +40,7 @@ class SplashViewController: UIViewController {
     
     //로그인
     func Login(parameters: Parameters){
-        Alamofire.request("https://www.urbene-fit.com/login", method: .post, parameters: parameters)
+        Alamofire.request("https://www.hyemo.com/login", method: .post, parameters: parameters)
             .validate()
             .responseJSON { [self] response in
                 

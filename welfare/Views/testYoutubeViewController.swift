@@ -74,7 +74,7 @@ class testYoutubeViewController: UIViewController, UITableViewDelegate, UITableV
         
         
         //연관영상 목록 받아오기, 유튜브 정보 받아오기
-        Alamofire.request("https://www.urbene-fit.com/youtube", method: .get)
+        Alamofire.request("https://www.hyemo.com/youtube", method: .get)
             .validate()
             .responseJSON { [self] response in
                 switch response.result {

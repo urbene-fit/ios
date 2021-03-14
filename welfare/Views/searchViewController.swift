@@ -211,7 +211,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         let search : String = seachBar.text!
         let params = ["type":"search", "keyword":search, "userAgent" : DeviceManager.sharedInstance.log]
-        Alamofire.request("https://www.urbene-fit.com/welf", method: .get, parameters: params)
+        Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
             .validate()
             .responseJSON { response in
                 switch response.result {
@@ -299,7 +299,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         debugPrint("검색화면 - move() 실헹, 결과페이지로 이동하는 버튼 클릭")
         
         let parameters = ["type":"category_search", "keyword":LabelName[sender.tag], "userAgent" : DeviceManager.sharedInstance.log]
-        Alamofire.request("https://www.urbene-fit.com/welf", method: .get, parameters: parameters)
+        Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: parameters)
             .validate()
             .responseJSON { response in
                 switch response.result {

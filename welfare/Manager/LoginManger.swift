@@ -47,7 +47,7 @@ class LoginManager {
         ]
         
         
-        Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        Alamofire.request("https://www.hyemo.com/log", method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
                 
@@ -102,13 +102,13 @@ class LoginManager {
         ]
         
         
-        Alamofire.request("https://www.urbene-fit.com/log", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+        Alamofire.request("https://www.hyemo.com/log", method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
             .validate()
             .responseJSON { (response) in
                 
                 print("세션받는 메소드")
                 
-                //        Alamofire.request("https://www.urbene-fit.com/log", method: .get, parameters: parameters)
+                //        Alamofire.request("https://www.hyemo.com/log", method: .get, parameters: parameters)
                 //            .validate()
                 //            .responseJSON {  response in
                 //

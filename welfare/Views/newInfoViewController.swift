@@ -480,7 +480,7 @@ class newInfoViewController: UIViewController, UIPickerViewDelegate, UIPickerVie
                 
                 //서버로 입력한 개인정보를 전송
                 let parameters = ["login_token": LoginManager.sharedInstance.token, "nickName":nick,"age" : age, "gender" : selectedGender, "city" : selectedArea]
-                Alamofire.request("https://www.urbene-fit.com/user", method: .post, parameters: parameters)
+                Alamofire.request("https://www.hyemo.com/user", method: .post, parameters: parameters)
                     .validate()
                     .responseJSON { response in
                         switch response.result {
