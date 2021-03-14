@@ -15,9 +15,6 @@ import Gemini
 class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBarDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     
     
-
-    
-    
     // 메인 세로 스크롤
     let m_Scrollview = UIScrollView()
     
@@ -111,16 +108,16 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     
     
     //추천리스트를 보여줄 콜렉션 뷰
-//    var bannerView = UICollectionView()
-//    var collectionview = UICollectionView()
-      var cellId = "recommendCell"
+    //    var bannerView = UICollectionView()
+    //    var collectionview = UICollectionView()
+    var cellId = "recommendCell"
     
     var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     //추천아이템
-
+    
     var itemCount : Int = 0
-
+    
     
     
     //자동이동을 위한 타이머
@@ -137,20 +134,20 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     //추천 리스트
     var recommendList: [Personalized] = []
     struct item {
-                var welf_name : String
-                var welf_local : String
-                var welf_category : [String]
-                var tag : String
-
+        var welf_name : String
+        var welf_local : String
+        var welf_category : [String]
+        var tag : String
+        
     }
     
-
     
-
-
-
+    
+    
+    
+    
     var items: [item] = []
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -187,7 +184,7 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         // 홈화면 UI 생성
         configureAutolayouts()
         
-
+        
     }
     
     
@@ -213,9 +210,9 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         let naviLabel = UILabel()
         naviLabel.frame = CGRect(x: 63.8, y: 235.4, width: 118, height: 17.3)
         naviLabel.textAlignment = .center
-//
-//        naviLabel.textColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-//        naviLabel.text = "UrBene_Fit"
+        //
+        //        naviLabel.textColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+        //        naviLabel.text = "UrBene_Fit"
         
         
         naviLabel.textColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
@@ -379,117 +376,117 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         if(LoginManager.sharedInstance.checkInfo && LoginManager.sharedInstance.token != ""){
             debugPrint("키워드 정보 입력되어있을경우")
             
-           //  맞춤 혜택 정보 요청
-                        let parameters = ["type":"customized", "login_token": LoginManager.sharedInstance.token]
-                        Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: parameters)
-                            .validate()
-                            .responseJSON { [self] response in
-                                switch response.result {
-                                case .success(let value):
-                                    do {
-                                        let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
-                                        let result = try JSONDecoder().decode(PersonalizedParse.self, from: data)
-            
-            
-                                        //맞춤정책
-                                        for i in 0..<result.Message.count {
-                                            
-                                            var tag = result.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
-                                            //split
-                                            var arr = tag.components(separatedBy: ";;")
-                                            
-                                            
-                                            
-                                            items.append(NewMainViewController.item.init(welf_name: result.Message[i].welf_name, welf_local: result.Message[i].welf_local, welf_category: arr, tag: result.Message[i].tag))
-                                            
-                                            
-                                            
-                                            
-                                            
-//                                            // Personalized.init() : ?
-//                                            self.PersonalizedList.append(Personalized.init(welf_name: result.Message[i].welf_name, welf_local: result.Message[i].welf_local,
-//                                                                                           welf_category: result.Message[i].welf_category, tag : result.Message[i].tag))
-//
-//                                            let xPosition = (DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) + 30) * CGFloat(i) + 30
-//
-//
-//                                            // 맞춤 혜택 UI
-//                                            let listView = UIView()
-//                                            listView.frame = CGRect(x: xPosition, y: 20 *  heightRatio,
-//                                                                    width: DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio),
-//                                                                    height: 220 *  heightRatio)
-//                                            listView.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-//                                            listView.layer.borderWidth = 1
-//                                            listView.layer.borderColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1).cgColor
-//                                            listView.layer.cornerRadius = 33
-//
-//
-//                                            //정책명
-//                                            let policyName = UILabel()
-//                                            policyName.frame = CGRect(x: 20  *  DeviceManager.sharedInstance.widthRatio, y: 60  *  heightRatio,
-//                                                                      width: 200  *  DeviceManager.sharedInstance.widthRatio,
-//                                                                      height: 120  *  heightRatio)
-//                                            policyName.font = UIFont(name: "Jalnan", size: 20  *  heightRatio)
-//                                            policyName.textColor = UIColor.white
-//                                            policyName.numberOfLines = 6
-//
-//                                            let title = PersonalizedList[i].welf_name.replacingOccurrences(of: " ", with: "\n")
-//                                            policyName.text = title
-//                                            listView.addSubview(policyName)
-//
-//
-//                                            //혜택지역
-//                                            let localName = UILabel()
-//                                            localName.frame = CGRect(x: 20  *  DeviceManager.sharedInstance.widthRatio, y: 20  *  heightRatio,
-//                                                                     width: 200  *  DeviceManager.sharedInstance.widthRatio,
-//                                                                     height: 20  *  heightRatio)
-//                                            localName.font = UIFont(name: "Jalnan", size: 15  *  heightRatio)
-//                                            localName.textColor = UIColor.white
-//                                            localName.text = "#\(PersonalizedList[i].welf_local)"
-//                                            listView.addSubview(localName)
-//
-//
-//                                            //혜택 일러스트
-//                                            let categoryImg = UIImageView()
-//                                            categoryImg.frame = CGRect(x: DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) - (200  *  DeviceManager.sharedInstance.widthRatio), y: 0,
-//                                                                       width: 200  *  DeviceManager.sharedInstance.widthRatio,
-//                                                                       height: 200  *  heightRatio)
-//
-//
-//                                            //일러스트 추가
-//                                            let tag = PersonalizedList[i].welf_category.replacingOccurrences(of: " ", with: "")
-//                                            let arr = tag.components(separatedBy: ";;")
-//                                            let imgName = arr[0]
-//
-//                                            debugPrint("이미지 : \(imgName)")
-//                                            if(imgDic[imgName] != nil){
-//                                                categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
-//                                            }else{
-//                                                categoryImg.setImage(UIImage(named: "AppIcon")!)
-//                                            }
-//                                            listView.addSubview(categoryImg)
-//
-//
-//                                            //각 스크롤의 터치 혹은 스크롤 이벤트를 구분하기 위해 태그값을 준다.
-//                                            // 영상 클릭 이벤트 추가, UITapGestureRecognizer: 싱글탭 또는 멀티탭 제스처 인식
-//                                            let contentListener = PersonalizedClickListener(target: self, action: #selector(self.onCustomizedClicked(sender:)))
-//                                            contentListener.welfName = result.Message[i].welf_name
-//                                            contentListener.welfLocal =  result.Message[i].welf_local
-//                                            listView.addGestureRecognizer(contentListener)
-//
-//
-//                                            //음영처리
-//                                            listView.layer.shadowColor = UIColor.black.cgColor
-//                                            listView.layer.shadowOffset = CGSize(width: 5, height: 5) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
-//                                            listView.layer.shadowOpacity = 1
-//                                            listView.layer.shadowRadius = 1 // 반경?
-//                                            listView.layer.shadowOpacity = 0.5 // alpha값입니다.
-//                                            self.Personalized_scroll.addSubview(listView)
-                                        }
-                                        
-                                        itemCount = items.count
-                                        let layout = CarouselLayout()
-                                            layout.itemSize = CGSize(width: 200, height: 300)
+            //  맞춤 혜택 정보 요청
+            let parameters = ["type":"customized", "login_token": LoginManager.sharedInstance.token]
+            Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: parameters)
+                .validate()
+                .responseJSON { [self] response in
+                    switch response.result {
+                    case .success(let value):
+                        do {
+                            let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                            let result = try JSONDecoder().decode(PersonalizedParse.self, from: data)
+                            
+                            
+                            //맞춤정책
+                            for i in 0..<result.Message.count {
+                                
+                                var tag = result.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
+                                //split
+                                var arr = tag.components(separatedBy: ";;")
+                                
+                                
+                                
+                                items.append(NewMainViewController.item.init(welf_name: result.Message[i].welf_name, welf_local: result.Message[i].welf_local, welf_category: arr, tag: result.Message[i].tag))
+                                
+                                
+                                
+                                
+                                
+                                //                                            // Personalized.init() : ?
+                                //                                            self.PersonalizedList.append(Personalized.init(welf_name: result.Message[i].welf_name, welf_local: result.Message[i].welf_local,
+                                //                                                                                           welf_category: result.Message[i].welf_category, tag : result.Message[i].tag))
+                                //
+                                //                                            let xPosition = (DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) + 30) * CGFloat(i) + 30
+                                //
+                                //
+                                //                                            // 맞춤 혜택 UI
+                                //                                            let listView = UIView()
+                                //                                            listView.frame = CGRect(x: xPosition, y: 20 *  heightRatio,
+                                //                                                                    width: DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio),
+                                //                                                                    height: 220 *  heightRatio)
+                                //                                            listView.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+                                //                                            listView.layer.borderWidth = 1
+                                //                                            listView.layer.borderColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1).cgColor
+                                //                                            listView.layer.cornerRadius = 33
+                                //
+                                //
+                                //                                            //정책명
+                                //                                            let policyName = UILabel()
+                                //                                            policyName.frame = CGRect(x: 20  *  DeviceManager.sharedInstance.widthRatio, y: 60  *  heightRatio,
+                                //                                                                      width: 200  *  DeviceManager.sharedInstance.widthRatio,
+                                //                                                                      height: 120  *  heightRatio)
+                                //                                            policyName.font = UIFont(name: "Jalnan", size: 20  *  heightRatio)
+                                //                                            policyName.textColor = UIColor.white
+                                //                                            policyName.numberOfLines = 6
+                                //
+                                //                                            let title = PersonalizedList[i].welf_name.replacingOccurrences(of: " ", with: "\n")
+                                //                                            policyName.text = title
+                                //                                            listView.addSubview(policyName)
+                                //
+                                //
+                                //                                            //혜택지역
+                                //                                            let localName = UILabel()
+                                //                                            localName.frame = CGRect(x: 20  *  DeviceManager.sharedInstance.widthRatio, y: 20  *  heightRatio,
+                                //                                                                     width: 200  *  DeviceManager.sharedInstance.widthRatio,
+                                //                                                                     height: 20  *  heightRatio)
+                                //                                            localName.font = UIFont(name: "Jalnan", size: 15  *  heightRatio)
+                                //                                            localName.textColor = UIColor.white
+                                //                                            localName.text = "#\(PersonalizedList[i].welf_local)"
+                                //                                            listView.addSubview(localName)
+                                //
+                                //
+                                //                                            //혜택 일러스트
+                                //                                            let categoryImg = UIImageView()
+                                //                                            categoryImg.frame = CGRect(x: DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) - (200  *  DeviceManager.sharedInstance.widthRatio), y: 0,
+                                //                                                                       width: 200  *  DeviceManager.sharedInstance.widthRatio,
+                                //                                                                       height: 200  *  heightRatio)
+                                //
+                                //
+                                //                                            //일러스트 추가
+                                //                                            let tag = PersonalizedList[i].welf_category.replacingOccurrences(of: " ", with: "")
+                                //                                            let arr = tag.components(separatedBy: ";;")
+                                //                                            let imgName = arr[0]
+                                //
+                                //                                            debugPrint("이미지 : \(imgName)")
+                                //                                            if(imgDic[imgName] != nil){
+                                //                                                categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
+                                //                                            }else{
+                                //                                                categoryImg.setImage(UIImage(named: "AppIcon")!)
+                                //                                            }
+                                //                                            listView.addSubview(categoryImg)
+                                //
+                                //
+                                //                                            //각 스크롤의 터치 혹은 스크롤 이벤트를 구분하기 위해 태그값을 준다.
+                                //                                            // 영상 클릭 이벤트 추가, UITapGestureRecognizer: 싱글탭 또는 멀티탭 제스처 인식
+                                //                                            let contentListener = PersonalizedClickListener(target: self, action: #selector(self.onCustomizedClicked(sender:)))
+                                //                                            contentListener.welfName = result.Message[i].welf_name
+                                //                                            contentListener.welfLocal =  result.Message[i].welf_local
+                                //                                            listView.addGestureRecognizer(contentListener)
+                                //
+                                //
+                                //                                            //음영처리
+                                //                                            listView.layer.shadowColor = UIColor.black.cgColor
+                                //                                            listView.layer.shadowOffset = CGSize(width: 5, height: 5) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
+                                //                                            listView.layer.shadowOpacity = 1
+                                //                                            listView.layer.shadowRadius = 1 // 반경?
+                                //                                            listView.layer.shadowOpacity = 0.5 // alpha값입니다.
+                                //                                            self.Personalized_scroll.addSubview(listView)
+                            }
+                            
+                            itemCount = items.count
+                            let layout = CarouselLayout()
+                            layout.itemSize = CGSize(width: 200, height: 300)
                             //            //콜렉션뷰 스크롤 방향
                             //            layout.scrollDirection = .horizontal
                             //            layout.minimumInteritemSpacing = 40
@@ -500,110 +497,110 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
                             //            let leftInset = (DeviceManager.sharedInstance.width - CGFloat(totalCellWidth + totalSpacingWidth)) / 2
                             //            let rightInset = leftInset
                             //            layout.sectionInset = UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
-                                        
-
-                                            collectionView = UICollectionView(frame: CGRect(x: 0, y: 100 * heightRatio, width: DeviceManager.sharedInstance.width, height: 360 *  heightRatio), collectionViewLayout: layout)
-                                        
-                                        
-                                            self.view.addSubview(collectionView)
-                                            collectionView.delegate   = self
-                                            collectionView.dataSource = self
-                                        collectionView.register(recommendCell.self, forCellWithReuseIdentifier: "recommendCell")
-                                        //collectionView.isPagingEnabled = true
-                                        collectionView.backgroundColor = UIColor.white
-                                        // 스크롤 시 빠르게 감속 되도록 설정
-                                        collectionView.decelerationRate = .fast
-                                        collectionView.showsHorizontalScrollIndicator = false
-
-                                        
-
-                                        m_Scrollview.addSubview(collectionView)
-                                        bannerTimer()
-            
-            
-//                                        // 맞춤 혜택 정보 배경 UI 설정 값
-//                                        Personalized_scroll.frame = CGRect(x: 0, y: 170 *  heightRatio, width: self.view.frame.width, height: 330 *  heightRatio)
-//                                        Personalized_scroll.contentSize.width = (DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) + 30) * CGFloat(PersonalizedList.count) + 30
-//                                        Personalized_scroll.backgroundColor = UIColor.white
-//
-//                                        //페이징
-//                                        Personalized_scroll.isPagingEnabled = true
-//                                        self.Personalized_scroll.delegate = self
-//
-//
-//                                        //m_Scrollview.addSubview(Personalized_scroll)
-//
-//                                        //페이지컨트롤러 추가
-//
-//                                        pageControl.frame =  CGRect(x: 100, y: 520 *  heightRatio,
-//                                                                    width: DeviceManager.sharedInstance.width,
-//                                                                    height: 30 *  heightRatio)
-//                                        pageControl.numberOfPages = result.Message.count
-//                                        pageControl.currentPage = 0
-//                                        pageControl.tintColor = UIColor.red
-//                                        pageControl.pageIndicatorTintColor = UIColor.black
-//                                        pageControl.currentPageIndicatorTintColor = UIColor.green
-//                                        pageControl.addTarget(self, action: #selector(pageControltapped(_:)), for: .touchUpInside)
-//
-//                                        //m_Scrollview.addSubview(pageControl)
-//
-//
-//                                        //추천 라벨
-//                                        let recommendLabel = UILabel()
-//                                        recommendLabel.frame =  CGRect(x: 20, y: 80 *  heightRatio,
-//                                                                       width: DeviceManager.sharedInstance.width,
-//                                                                       height: 90 *  heightRatio)
-//                                        recommendLabel.backgroundColor = UIColor.white
-//                                        var nickName : String = ""
-//                                        if(UserDefaults.standard.string(forKey: "nickName") != nil){
-//                                            nickName = UserDefaults.standard.string(forKey: "nickName")!
-//                                        }
-//                                        recommendLabel.text = "\(nickName) 님에게\n    복지혜택 \(PersonalizedList.count)개를 추천해요"
-//                                        recommendLabel.numberOfLines = 2
-//                                        recommendLabel.font = UIFont(name: "Jalnan", size: 26  *  heightRatio)
-//
-//
-//                                        //색상변경
-//                                        let attributedStr = NSMutableAttributedString(string: recommendLabel.text!)
-//                                        attributedStr.addAttribute(.foregroundColor, value: UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1), range: (recommendLabel.text! as NSString).range(of: nickName))
-//                                        attributedStr.addAttribute(.foregroundColor, value: UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1), range: (recommendLabel.text! as NSString).range(of: "\(PersonalizedList.count)개"))
-//                                        recommendLabel.attributedText = attributedStr
-            
-                                        //m_Scrollview.addSubview(recommendLabel)
-                                    }
-            
-                                    catch let DecodingError.dataCorrupted(context) {
-                                        debugPrint(context)
-                                    } catch let DecodingError.keyNotFound(key, context) {
-                                        debugPrint("Key '\(key)' not found:", context.debugDescription)
-                                        debugPrint("codingPath:", context.codingPath)
-                                    } catch let DecodingError.valueNotFound(value, context) {
-                                        debugPrint("Value '\(value)' not found:", context.debugDescription)
-                                        debugPrint("codingPath:", context.codingPath)
-                                    } catch let DecodingError.typeMismatch(type, context)  {
-                                        debugPrint("Type '\(type)' mismatch:", context.debugDescription)
-                                        debugPrint("codingPath:", context.codingPath)
-                                    } catch {
-                                        debugPrint("error: ", error)
-                                    }
-                                case .failure(let error):
-                                    debugPrint(error)
-                                }
-                            }
+                            
+                            
+                            collectionView = UICollectionView(frame: CGRect(x: 0, y: 100 * heightRatio, width: DeviceManager.sharedInstance.width, height: 360 *  heightRatio), collectionViewLayout: layout)
+                            
+                            
+                            self.view.addSubview(collectionView)
+                            collectionView.delegate   = self
+                            collectionView.dataSource = self
+                            collectionView.register(recommendCell.self, forCellWithReuseIdentifier: "recommendCell")
+                            //collectionView.isPagingEnabled = true
+                            collectionView.backgroundColor = UIColor.white
+                            // 스크롤 시 빠르게 감속 되도록 설정
+                            collectionView.decelerationRate = .fast
+                            collectionView.showsHorizontalScrollIndicator = false
+                            
+                            
+                            
+                            m_Scrollview.addSubview(collectionView)
+                            bannerTimer()
+                            
+                            
+                            //                                        // 맞춤 혜택 정보 배경 UI 설정 값
+                            //                                        Personalized_scroll.frame = CGRect(x: 0, y: 170 *  heightRatio, width: self.view.frame.width, height: 330 *  heightRatio)
+                            //                                        Personalized_scroll.contentSize.width = (DeviceManager.sharedInstance.width - (40  *  DeviceManager.sharedInstance.widthRatio) + 30) * CGFloat(PersonalizedList.count) + 30
+                            //                                        Personalized_scroll.backgroundColor = UIColor.white
+                            //
+                            //                                        //페이징
+                            //                                        Personalized_scroll.isPagingEnabled = true
+                            //                                        self.Personalized_scroll.delegate = self
+                            //
+                            //
+                            //                                        //m_Scrollview.addSubview(Personalized_scroll)
+                            //
+                            //                                        //페이지컨트롤러 추가
+                            //
+                            //                                        pageControl.frame =  CGRect(x: 100, y: 520 *  heightRatio,
+                            //                                                                    width: DeviceManager.sharedInstance.width,
+                            //                                                                    height: 30 *  heightRatio)
+                            //                                        pageControl.numberOfPages = result.Message.count
+                            //                                        pageControl.currentPage = 0
+                            //                                        pageControl.tintColor = UIColor.red
+                            //                                        pageControl.pageIndicatorTintColor = UIColor.black
+                            //                                        pageControl.currentPageIndicatorTintColor = UIColor.green
+                            //                                        pageControl.addTarget(self, action: #selector(pageControltapped(_:)), for: .touchUpInside)
+                            //
+                            //                                        //m_Scrollview.addSubview(pageControl)
+                            //
+                            //
+                            //                                        //추천 라벨
+                            //                                        let recommendLabel = UILabel()
+                            //                                        recommendLabel.frame =  CGRect(x: 20, y: 80 *  heightRatio,
+                            //                                                                       width: DeviceManager.sharedInstance.width,
+                            //                                                                       height: 90 *  heightRatio)
+                            //                                        recommendLabel.backgroundColor = UIColor.white
+                            //                                        var nickName : String = ""
+                            //                                        if(UserDefaults.standard.string(forKey: "nickName") != nil){
+                            //                                            nickName = UserDefaults.standard.string(forKey: "nickName")!
+                            //                                        }
+                            //                                        recommendLabel.text = "\(nickName) 님에게\n    복지혜택 \(PersonalizedList.count)개를 추천해요"
+                            //                                        recommendLabel.numberOfLines = 2
+                            //                                        recommendLabel.font = UIFont(name: "Jalnan", size: 26  *  heightRatio)
+                            //
+                            //
+                            //                                        //색상변경
+                            //                                        let attributedStr = NSMutableAttributedString(string: recommendLabel.text!)
+                            //                                        attributedStr.addAttribute(.foregroundColor, value: UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1), range: (recommendLabel.text! as NSString).range(of: nickName))
+                            //                                        attributedStr.addAttribute(.foregroundColor, value: UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1), range: (recommendLabel.text! as NSString).range(of: "\(PersonalizedList.count)개"))
+                            //                                        recommendLabel.attributedText = attributedStr
+                            
+                            //m_Scrollview.addSubview(recommendLabel)
+                        }
+                        
+                        catch let DecodingError.dataCorrupted(context) {
+                            debugPrint(context)
+                        } catch let DecodingError.keyNotFound(key, context) {
+                            debugPrint("Key '\(key)' not found:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch let DecodingError.valueNotFound(value, context) {
+                            debugPrint("Value '\(value)' not found:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch let DecodingError.typeMismatch(type, context)  {
+                            debugPrint("Type '\(type)' mismatch:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch {
+                            debugPrint("error: ", error)
+                        }
+                    case .failure(let error):
+                        debugPrint(error)
+                    }
+                }
             
             //            setPageViewController()
             //             setPageControl()
             
-//
-//            bannerView.frame =  CGRect(x: 0, y: 0 * heightRatio,
-//                                       width: DeviceManager.sharedInstance.width,
-//                                       height: 495 *  heightRatio)
+            //
+            //            bannerView.frame =  CGRect(x: 0, y: 0 * heightRatio,
+            //                                       width: DeviceManager.sharedInstance.width,
+            //                                       height: 495 *  heightRatio)
             
-  
-
-          
             
-   
+            
+            
+            
+            
             
         }else{
             debugPrint("키워드 정보 입력 안되어있는 경우")
@@ -641,7 +638,7 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             MainUi.layer.borderColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1).cgColor
             MainUi.layer.borderWidth = 0.1
             MainUi.layer.cornerRadius = 10 *  DeviceManager.sharedInstance.heightRatio
-
+            
             
             
             let animationView = AnimationView(name:"present")
@@ -886,17 +883,17 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     
     //콜렉션뷰(추천혜택화면) 메소드
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-         return itemCount
-     }
-
-
- 
+        return itemCount
+    }
+    
+    
+    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath as IndexPath) as! recommendCell
         
         var title = items[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
-    cell.policyName.text = "\(title)"
+        cell.policyName.text = "\(title)"
         cell.localName.text = "#\(items[indexPath.row].welf_local)"
         
         cell.backgroundColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
@@ -905,8 +902,8 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         
         //애니메이션 재생모드( .loop = 애니메이션 무한재생)
         cell.animationView.loopMode = .loop
-    
-         return cell
+        
+        return cell
     }
     //터치 스크롤
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -918,59 +915,15 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
             
         }
         RVC.selectedPolicy = "\(items[indexPath.row].welf_name)"
-            RVC.selectedLocal = "\(items[indexPath.row].welf_local)"
+        RVC.selectedLocal = "\(items[indexPath.row].welf_local)"
         RVC.modalPresentationStyle = .fullScreen
-
+        
         //혜택 상세보기 페이지로 이동
         //self.present(RVC, animated: true, completion: nil)
         self.navigationController?.pushViewController(RVC, animated: true)
-        
-        
-        
-//        let cell = collectionView.cellForItem(at: indexPath)
-//
-//        //Briefly fade the cell on selection
-//        UIView.animate(withDuration: 0.5,
-//                       animations: {
-//                        //Fade-out
-//                        cell!.alpha = 0.1
-//        }) { (completed) in
-//            UIView.animate(withDuration: 0.5,
-//                           animations: {
-//                            //Fade-out
-//                            cell!.alpha = 1
-//            })
-//        }
-//
-        //cell.animationView.play()
-    
-        
-        //collectionView.isPagingEnabled = true
-
-        //timer.invalidate()
-    
-        //collectionView.scrollToItem(at: indexPath, at: .right, animated: true)
-        
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath as IndexPath) as! recommendCell
-//        cell.animationView.play()
-        
-        
-        }
+    }
     
     
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        targetContentOffset.pointee = scrollView.contentOffset
-//        var indexes = self.collectionView.indexPathsForVisibleItems
-//        indexes.sort()
-//        var index = indexes.first!
-//        let cell = self.collectionView.cellForItem(at: index)!
-//        let position = self.collectionView.contentOffset.x - cell.frame.origin.x
-//        if position > cell.frame.size.width/2{
-//           index.row = index.row+1
-//        }
-//        self.collectionView.scrollToItem(at: index, at: .left, animated: true )
-//    }
-//
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard let layout = self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout else { return }
         
@@ -990,16 +943,16 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         
         // 현재페이지가 마지막 페이지일 경우
         if  index == 10 {
-        // 맨 처음 페이지로 돌아감
+            // 맨 처음 페이지로 돌아감
             //collectionView.scrollToItem(at: NSIndexPath(item: 11, section: 0) as IndexPath, at: .left, animated: true)
-         
+            
             //스크롤을 빨리 이동시키는 경우 거꾸로 돌아감
             collectionView.scrollToItem(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .left, animated: false)
             targetContentOffset.pointee = CGPoint(x: CGFloat(0) * cellWidthIncludingSpacing, y: 0)
-
+            
             print("마지막 배너 메소드 호출")
             
-
+            
             return
         }
         
@@ -1009,7 +962,7 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     // 2초마다 실행되는 타이머
     func bannerTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { (Timer) in
-           // print("타이머메소드 호출")
+            // print("타이머메소드 호출")
             //self.bannerMove()
         }
     }
@@ -1018,33 +971,33 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
         
         //움직이는동안 페이징을 꺼줘야 작동한다.
         collectionView.isPagingEnabled = false
-
+        
         // 현재페이지가 마지막 페이지일 경우
         if self.nowPage == 10 {
-        // 맨 처음 페이지로 돌아감
+            // 맨 처음 페이지로 돌아감
             //collectionView.scrollToItem(at: NSIndexPath(item: 11, section: 0) as IndexPath, at: .left, animated: true)
             self.nowPage = 0
             collectionView.scrollToItem(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .left, animated: false)
             print("마지막 배너 메소드 호출")
             
-
+            
             return
         }
         // 다음 페이지로 전환
-
+        
         self.nowPage += 1
-
+        
         collectionView.scrollToItem(at: NSIndexPath(item: nowPage, section: 0) as IndexPath, at: .right, animated: true)
         print("배너 메소드 호출")
         collectionView.isPagingEnabled = true
-
-
+        
+        
     }
     
     //터치감지
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-
-// Stop your timer  here
+        
+        // Stop your timer  here
         print("터치종료감지")
         //bannerTimer()
         
@@ -1055,14 +1008,14 @@ class NewMainViewController: UIViewController, UIScrollViewDelegate, UISearchBar
     }
     
     //콜렉션뷰 셀크기 조정
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
-//     {
-//        return CGSize(width: 300.0, height: 300.0)
-//     }
+    //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
+    //     {
+    //        return CGSize(width: 300.0, height: 300.0)
+    //     }
     
 }
-  
-    
+
+
 
 
 
@@ -1116,7 +1069,7 @@ extension NewMainViewController: UIPageViewControllerDataSource {
     }
     
     
- 
+    
 }
 
 extension NewMainViewController: UIPageViewControllerDelegate {
@@ -1139,9 +1092,9 @@ extension NewMainViewController: UIPageViewControllerDelegate {
 
 
 class AnimationUtility: UIViewController, CAAnimationDelegate {
-
+    
     static let kSlideAnimationDuration: CFTimeInterval = 0.4
-
+    
     static func viewSlideInFromRight(toLeft views: UIView) {
         var transition: CATransition? = nil
         transition = CATransition.init()
@@ -1149,10 +1102,10 @@ class AnimationUtility: UIViewController, CAAnimationDelegate {
         transition?.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         transition?.type = CATransitionType.push
         transition?.subtype = CATransitionSubtype.fromRight
-//        transition?.delegate = (self as! CAAnimationDelegate)
+        //        transition?.delegate = (self as! CAAnimationDelegate)
         views.layer.add(transition!, forKey: nil)
     }
-
+    
     static func viewSlideInFromLeft(toRight views: UIView) {
         var transition: CATransition? = nil
         transition = CATransition.init()
@@ -1160,10 +1113,10 @@ class AnimationUtility: UIViewController, CAAnimationDelegate {
         transition?.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         transition?.type = CATransitionType.push
         transition?.subtype = CATransitionSubtype.fromLeft
-//        transition?.delegate = (self as! CAAnimationDelegate)
+        //        transition?.delegate = (self as! CAAnimationDelegate)
         views.layer.add(transition!, forKey: nil)
     }
-
+    
     static func viewSlideInFromTop(toBottom views: UIView) {
         var transition: CATransition? = nil
         transition = CATransition.init()
@@ -1171,10 +1124,10 @@ class AnimationUtility: UIViewController, CAAnimationDelegate {
         transition?.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         transition?.type = CATransitionType.push
         transition?.subtype = CATransitionSubtype.fromBottom
-//        transition?.delegate = (self as! CAAnimationDelegate)
+        //        transition?.delegate = (self as! CAAnimationDelegate)
         views.layer.add(transition!, forKey: nil)
     }
-
+    
     static func viewSlideInFromBottom(toTop views: UIView) {
         var transition: CATransition? = nil
         transition = CATransition.init()
@@ -1182,7 +1135,7 @@ class AnimationUtility: UIViewController, CAAnimationDelegate {
         transition?.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
         transition?.type = CATransitionType.push
         transition?.subtype = CATransitionSubtype.fromTop
-//        transition?.delegate = (self as! CAAnimationDelegate)
+        //        transition?.delegate = (self as! CAAnimationDelegate)
         views.layer.add(transition!, forKey: nil)
     }
 }
@@ -1194,7 +1147,7 @@ class CarouselLayout: UICollectionViewFlowLayout {
     public var sideItemScale: CGFloat = 0.5
     public var sideItemAlpha: CGFloat = 0.5
     public var spacing: CGFloat = 10
-
+    
     public var isPagingEnabled: Bool = false
     
     private var isSetup: Bool = false
@@ -1209,11 +1162,11 @@ class CarouselLayout: UICollectionViewFlowLayout {
     
     private func setupLayout() {
         guard let collectionView = self.collectionView else {return}
-                
-//        let collectionViewSize = collectionView.bounds.size
-//
-//        let xInset = (collectionViewSize.width - self.itemSize.width) / 2
-//        let yInset = (collectionViewSize.height - self.itemSize.height) / 2
+        
+        //        let collectionViewSize = collectionView.bounds.size
+        //
+        //        let xInset = (collectionViewSize.width - self.itemSize.width) / 2
+        //        let yInset = (collectionViewSize.height - self.itemSize.height) / 2
         
         
         let xInset = (DeviceManager.sharedInstance.width - self.itemSize.width) / 2
@@ -1225,7 +1178,7 @@ class CarouselLayout: UICollectionViewFlowLayout {
         
         let scaledItemOffset =  (itemWidth - itemWidth*self.sideItemScale) / 2
         self.minimumLineSpacing = spacing - scaledItemOffset
-
+        
         self.scrollDirection = .horizontal
     }
     
@@ -1235,8 +1188,8 @@ class CarouselLayout: UICollectionViewFlowLayout {
     
     public override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let superAttributes = super.layoutAttributesForElements(in: rect),
-            let attributes = NSArray(array: superAttributes, copyItems: true) as? [UICollectionViewLayoutAttributes]
-            else { return nil }
+              let attributes = NSArray(array: superAttributes, copyItems: true) as? [UICollectionViewLayoutAttributes]
+        else { return nil }
         
         return attributes.map({ self.transformLayoutAttributes(attributes: $0) })
     }
@@ -1251,9 +1204,9 @@ class CarouselLayout: UICollectionViewFlowLayout {
         
         let maxDistance = self.itemSize.width + self.minimumLineSpacing
         let distance = min(abs(collectionCenter - center), maxDistance)
-
+        
         let ratio = (maxDistance - distance)/maxDistance
-
+        
         let alpha = ratio * (1 - self.sideItemAlpha) + self.sideItemAlpha
         let scale = ratio * (1 - self.sideItemScale) + self.sideItemScale
         
@@ -1268,81 +1221,3 @@ class CarouselLayout: UICollectionViewFlowLayout {
         return attributes
     }
 }
-
-
-//class FadingLayout: UICollectionViewFlowLayout,UICollectionViewDelegateFlowLayout {
-//
-//    //should be 0<fade<1
-//    private let fadeFactor: CGFloat = 0.5
-//    private let cellHeight : CGFloat = 60.0
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        super.init(coder: aDecoder)
-//    }
-//
-//    init(scrollDirection:UICollectionView.ScrollDirection) {
-//        super.init()
-//        self.scrollDirection = scrollDirection
-//
-//    }
-//
-//    override func prepare() {
-//        setupLayout()
-//        super.prepare()
-//    }
-//
-//    func setupLayout() {
-//        self.itemSize = CGSize(width: self.collectionView!.bounds.size.width,height:cellHeight)
-//        self.minimumLineSpacing = 0
-//    }
-//
-//    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-//        return true
-//    }
-//
-//    func scrollDirectionOver() -> UICollectionView.ScrollDirection {
-//        return UICollectionView.ScrollDirection.vertical
-//    }
-//    //this will fade both top and bottom but can be adjusted
-//    override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-//        let attributesSuper: [UICollectionViewLayoutAttributes] = super.layoutAttributesForElements(in: rect) as [UICollectionViewLayoutAttributes]?
-//
-//
-//        if let attributes = NSArray(array: attributesSuper, copyItems: true) as? [UICollectionViewLayoutAttributes]{
-//            var visibleRect = CGRect()
-//            visibleRect.origin = collectionView!.contentOffset
-//            visibleRect.size = collectionView!.bounds.size
-//            for attrs in attributes {
-//                if attrs.frame.intersects(rect) {
-//                    let distance = visibleRect.midY - attrs.center.y
-//                    let normalizedDistance = abs(distance) / (visibleRect.height * fadeFactor)
-//                    let fade = 1 - normalizedDistance
-//                    attrs.alpha = fade
-//                }
-//            }
-//            return attributes
-//        }else{
-//            return nil
-//        }
-//    }
-//    //appear and disappear at 0
-//    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-//        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-//        attributes.alpha = 0
-//        return attributes
-//    }
-//
-//    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-//        let attributes = super.layoutAttributesForItem(at: itemIndexPath)! as UICollectionViewLayoutAttributes
-//        attributes.alpha = 0
-//        return attributes
-//    }
-//}
-
-//extension NewMainViewController: UIScrollViewDelegate {
-//    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        // floor 내림, ceil 올림
-//        // contentOffset는 현재 스크롤된 좌표
-//        pageControl.currentPage = Int(floor(scrollView.contentOffset.x / UIScreen.main.bounds.width))
-//    }
-//}
