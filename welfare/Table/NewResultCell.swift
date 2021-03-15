@@ -59,7 +59,7 @@ class NewResultCell: UITableViewCell {
         let localName = UILabel()
         localName.translatesAutoresizingMaskIntoConstraints = false
         localName.font = UIFont(name: "Jalnan", size: 15  *  DeviceManager.sharedInstance.heightRatio)
-        localName.textColor = UIColor.white
+        localName.textColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
         return localName
     }()
     
@@ -69,6 +69,7 @@ class NewResultCell: UITableViewCell {
         let policyTag = UILabel()
         policyTag.translatesAutoresizingMaskIntoConstraints = false
         policyTag.font = UIFont(name: "NanumGothic", size: 12.7  *  DeviceManager.sharedInstance.heightRatio)
+        policyTag.textColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
         return policyTag
     }()
     

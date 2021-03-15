@@ -8,6 +8,7 @@ PODS:
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
   - DeviceKit (4.2.1)
+  - DropDown (2.3.13)
   - Firebase/Analytics (6.28.1):
     - Firebase/Core
   - Firebase/Auth (6.28.1):
@@ -126,6 +127,7 @@ DEPENDENCIES:
   - Alamofire (= 4.7.3)
   - AlamofireImage
   - DeviceKit (~> 4.0)
+  - DropDown
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core
@@ -147,6 +149,7 @@ SPEC REPOS:
     - AlamofireImage
     - AppAuth
     - DeviceKit
+    - DropDown
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -179,6 +182,7 @@ SPEC CHECKSUMS:
   AlamofireImage: 78d67ccbb763d87ba44b21583d2153500a195630
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   DeviceKit: cadb5ff25d45fe186778bf2d0fd2ea4750542189
+  DropDown: 8a2116376c1981888557f72ec2ffc9a5e0e456ec
   Firebase: ed042590caa0029392257529a8003c25ee82bc18
   FirebaseAnalytics: 5fa308e1b13f838d0f6dc74719ac2a72e8c5afc4
   FirebaseAuth: 06feef26ff3a98323677c76c4102146b872cd6b7
@@ -206,6 +210,6 @@ SPEC CHECKSUMS:
   youtube-ios-player-helper: 40b96e52c22445f0fdc43731cefa32c67075ff81
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
 
-PODFILE CHECKSUM: fd160cdfad98f1ad50dd41c8e821687dd77c0fdd
+PODFILE CHECKSUM: 488a4fb32bfc7472a8d4215d52ec7d7a0323728b
 
 COCOAPODS: 1.10.1

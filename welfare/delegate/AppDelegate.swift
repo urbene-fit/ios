@@ -133,6 +133,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate{ //GIDSignInDelegate {
 //
 //
         
+        //네비바 배경색 없애고 줄 없애는 처리
+                UINavigationBar.appearance().shadowImage = UIImage()
+                UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
+        //        UINavigationBar.appearance().tintColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
+        //        UINavigationBar.appearance().layer.borderWidth = 1
+                UINavigationBar.appearance().backgroundColor = UIColor.clear
+        
         return true
     }
     
