@@ -58,6 +58,11 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
+    struct orderParse: Codable {
+        let Message : String
+    }
+    
+    
     //데이터 파싱
     struct SearchList: Codable {
         var welf_name : String
@@ -116,15 +121,15 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }()
     
     
-    // set frame
-    var dropButton = DropDown()
-    
-    
     let stackView = UIStackView()
     
     
     // 내용 UI
     let bottomView = UIStackView()
+    
+    
+    // 선택한 지역 정보
+    var selectCity = "전국"
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -206,8 +211,6 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         
         // 드롭 다운이 표시되는보기
-        // UIView 또는 UIBarButtonItem
-        // Top of drop down will be below the anchorView
         let button = UIButton()
         button.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
         button.backgroundColor = .clear
@@ -224,11 +227,18 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
             textfield.overrideUserInterfaceStyle = .light
             textfield.backgroundColor = .lightText
             textfield.leftView = button
+//            textfield.leftView?.layer.addCategoryBtnBorder([.left], color:#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
+//            textfield.leftView?.layer.borderWidth = 1.0
+            textfield.leftView?.layer.addBtnBorder([UIRectEdge.left], color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
+            textfield.leftViewMode = .always
         }
         
         
+        // 드랍 다운 정보를 버튼으로 붙이겠습니다.
         menu.anchorView = button
         
+        // 버튼을 가리는게 싫을 경우 설정
+        menu.bottomOffset = CGPoint(x: 0, y:(menu.anchorView?.plainView.bounds.height)!)
         
         menu.direction = .bottom
         
@@ -240,6 +250,12 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         // 선택시 트리거되는 작업
         menu.selectionAction = { [unowned self] (index: Int, item: String) in
             debugPrint("Selected item: \(item) at index: \(index)") //Selected item: code at index: 0
+            
+            // 선택한 지역 정보 저장
+            selectCity = item
+            
+            // 타이틀 이름 수정
+            button.setTitle(item, for: .normal)
         }
         
         // NavigationBar에 SearchBar 추가
@@ -278,36 +294,6 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         // 네비게이션 UI생성
         setBarButton()
-        
-        
-        // 테마 키워드 - 카테고리 버튼 UI 생성
-//        for i in 0..<12 {
-//            let xInt = i % 3
-//            let yInt = ceil(Double((i)/3))
-//            
-//            let button = UIButton(type: .system)
-//            button.frame = CGRect(x: CGFloat((20 + (130 * xInt)))  * DeviceManager.sharedInstance.widthRatio, y: CGFloat(240 + (60 * yInt))  * DeviceManager.sharedInstance.heightRatio, width: 110 * DeviceManager.sharedInstance.widthRatio, height: 40 * DeviceManager.sharedInstance.heightRatio)
-//            
-//            
-//            buttons.append(button)
-//            
-//            
-//            button.tag = i
-//            button.setTitle("# \(LabelName[i])", for: .normal)
-//            button.tintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-//            button.titleLabel?.font = UIFont(name: "Jalnan", size: 12 *  DeviceManager.sharedInstance.heightRatio)!
-//            button.setTitleColor(UIColor.white, for: .normal)
-//            button.backgroundColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-//            button.layer.cornerRadius = 17 *  DeviceManager.sharedInstance.heightRatio
-//            button.layer.borderWidth = 0.1
-//            button.layer.borderColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1).cgColor
-//            
-//            //카테고리 선택시 선택한 카테고리를 저장해주는 메소드
-//            button.addTarget(self, action: #selector(self.move), for: .touchUpInside)
-//            
-//            //카테고리에 사용되는 뷰들을 리스트로 관리해서 선택됫을경우 선탟된 카테고리의 뷰들에 대해 변형해준다.
-//            self.bottomView.addSubview(button)
-//        }
     }
     
     
@@ -346,7 +332,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         debugPrint("searchViewController - searchBarSearchButtonClicked 실행, 엔터감지")
         
         let search : String = seachBar.text!
-        let params = ["type":"search", "keyword":search, "city":"전국", "userAgent" : DeviceManager.sharedInstance.log]
+        let params = ["type":"search", "keyword":search, "city":selectCity, "userAgent" : DeviceManager.sharedInstance.log]
         Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
             .validate()
             .responseJSON { response in
@@ -362,10 +348,12 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                             return
                         }
                         
-                        debugPrint("parseResult",parseResult)
-                        if(parseResult.Status == "200"){
+                        
+                        switch parseResult.Status {
+                        case "200":
                             let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
                             
+                            // 검색 결과값 파싱 해서 처리 후 다음 화면에 전달
                             for i in 0..<parseResult.Message.count {
                                 let tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
                                 let split = tag.components(separatedBy: ";;")
@@ -381,7 +369,6 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                                 }
                             }
                             
-                            
                             //뷰 이동
                             RVC.modalPresentationStyle = .fullScreen
                             
@@ -389,9 +376,13 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                             // 상세정보 뷰로 이동
                             //self.present(RVC, animated: true, completion: nil)
                             self.navigationController?.pushViewController(RVC, animated: true)
-                        }else{
-                            debugPrint(parseResult.Status)
-                            let alert = UIAlertController(title: "알림", message: "다른 검색어로 검색해보세요.", preferredStyle: .alert)
+                        default:
+                            debugPrint("Status:", parseResult.Status, ", parseResult:",parseResult)
+                            
+                            let orderResult = try JSONDecoder().decode(orderParse.self, from: data)
+                            
+                            // 알림창 출력
+                            let alert = UIAlertController(title: "알림", message: orderResult.Message, preferredStyle: .alert)
                             
                             let cancelAction = UIAlertAction(title: "확인", style: .cancel){
                                 (action : UIAlertAction) -> Void in
@@ -424,10 +415,10 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     
     // 키보드 내리기
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        debugPrint("searchViewController - touchesBegan() 실헹, 키보드 내리기")
-        self.view.endEditing(true)
-    }
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        debugPrint("searchViewController - touchesBegan() 실헹, 키보드 내리기")
+//        self.view.endEditing(true)
+//    }
     
     
     // 테마 키워드 카테고리 버튼 누를 경우 실행

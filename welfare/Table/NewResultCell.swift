@@ -100,6 +100,7 @@ class NewResultCell: UITableViewCell {
         autoLayout()
     }
     
+    
     override func prepareForReuse() {
         super.prepareForReuse()
     }
