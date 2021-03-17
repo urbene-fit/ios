@@ -6,46 +6,10 @@
 
 import UIKit
 import Alamofire
-import iOSDropDown
 import PopMenu
 
-class ResponsiveView: UIView {
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-}
 
-
-// https://stackoverflow.com/questions/51789511/want-to-create-a-search-bar-like-google-in-swift
-// https://www.swiftdevcenter.com/drop-down-list-ios-swift-5/
 class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate {
-    
-    
-    //버튼들을 담을 배열
-    var buttons = [UIButton]()
-    
-    
-    // 태그내용들을 담을 배열, 임시 더미데이터
-    var TagName = ["#아기·어린이","#청년","#중장년·노인","#육아·임신","#장애인","#문화·생활"]
-    
-    
-    // 태그 색상을 담을 배열
-    var TagColor = ["UIColor.blue","UIColor.purple","UIColor.red","UIColor.systemPink","UIColor.brown","UIColor.orange"]
-    
-    
-    // 태그명 길이를 합산해주는 변수
-    var TagLength : Int = 0
-    
-    
-    // 태그를 배치해줄 Y값
-    var TagYPosition : Int = 0
-    
-    
-    // 검색결과를 보여주 더미데이터, 라벨명을 담을 배열
-    var myTableView: UITableView!
-    
-    
-    var firstItems = Array<String>()
     
     
     //네비게이션 바 변수
@@ -60,17 +24,19 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     var selectTag : String = ""
     
     
+    // 데이터 파싱 - 서버 결과 상태값
     struct parse: Codable {
         let Status : String
     }
     
     
+    // 데이터 파싱 - 성공 이외 정보값
     struct orderParse: Codable {
         let Message : String
     }
     
     
-    //데이터 파싱
+    // 데이터 파싱 - 성공할 경우 내용 정보들
     struct SearchList: Codable {
         var welf_name : String
         var welf_local : String
@@ -80,54 +46,13 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
+    // 데이터 파싱 - 성공할 경우
     struct searchParse: Codable {
         let Message : [SearchList]
     }
     
     
-    struct item {
-        var welf_name : String
-        var welf_local : String
-        var parent_category : String
-        var welf_category : String
-        var tag : String
-    }
-    
-    
-    var items: [item] = []
-    
-    
-    //카테고리 버튼에 사용할 이미지
-    var ImgFile = ["Employment","youngman","Dwelling","pregnancy","baby","Cultural","enterprise","BasicLivelihood","oldman","disable","cultures","law","etc"]
-    
-    
-    //카테고리명들
-    var LabelName = ["취업·창업","청년","주거","육아·임신","아기·어린이","문화·생활","기업·자영업자",
-                     "저소득층","중장년·노인","장애인","다문화","법률"]
-    
-    
-    //카테고리 라벨을 담을 배열
-    var labels = [UILabel]()
-    
-    
-    var imgViews = [UIImageView]()
-    
-    
-    // 메인 세로 스크롤
-    let m_Scrollview = UIScrollView()
-    
-    
-    let conteainerView = UIView()
-    
-    
-    // 참고: https://www.youtube.com/watch?v=-tpJMQRSl_o
-    //    let menu: DropDown = {
-    //        let menu = DropDown()
-    //        menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
-    //        return menu
-    //    }()
-    
-    
+    // 메인 UI 담을 변수
     let stackView = UIStackView()
     
     
@@ -139,7 +64,11 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     var selectCity = "전국"
     
     
-    // let cityLiset = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
+    // 드롭다운 표시할 버튼
+    let cityButton = UIButton()
+    
+    
+    // 드랍박스_v1
     var menuItems: [UIAction] {
         return [
             
@@ -193,16 +122,13 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
-    var responsiveView: ResponsiveView!
-    
-    
-    // 드랍박스 버전 2
-    // 내용 생성
+    // 드랍박스_v2, 도시 리스트
     let cityList = [ "전국", "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북" ]
     
     
-    // 빈 배열 만들기
+    // 드랍박스 틀 생성
     var actions : [PopMenuDefaultAction] = []
+    
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -250,6 +176,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     // 스택 뷰 적용
     func createStackViewUI() {
+        
         // 스택 뷰 적용
         self.view.addSubview(stackView)
         
@@ -258,7 +185,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         stackView.axis = .vertical // 수평 또는 수직 스택의 방향을 결정
         stackView.distribution = .fill // 스택 축을 따라 정렬 된 뷰의 레이아웃을 결정
         stackView.alignment = .fill // 스택 축에 수직으로 정렬 된 뷰의 레이아웃을 결정
-        stackView.spacing = 10 // 배치 뷰 사이 간격 최소값을 결정
+        //        stackView.spacing = 10 // 배치 뷰 사이 간격 최소값을 결정
         
         
         // 스택 뷰 autolayout 설정
@@ -271,8 +198,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
-    // 서치 바 UI 생성, 참고 - https://zeddios.tistory.com/1196
-    // https://cocoapods.org/pods/iOSDropDown
+    // 서치 바 UI 생성, 참고
     func createSearchBarUI() {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "혜택을 검색해보세요"
@@ -280,73 +206,72 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         searchController.automaticallyShowsCancelButton = false // 자동으로 cancel버튼이 나오게 할지 여부
         searchController.searchBar.delegate = self // 검색창, 서치바를 동작하기 위한 대리자 선언
         searchController.searchBar.sizeToFit()
-        searchController.searchBar.scopeButtonTitles = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
-        searchController.searchBar.showsScopeBar = false
-        searchController.searchBar.layer.addBorder([.right], color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
-        
-        // 드롭 다운이 표시되는보기
-        let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
-        button.backgroundColor = .clear
-        button.setTitle("전국", for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
         
         
-        // 버튼 드랍다운_v1 적용 - 참고: https://nemecek.be/blog/85/how-to-show-uimenu-from-uibutton-or-uibarbuttonitem
-//        button.menu = demoMenu
-//        button.showsMenuAsPrimaryAction = true
+        // 드롭 다운 표시할 버튼 UI 생성
+        cityButton.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
+        cityButton.backgroundColor = .clear
+        cityButton.setTitle("전국", for: .normal)
+        cityButton.setTitleColor(UIColor.black, for: .normal)
+        cityButton.imageEdgeInsets = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
+        cityButton.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
         
+        
+        let rightButton  = UIButton()
+        //this is not taken into account
+        rightButton.frame = CGRect(x:0, y:0, width:100, height:self.accessibilityFrame.height)
+        rightButton.imageView?.contentMode = .scaleAspectFit
+        rightButton.backgroundColor = .blue
+        rightButton.setTitle("전국", for: .normal)
+        rightButton.setTitleColor(UIColor.black, for: .normal)
+        rightButton.setImage(UIImage(named: "searchIcon") , for: .normal)
+        rightButton.imageEdgeInsets = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
+
         
         // 검색바 텍스트 필드 UI 수정
         if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             textfield.overrideUserInterfaceStyle = .light
             textfield.backgroundColor = .lightText
-            textfield.leftView = button
+            
+            textfield.leftView = cityButton
             textfield.leftViewMode = .always
+            
+            //오른쪽 x버튼 이미지넣기
+                       if let rightView = textfield.rightView as? UIImageView {
+                           rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
+                           //이미지 틴트 정하기
+                           rightView.tintColor = UIColor.blue
+                       }
+            
+            textfield.autoresizesSubviews = true
+           
         }
+        
+        
+        // 버튼 드랍다운_v1 적용 - 참고: https://nemecek.be/blog/85/how-to-show-uimenu-from-uibutton-or-uibarbuttonitem
+        //        button.menu = demoMenu
+        //        button.showsMenuAsPrimaryAction = true
         
         
         // NavigationBar에 SearchBar 추가
         self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = false
     }
-
-    
-    // 드랍박스 버튼 클릭시 실행
-    @objc func dropEvent(_ sender: UIButton) {
-        debugPrint("dropEvent 실행")
-        
-        // action is a `PopMenuAction`, in this case it's a `PopMenuDefaultAction`
-        for i in cityList {
-            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
-                debugPrint("\(action.title) is tapped") // will print out: 'Action 1 is tapped'
-            }))
-        }
-
-
-        // Pass the UIView in init
-        let menu = PopMenuViewController(sourceView: sender, actions: actions)
-        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
-        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
-        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
-        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
-        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
-        menu.appearance.popMenuScrollIndicatorHidden = true // default false
-        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
-
-
-        present(menu, animated: true, completion: nil)
-    }
     
     
     // 메인 UI 생성
     func createMainUI() {
+        
         // 메인 뷰 상단 UI
         let centerView = UILabel()
         centerView.textAlignment = .center
         centerView.heightAnchor.constraint(equalToConstant: 20).isActive = true
         centerView.layer.backgroundColor = UIColor.clear.cgColor
+        
+        
+        // 빈 뷰 추가 - 간격 벌리기 목적
+        let empty = UILabel()
+        empty.heightAnchor.constraint(equalToConstant: 10).isActive = true
         
         
         // 메인 뷰 하단 UI
@@ -358,6 +283,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         // 스택 뷰에 추가
         self.stackView.addArrangedSubview(centerView)
+        self.stackView.addArrangedSubview(empty)
         self.stackView.addArrangedSubview(bottomView)
     }
     
@@ -368,38 +294,64 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         debugPrint("검색 - viewDidAppear")
         
         
-        // 네비게이션 UI생성
-        setBarButton()
+        // 네비게이션 UI 생성
+        createNaviUI()
     }
     
     
     // 네비게이션 UI 생성
-    private func setBarButton() {
+    func createNaviUI() {
         debugPrint("검색 - setBarButton 실행")
         
-        // 뒤로가기 글자 설정
-        self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "혜택모아", style: .plain, target: self, action: nil)
         
-        // 뒤로가기 폰트 설정
-        self.navigationController?.navigationBar.topItem?.backBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Jalnan", size: 20)!], for: .normal)
-        
-        // 백버튼 색상 변경
-        self.navigationController?.navigationBar.tintColor = .white
-        
-        
-        // 네비게이션바 색 변경 - 참고: https://hyerios.tistory.com/46
-        self.navigationController?.navigationBar.barTintColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
-        // self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)]
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-        self.navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)]
-        
-        
+        // 네비게이션 UI 이름 설정
         let naviLabel = UILabel()
         naviLabel.textAlignment = .left
         naviLabel.textColor = .white
         naviLabel.text = "혜택모아"
         naviLabel.font = UIFont(name: "Jalnan", size: 25  *  DeviceManager.sharedInstance.heightRatio)
         self.navigationController?.navigationBar.topItem?.titleView = naviLabel
+        
+        
+        // 뒤로가기 글자 설정
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem = UIBarButtonItem(title: "혜택모아", style: .plain, target: self, action: nil)
+        
+        
+        // 뒤로가기 폰트 설정
+        self.navigationController?.navigationBar.topItem?.backBarButtonItem?.setTitleTextAttributes([NSAttributedString.Key.font: UIFont(name: "Jalnan", size: 20)!], for: .normal)
+        
+        
+        // 백버튼 색상 변경
+        self.navigationController?.navigationBar.tintColor = .white
+    }
+    
+    
+    // 드랍박스 버튼 클릭시 실행
+    @objc func dropEvent(_ sender: UIButton) {
+        
+        // 드랍박스 UI 안에 표시할 값 추가
+        for i in cityList {
+            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
+                
+                // 선택한 지역 정보명으로 버튼 타이틀 수정
+                self.cityButton.setTitle(action.title, for: .normal)
+            }))
+        }
+        
+        
+        // 드랍박스 UI 생성 및 설정
+        let menu = PopMenuViewController(sourceView: sender, actions: actions)
+        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
+        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
+        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
+        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
+        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
+        menu.appearance.popMenuScrollIndicatorHidden = true // default false
+        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
+        
+        
+        // 드랍박스 UI 표시
+        present(menu, animated: true, completion: nil)
     }
     
     
@@ -407,7 +359,9 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     func searchBarSearchButtonClicked(_ seachBar: UISearchBar) {
         debugPrint("searchViewController - searchBarSearchButtonClicked 실행, 엔터감지")
         
-        let search : String = seachBar.text!
+        // 검색어가 있는지 확인해보고, 비어있는지 확인하고 출력
+        guard let search = seachBar.text, search.isEmpty == false else { return }
+        
         let params = ["type":"search", "keyword":search, "city":selectCity, "userAgent" : DeviceManager.sharedInstance.log]
         Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
             .validate()
@@ -419,6 +373,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                     do {
                         let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
                         let parseResult = try JSONDecoder().decode(parse.self, from: data)
+                        
                         
                         guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView else{
                             return
@@ -438,19 +393,19 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                                 
                                 
                                 // NewResultView 태그 추가
-                                for i in 0..<split.count {
-                                    if(!RVC.categoryItems.contains(split[i])){
-                                        RVC.categoryItems.append(split[i])
+                                for i in split {
+                                    if(!RVC.categoryItems.contains(i)){
+                                        RVC.categoryItems.append(i)
                                     }
                                 }
                             }
+                            
                             
                             //뷰 이동
                             RVC.modalPresentationStyle = .fullScreen
                             
                             
                             // 상세정보 뷰로 이동
-                            //self.present(RVC, animated: true, completion: nil)
                             self.navigationController?.pushViewController(RVC, animated: true)
                         default:
                             debugPrint("Status:", parseResult.Status, ", parseResult:",parseResult)
@@ -488,23 +443,17 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
                 }
             }
     }
-    
-    
-    // 테마 키워드 카테고리 버튼 누를 경우 실행
-    @objc func move(_ sender: UIButton) {
-        debugPrint("searchViewController - move() 실헹, 결과페이지로 이동하는 버튼 클릭")
-        
-        // 테스트용, 상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "ThemeListViewController") as? ThemeListViewController else {
-            return
-        }
-        
-        
-        //뷰 이동
-        RVC.modalPresentationStyle = .overFullScreen
-        
-        
-        // 상세정보 뷰로 이동
-        self.navigationController?.pushViewController(RVC, animated: true)
+}
+
+extension UITextField {
+    func rightImage(_ image: UIImage?, imageWidth: CGFloat, padding: CGFloat) {
+        let imageView = UIImageView()
+        imageView.frame = CGRect(x: padding + 2, y: 0, width: imageWidth, height: frame.height)
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = image
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + padding , height: frame.height))
+        containerView.addSubview(imageView)
+        rightView = containerView
+        rightViewMode = .always
     }
 }

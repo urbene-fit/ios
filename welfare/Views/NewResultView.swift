@@ -7,10 +7,10 @@
 
 import UIKit
 import Alamofire
-import iOSDropDown
+import PopMenu
 
 
-class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
+class NewResultView: UIViewController , UISearchBarDelegate {
     
     
     // 이전 페이지에서 조회한 혜택 정보를 담기 위한 객체
@@ -24,9 +24,11 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     var items: [item] = []
     
+    // ??
     var filtered : [item] = []
     
     
+    // 카테고리 정보
     var categoryItems: [String] = []
     
     
@@ -36,31 +38,24 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     
     //정책검색결과를 보여주는 테이블 뷰
-    private var resultTbView: UITableView!
+    var resultTbView: UITableView!
     
     
     // 카테고리를 선택하게하는 가로 스크롤뷰
     let categoryScrlview = UIScrollView()
-    let message : String = "복지 혜택 결과가 '100'개가\n검색되었습니다."
     
-    var count : Int = 0
-    let footer = UIView()
     
+    // 가져온 혜택 갯수
     var itemCount : Int = 0
+    
+    
+    // 선택 정보
     var selected : String = "전체"
     
     
     //카테고리 선택버튼들을 담을 배열
     var buttons = [UIButton]()
     
-    
-    //아이템 이미지 불러올때 사용할 자료구조
-    var imgDic : [String : String] = ["일자리지원":"job", "공간지원":"house","교육지원":"traning","현금지원":"cash","사업화지원":"business","카드지원":"giftCard","취업지원":"job","활동지원":"activity","보험지원":"insurance","상담지원":"counseling","진료지원":"treat","임대지원":"rent","창업지원":"business","재활지원":"recover","인력지원":"support","물품지원":"goods","현물지원":"goods","숙식지원":"bedBoard","정보지원":"information","멘토링지원":"mentor","감면지원":"tax","대출지원":"loan","치료지원":"care","서비스지원":"service","홍보지원":"service","세탁서비스지원":"service","컨설팅지원":"Consulting"]
-    
-    
-    // 지역 선택 드랍박스 - 참고: https://www.youtube.com/watch?v=-tpJMQRSl_o
-    // menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
-
     
     // 메인 UI
     let stackView = UIStackView()
@@ -74,15 +69,18 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     var selectCity = "전국"
     
     
+    // 데이터 파싱 - 서버 결과 상태값
     struct parse: Codable {
         let Status : String
     }
     
+    // 데이터 파싱 - 성공 이외 정보값
     struct orderParse: Codable {
         let Message : String
     }
     
-    //데이터 파싱
+    
+    // 데이터 파싱 - 성공할 경우 내용 정보들
     struct SearchList: Codable {
         var welf_name : String
         var welf_local : String
@@ -92,9 +90,23 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     }
     
     
+    // 데이터 파싱 - 성공할 경우
     struct searchParse: Codable {
         let Message : [SearchList]
     }
+    
+    
+    // 드롭다운 표시할 버튼
+    let cityButton = UIButton()
+    
+    
+    // 드랍박스_v2, 도시 리스트
+    let cityList = [ "전국", "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북" ]
+    
+    
+    // 드랍박스 틀 생성
+    var actions : [PopMenuDefaultAction] = []
+    
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -165,7 +177,7 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     }
     
     
-    // 서치 바 UI 생성, 참고 - https://zeddios.tistory.com/1196
+    // 서치 바 UI 생성
     func createSearchBarUI() {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "혜택을 검색해보세요"
@@ -175,23 +187,20 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         searchController.searchBar.sizeToFit()
         
         
-        // 드롭 다운이 표시되는보기
-        let button = UIButton()
-        button.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
-        button.backgroundColor = .clear
-        button.setTitle("전국", for: .normal)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
+        // 드롭 다운 표시할 버튼 UI 생성
+        cityButton.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
+        cityButton.backgroundColor = .clear
+        cityButton.setTitle("전국", for: .normal)
+        cityButton.setTitleColor(UIColor.black, for: .normal)
+        cityButton.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
         
         
-        // 참고
-        // https://somedd.github.io/TIL_SearchViewControllerAndSearchBar/
-        // https://stackoverflow.com/questions/58061378/labels-and-text-inside-text-field-becoming-white-automatically-for-ios-13-dark-m
-        // https://fomaios.tistory.com/entry/%EC%84%9C%EC%B9%98%EB%B0%94-%EC%BB%A4%EC%8A%A4%ED%85%80%ED%95%98%EA%B8%B0-Custom-UISearchBar
+        // 검색바 텍스트 필드 UI 수정
         if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             textfield.overrideUserInterfaceStyle = .light
             textfield.backgroundColor = .lightText
-            textfield.leftView = button
+            textfield.leftView = cityButton
+            textfield.leftViewMode = .always
         }
         
         
@@ -203,8 +212,6 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     // 메인 UI 생성
     func createMainUI() {
-        debugPrint("NewResultView - createMainUI 실행")
-        
         
         // 메인 뷰 상단 UI
         let centerView = UILabel()
@@ -216,20 +223,12 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         centerView.layer.backgroundColor = UIColor.clear.cgColor
         
         
-        // 검색 결과 메인 뷰에 적용
-        self.stackView.addArrangedSubview(centerView)
-        
-        
         // 빈 뷰 추가 - 간격 벌리기 목적
         let empty = UILabel()
         empty.heightAnchor.constraint(equalToConstant: 10).isActive = true
         
         
-        // 검색 결과 메인 뷰에 적용
-        self.stackView.addArrangedSubview(empty)
-        
-        
-        // 이전 클래스에서 받아온 값 조회
+        // 이전 클래스에서 받아온 값 저장
         itemCount = items.count
         
         
@@ -239,33 +238,23 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         
         // 카테고리 버튼 UI 생성
         for i in 0..<categoryItems.count {
-            debugPrint("categoryItems[i]:",categoryItems[i])
-            
             let button = UIButton(type: .system)
             button.frame = CGRect(x:CGFloat(20 + (Int(100) * i)) *  DeviceManager.sharedInstance.widthRatio, y:10, width: 80 *  DeviceManager.sharedInstance.widthRatio, height: 52 *  DeviceManager.sharedInstance.heightRatio)
             button.setTitle(categoryItems[i], for: .normal)
             button.setTitleColor(.gray, for: .normal)
-            button.tintColor = UIColor.gray
             button.titleLabel?.font = UIFont(name: "NanumGothicBold", size: 16 *  DeviceManager.sharedInstance.heightRatio)!
-            
-            
+            button.tintColor = UIColor.gray
             button.layer.backgroundColor = UIColor.white.cgColor
             button.layer.borderColor = UIColor.gray.cgColor
             button.layer.cornerRadius = 15
             button.layer.borderWidth = 1.0
-            //button.layer.addCategoryBtnBorder([.bottom], color:#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), width: 1.0)
             button.tag = i
-            
-            
-            //카테고리 선택시 카테고리에 해당하는 데이터만 보여주는 메소드
             button.addTarget(self, action: #selector(self.selectCategory), for: .touchUpInside)
             buttons.append(button)
             
+            
             // 카테고리 '전체' 버튼색 수정
             if(i == 0) {
-                debugPrint("카테고리 '전체' 버튼색 수정")
-                // buttons[0].layer.addCategoryBtnBorder([.bottom], color:UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1), width: 1.0)
-                //buttons[0].layer.addCategoryBtnBorder([.bottom], color: UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1), width: 1.0)
                 buttons[i].layer.borderColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1).cgColor
                 buttons[i].setTitleColor(UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1), for: .normal)
             }
@@ -278,50 +267,28 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         categoryScrlview.frame = CGRect(x: 0, y: 120 * DeviceManager.sharedInstance.heightRatio, width: CGFloat(DeviceManager.sharedInstance.width), height: 52 * DeviceManager.sharedInstance.heightRatio)
         categoryScrlview.contentSize = CGSize(width:(CGFloat(100 * categoryItems.count) * DeviceManager.sharedInstance.widthRatio)+20, height: 0)
         categoryScrlview.showsHorizontalScrollIndicator = false
-        
         categoryScrlview.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        
-        // 색 지정
-        categoryScrlview.backgroundColor = UIColor.white
-        
-        // 테두리 둥글게 지정
-        categoryScrlview.layer.cornerRadius = 30
-        categoryScrlview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        
-        
-        self.stackView.addArrangedSubview(categoryScrlview)
-        
-        
-        // 테이블뷰(스크롤뷰) 상단으로 이동하는 코드 - 참고: https://devsc.tistory.com/94
-        categoryScrlview.setContentOffset(CGPoint(x: 0, y: 0), animated: true)
+        categoryScrlview.backgroundColor = UIColor.white // 색 지정
+        categoryScrlview.layer.cornerRadius = 30 // 테두리 둥글게 지정
+        categoryScrlview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] // 밑 동그란 부분 채우게 설정
+        categoryScrlview.setContentOffset(CGPoint(x: 0, y: 0), animated: true) // 테이블뷰(스크롤뷰) 상단으로 이동하는 코드 - 참고: https://devsc.tistory.com/94
         
         
         // UITableView 생성
         resultTbView = UITableView(frame: CGRect(x: 0, y: Int(220 *  DeviceManager.sharedInstance.heightRatio), width: Int(DeviceManager.sharedInstance.width), height: Int(DeviceManager.sharedInstance.height) - Int(311.7 *  DeviceManager.sharedInstance.heightRatio)))
-        
-        
-        // 테이블 셀간의 줄 없애기
-        resultTbView.separatorStyle = UITableViewCell.SeparatorStyle.none
-        
-        
-        // 커스텀 테이블뷰를 등록
-        // register: 새 테이블 셀을 만드는 데 사용할 클래스를 등록, cellClass: 테이블에서 사용하려는 셀의 클래스 ( 하위 클래스 여야 함 ).UITableViewCell, identifier: 셀의 재사용 식별자입니다. 이 매개 변수는 nil빈 문자열이 아니어야하며 비어 있지 않아야합니다.
-        resultTbView.register(NewResultCell.self, forCellReuseIdentifier: NewResultCell.identifier)
-        
-        // TableView에서 dequeueReusableCell 메소드를 사용하기 위해 cell의 identifier가 필요 따라서 identifier 갑설정
+        resultTbView.separatorStyle = UITableViewCell.SeparatorStyle.none // 테이블 셀간의 줄 없애기
+        resultTbView.register(NewResultCell.self, forCellReuseIdentifier: NewResultCell.identifier) // 커스텀 테이블뷰를 등록
+        resultTbView.rowHeight = 220 *  DeviceManager.sharedInstance.heightRatio
+        resultTbView.heightAnchor.constraint(equalToConstant: 50).isActive = true
         resultTbView.dataSource = self
         resultTbView.delegate = self
-        resultTbView.rowHeight = 220 *  DeviceManager.sharedInstance.heightRatio
         
         
-        // 메인 뷰 하단 UI
-        resultTbView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        
-        // 검색 결과 메인 뷰에 적용
+        // 스택 뷰에 추가
+        self.stackView.addArrangedSubview(centerView)
+        self.stackView.addArrangedSubview(empty)
+        self.stackView.addArrangedSubview(categoryScrlview)
         self.stackView.addArrangedSubview(resultTbView)
-        
         
         
         // 레이아웃 재정비
@@ -334,12 +301,12 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         super.viewDidAppear(animated)
         
         // 네비게이션 UI 생성
-        setBarButton()
+        createNaviUI()
     }
     
     
     // 네비게이션 UI 생성
-    func setBarButton() {
+    func createNaviUI() {
         debugPrint("검색 - setBarButton 실행")
         
         
@@ -356,111 +323,10 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     }
     
     
-    // 상세페이지로 이동한다.
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        debugPrint("정책 선택")
-        
-        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewDetailView") as? NewDetailView else{
-            return
-        }
-        
-        switch selected {
-        case "전체":
-            RVC.selectedPolicy = "\(items[indexPath.row].welf_name)"
-            RVC.selectedLocal = "\(items[indexPath.row].welf_local)"
-            let imgName = items[indexPath.row].welf_category[0]
-            RVC.selectedImg = imgDic[imgName]!
-            
-            debugPrint("선택한 정책명 : \(items[indexPath.row].welf_name), 선택한 정책의 지역 : \(items[indexPath.row].welf_local), 선택한 정책의 카테고리 : \(items[indexPath.row].welf_category[0])")
-        default:
-            RVC.selectedPolicy = "\(filtered[indexPath.row].welf_name)"
-            RVC.selectedLocal = "\(filtered[indexPath.row].welf_local)"
-            
-            let imgName = filtered[indexPath.row].welf_category[0]
-            RVC.selectedImg = imgDic[imgName]!
-            
-            debugPrint("선택한 정책명 : \(filtered[indexPath.row].welf_name), 선택한 정책의 지역 : \(filtered[indexPath.row].welf_local)")
-        }
-        
-        
-        RVC.modalPresentationStyle = .fullScreen
-        
-        
-        //혜택 상세보기 페이지로 이동
-        //self.present(RVC, animated: true, completion: nil)
-        self.navigationController?.pushViewController(RVC, animated: true)
-    }
-    
-    
-    // 섹션별 행 숫자
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        debugPrint("행 숫자: \(itemCount)")
-        
-        switch selected {
-        case ("전체"):
-            return itemCount
-        case (let value) where value != "전체":
-            return filtered.count
-        default:
-            return itemCount
-        }
-    }
-    
-    
-    // 테이블뷰의 셀을 만드는 메소드, 테이블뷰의 셀이 어떤 커스텀셀을 참조하는지 지정해준다. 실제 셀에 데이터를 반환하는 메소드, (필수)
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: NewResultCell.identifier, for: indexPath) as! NewResultCell
-        
-        
-        //아이템의 제목을 받아 바꿔준다
-        // cell.backgroundColor = UIColor(displayP3Red:238/255,green : 47/255, blue : 67/255, alpha: 1)
-        
-        cell.backgroundColor = UIColor.white
-        cell.layer.borderColor = UIColor.gray.cgColor
-        cell.layer.borderWidth = 1.3
-        cell.layer.cornerRadius = 34 *  DeviceManager.sharedInstance.heightRatio
-        cell.clipsToBounds = true
-        
-        
-        switch selected {
-        case "전체":
-            let title = items[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
-            cell.policyName.text = "\(title)"
-            cell.localName.text = "#\(items[indexPath.row].welf_local)"
-            
-//            let imgName = items[indexPath.row].welf_category[0]
-//            if(imgDic[imgName] != nil){
-//                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
-//            }else{
-//                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
-//            }
-        default:
-            let title = filtered[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
-            cell.policyName.text = "\(title)"
-            cell.localName.text = "#\(items[indexPath.row].welf_local)"
-            
-//            let imgName = filtered[indexPath.row].welf_category[0]
-//            if(imgDic[imgName] != nil){
-//                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
-//            }else{
-//                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
-//            }
-        }
-        
-        // cell.policyName.textRect(forBounds: CGRect(x: 0, y: 0, width: ce, height: <#T##Int#>), limitedToNumberOfLines: 3)
-        
-        
-        cell.layer.shadowOffset = CGSize(width: 5, height: 5) // 반경에 대해서 너무 적용이 되어서 4point 정도 내림.
-        cell.layer.shadowRadius = 1 // 반경?
-        cell.layer.shadowOpacity = 0.5 // alpha값입니다.
-        cell.selectionStyle = .none //셀 선택시 회색으로 변하지 않게 하기
-        return cell
-    }
-    
-    
-    // 테이블뷰 리스트 리셋
+    // 테이블뷰 내용 리셋
     func resetList() {
         debugPrint("테이블뷰 리스트 리셋 - count:", items.count)
+        
         
         selected = buttons[0].title(for: .normal)!
         
@@ -472,6 +338,7 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
         default:
             filtered = items.filter{ $0.welf_category.contains(selected)}
         }
+        
         
         // 셀, 섹션 머리글 및 바닥 글, 인덱스 배열 등을 포함하여 테이블을 구성하는 데 사용되는 모든 데이터를 다시로드
         // reloadData: collectionView, tableView 를 새로 그려야 할 경우 가장 먼저 떠오르는 방법
@@ -520,16 +387,41 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     // 드랍박스 버튼 클릭시 실행
     @objc func dropEvent(_ sender: UIButton) {
-//        menu.show()
-    }
+        
+        // 드랍박스 UI 안에 표시할 값 추가
+        for i in cityList {
+            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
+                
+                // 선택한 지역 정보명으로 버튼 타이틀 수정
+                self.cityButton.setTitle(action.title, for: .normal)
+            }))
+        }
 
+        
+        // 드랍박스 UI 생성 및 설정
+        let menu = PopMenuViewController(sourceView: sender, actions: actions)
+        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
+        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
+        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
+        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
+        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
+        menu.appearance.popMenuScrollIndicatorHidden = true // default false
+        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
+
+        
+        // 드랍박스 UI 표시
+        present(menu, animated: true, completion: nil)
+    }
+    
     
     // 엔터 감지하는 함수
     func searchBarSearchButtonClicked(_ seachBar: UISearchBar) {
         debugPrint("searchViewController - searchBarSearchButtonClicked 실행, 엔터감지")
         
         
-        let search : String = seachBar.text!
+        // 검색어가 있는지 확인해보고, 비어있는지 확인하고 출력
+        guard let search = seachBar.text, search.isEmpty == false else { return }
+        
         let params = ["type":"search", "keyword":search, "city":selectCity, "userAgent" : DeviceManager.sharedInstance.log]
         Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
             .validate()
@@ -546,7 +438,6 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
                         case "200":
                             let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
                             
-                            // debugPrint("parseResult:",parseResult)
                             
                             DispatchQueue.global(qos: .background).async {
                                 debugPrint("DispatchQueue.global(qos: .background).async 실행")
@@ -613,6 +504,10 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
                                     self.resetList()
                                     
                                     
+                                    // 버튼 값 초기화
+                                    self.cityButton.setTitle("전국", for: .normal)
+                                    
+                                    
                                     // 검색 포커스 해제
                                     self.navigationItem.searchController?.isActive = false
                                 }
@@ -651,5 +546,95 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
                     debugPrint(error)
                 }
             }
+    }
+}
+
+
+extension NewResultView : UITableViewDelegate, UITableViewDataSource {
+    
+    
+    // 혜택 클릭시 실행
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        debugPrint("정책 선택")
+        
+        
+        // 상세페이지로 이동한다.
+        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewDetailView") as? NewDetailView else{
+            return
+        }
+        
+        
+        switch selected {
+        case "전체":
+            RVC.selectedPolicy = "\(items[indexPath.row].welf_name)"
+            RVC.selectedLocal = "\(items[indexPath.row].welf_local)"
+            
+            debugPrint("선택한 정책명 : \(items[indexPath.row].welf_name), 선택한 정책의 지역 : \(items[indexPath.row].welf_local), 선택한 정책의 카테고리 : \(items[indexPath.row].welf_category[0])")
+        default:
+            RVC.selectedPolicy = "\(filtered[indexPath.row].welf_name)"
+            RVC.selectedLocal = "\(filtered[indexPath.row].welf_local)"
+            
+            debugPrint("선택한 정책명 : \(filtered[indexPath.row].welf_name), 선택한 정책의 지역 : \(filtered[indexPath.row].welf_local)")
+        }
+        
+        
+        RVC.modalPresentationStyle = .fullScreen
+        
+        
+        //혜택 상세보기 페이지로 이동
+        self.navigationController?.pushViewController(RVC, animated: true)
+    }
+    
+    
+    // 섹션별 행 숫자
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        debugPrint("행 숫자: \(itemCount)")
+        
+        
+        switch selected {
+        case ("전체"):
+            return itemCount
+        case (let value) where value != "전체":
+            return filtered.count
+        default:
+            return itemCount
+        }
+    }
+    
+    
+    // 테이블뷰의 셀을 만드는 메소드, 테이블뷰의 셀이 어떤 커스텀셀을 참조하는지 지정해준다. 실제 셀에 데이터를 반환하는 메소드, (필수)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: NewResultCell.identifier, for: indexPath) as! NewResultCell
+        
+        
+        //아이템의 제목을 받아 바꿔준다
+        cell.backgroundColor = UIColor.white
+        cell.layer.borderColor = UIColor.gray.cgColor
+        cell.layer.borderWidth = 1.3
+        cell.layer.cornerRadius = 34 *  DeviceManager.sharedInstance.heightRatio
+        cell.clipsToBounds = true
+        
+        
+        switch selected {
+        case "전체":
+            let title = items[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
+            cell.policyName.text = "\(title)"
+            cell.localName.text = "#\(items[indexPath.row].welf_local)"
+        default:
+            let title = filtered[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
+            cell.policyName.text = "\(title)"
+            cell.localName.text = "#\(items[indexPath.row].welf_local)"
+        }
+        
+        
+        // 정책 이름 설정
+//        cell.policyName.backgroundColor = .yellow
+        cell.policyName.lineBreakStrategy = .hangulWordPriority
+        
+        cell.layer.shadowOffset = CGSize(width: 5, height: 5) // 반경에 대해서 너무 적용이 되어서 4point 정도 내림.
+        cell.layer.shadowRadius = 1 // 반경?
+        cell.layer.shadowOpacity = 0.5 // alpha값입니다.
+        cell.selectionStyle = .none //셀 선택시 회색으로 변하지 않게 하기
+        return cell
     }
 }

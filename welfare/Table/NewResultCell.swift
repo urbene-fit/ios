@@ -11,6 +11,7 @@ class NewResultCell: UITableViewCell {
     
     static let identifier = "NewResultCell"
     
+    
     // 테이블뷰 셀 프레임지정
     override open var frame: CGRect {
         get {
@@ -34,29 +35,15 @@ class NewResultCell: UITableViewCell {
     }
     
     
-    //하위 카테고리별 이미지
-    let categoryImg: UIImageView = {
-        //let plusImg = UIImageView()
-        let categoryImg = UIImageView()
-        categoryImg.translatesAutoresizingMaskIntoConstraints = false
-        return categoryImg
-    }()
-    
-    
     //정책이름
     let policyName: UILabel = {
         let policyName = UILabel()
         policyName.translatesAutoresizingMaskIntoConstraints = false
 //        policyName.font = UIFont(name: "Jalnan", size: 20  *  DeviceManager.sharedInstance.heightRatio)
+        policyName.lineBreakMode = .byWordWrapping
         policyName.textColor = UIColor.black
-        policyName.numberOfLines = 3 // 최대 몇줄로 표시할 수 있는지에 대한 설정
-//        policyName.backgroundColor = .yellow
-        
-        if #available(iOS 14.0, *) {
-            policyName.lineBreakStrategy = .hangulWordPriority
-        } else {
-            // Fallback on earlier versions
-        }
+        policyName.numberOfLines = 6 // 최대 몇줄로 표시할 수 있는지에 대한 설정
+        policyName.textAlignment = .center
         return policyName
     }()
     
@@ -108,55 +95,26 @@ class NewResultCell: UITableViewCell {
     }
     
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-    
-    
     private func addContentView() {
-//        contentView.addSubview(categoryImg)
         contentView.addSubview(policyName)
-        
         contentView.addSubview(localName)
-//        contentView.layer.shadowColor = UIColor.black.cgColor
-//        contentView.layer.shadowOffset = CGSize(width: 5  *  DeviceManager.sharedInstance.heightRatio, height: 5  *  DeviceManager.sharedInstance.heightRatio) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
-//        contentView.layer.shadowOpacity = 1
-//        contentView.layer.shadowRadius = 1 // 반경?
-//        contentView.layer.shadowOpacity = 0.5 // alpha값입니다.
     }
     
     
-    private func autoLayout() {
+    // 제약 조건 설정
+    func autoLayout() {
         NSLayoutConstraint.activate([
-            //마진 설정하는 부분
             
-            //하위 카테고리 이미지
-//            categoryImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-//            categoryImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 200  *  DeviceManager.sharedInstance.heightRatio),
-            
-            //정책이름
+            // 정책이름
             policyName.topAnchor.constraint(equalTo: self.topAnchor, constant: 60  * DeviceManager.sharedInstance.widthRatio),
             policyName.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20  *  DeviceManager.sharedInstance.heightRatio),
+            policyName.trailingAnchor.constraint(equalTo: self.trailingAnchor,constant: -20  *  DeviceManager.sharedInstance.heightRatio),
+            policyName.heightAnchor.constraint(equalToConstant: 120  *  DeviceManager.sharedInstance.heightRatio),
             
             
-            //지역명local
+            // 지역명
             localName.topAnchor.constraint(equalTo: self.topAnchor, constant: 20  * DeviceManager.sharedInstance.widthRatio),
             localName.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20  *  DeviceManager.sharedInstance.heightRatio),
-            
-            //정책태그
-            //            policyTag.topAnchor.constraint(equalTo: self.topAnchor, constant: 100),
-            //            policyTag.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            
-            //별점 이미지
-            //            policyTag.topAnchor.constraint(equalTo: self.topAnchor, constant: 70),
-            //            policyTag.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            //
-            
-            //크기 지정하는 부분
-//            categoryImg.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
-//            categoryImg.heightAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.heightRatio),
-//            policyName.widthAnchor.constraint(equalToConstant: 400  *  DeviceManager.sharedInstance.widthRatio),
-            policyName.heightAnchor.constraint(equalToConstant: 120  *  DeviceManager.sharedInstance.heightRatio),
             localName.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
             localName.heightAnchor.constraint(equalToConstant: 20  *  DeviceManager.sharedInstance.heightRatio),
         ])
