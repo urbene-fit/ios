@@ -6,7 +6,14 @@
 
 import UIKit
 import Alamofire
-import DropDown
+import iOSDropDown
+import PopMenu
+
+class ResponsiveView: UIView {
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+}
 
 
 // https://stackoverflow.com/questions/51789511/want-to-create-a-search-bar-like-google-in-swift
@@ -114,11 +121,11 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     
     // 참고: https://www.youtube.com/watch?v=-tpJMQRSl_o
-    let menu: DropDown = {
-        let menu = DropDown()
-        menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
-        return menu
-    }()
+    //    let menu: DropDown = {
+    //        let menu = DropDown()
+    //        menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
+    //        return menu
+    //    }()
     
     
     let stackView = UIStackView()
@@ -130,6 +137,72 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     // 선택한 지역 정보
     var selectCity = "전국"
+    
+    
+    // let cityLiset = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
+    var menuItems: [UIAction] {
+        return [
+            
+            UIAction(title: "전국", handler: { (_) in
+            }),
+            UIAction(title: "강원", handler: { (_) in
+            }),
+            UIAction(title: "경기", handler: { (_) in
+            }),
+            UIAction(title: "경남", handler: { (_) in
+            }),
+            UIAction(title: "경북", handler: { (_) in
+            }),
+            UIAction(title: "광주", handler: { (_) in
+            }),
+            UIAction(title: "대구", handler: { (_) in
+            }),
+            UIAction(title: "대전", handler: { (_) in
+            }),
+            UIAction(title: "부산", handler: { (_) in
+            }),
+            UIAction(title: "서울", handler: { (_) in
+            }),
+            UIAction(title: "세종", handler: { (_) in
+            }),
+            UIAction(title: "울산", handler: { (_) in
+            }),
+            UIAction(title: "인천", handler: { (_) in
+            }),
+            UIAction(title: "전남", handler: { (_) in
+            }),
+            UIAction(title: "전북", handler: { (_) in
+            }),
+            UIAction(title: "제주", handler: { (_) in
+            }),
+            UIAction(title: "충남", handler: { (_) in
+            }),
+            UIAction(title: "충북", handler: { (_) in
+            })
+            
+            //            UIAction(title: "충남", image: UIImage(systemName: "moon"), attributes: .disabled, handler: { (_) in
+            //            }),
+            //            UIAction(title: "충북", image: nil, attributes: .destructive, handler: { (_) in
+            //            })
+        ]
+    }
+    
+    
+    var demoMenu: UIMenu {
+        return UIMenu(children: menuItems)
+    }
+    
+    
+    var responsiveView: ResponsiveView!
+    
+    
+    // 드랍박스 버전 2
+    // 내용 생성
+    let cityList = [ "전국", "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북" ]
+    
+    
+    // 빈 배열 만들기
+    var actions : [PopMenuDefaultAction] = []
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -199,6 +272,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     
     // 서치 바 UI 생성, 참고 - https://zeddios.tistory.com/1196
+    // https://cocoapods.org/pods/iOSDropDown
     func createSearchBarUI() {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "혜택을 검색해보세요"
@@ -208,7 +282,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         searchController.searchBar.sizeToFit()
         searchController.searchBar.scopeButtonTitles = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
         searchController.searchBar.showsScopeBar = false
-        
+        searchController.searchBar.layer.addBorder([.right], color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
         
         // 드롭 다운이 표시되는보기
         let button = UIButton()
@@ -219,48 +293,50 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         button.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
         
         
-        // 참고
-        // https://somedd.github.io/TIL_SearchViewControllerAndSearchBar/
-        // https://stackoverflow.com/questions/58061378/labels-and-text-inside-text-field-becoming-white-automatically-for-ios-13-dark-m
-        // https://fomaios.tistory.com/entry/%EC%84%9C%EC%B9%98%EB%B0%94-%EC%BB%A4%EC%8A%A4%ED%85%80%ED%95%98%EA%B8%B0-Custom-UISearchBar
+        // 버튼 드랍다운_v1 적용 - 참고: https://nemecek.be/blog/85/how-to-show-uimenu-from-uibutton-or-uibarbuttonitem
+//        button.menu = demoMenu
+//        button.showsMenuAsPrimaryAction = true
+        
+        
+        // 검색바 텍스트 필드 UI 수정
         if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
             textfield.overrideUserInterfaceStyle = .light
             textfield.backgroundColor = .lightText
             textfield.leftView = button
-//            textfield.leftView?.layer.addCategoryBtnBorder([.left], color:#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
-//            textfield.leftView?.layer.borderWidth = 1.0
-            textfield.leftView?.layer.addBtnBorder([UIRectEdge.left], color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), width: 1.0)
             textfield.leftViewMode = .always
         }
         
         
-        // 드랍 다운 정보를 버튼으로 붙이겠습니다.
-        menu.anchorView = button
-        
-        // 버튼을 가리는게 싫을 경우 설정
-        menu.bottomOffset = CGPoint(x: 0, y:(menu.anchorView?.plainView.bounds.height)!)
-        
-        menu.direction = .bottom
-        
-        
-        // 드랍박스 가로 길이 설정
-        menu.width = 80
-        
-        
-        // 선택시 트리거되는 작업
-        menu.selectionAction = { [unowned self] (index: Int, item: String) in
-            debugPrint("Selected item: \(item) at index: \(index)") //Selected item: code at index: 0
-            
-            // 선택한 지역 정보 저장
-            selectCity = item
-            
-            // 타이틀 이름 수정
-            button.setTitle(item, for: .normal)
-        }
-        
         // NavigationBar에 SearchBar 추가
         self.navigationItem.searchController = searchController
         self.navigationItem.hidesSearchBarWhenScrolling = false
+    }
+
+    
+    // 드랍박스 버튼 클릭시 실행
+    @objc func dropEvent(_ sender: UIButton) {
+        debugPrint("dropEvent 실행")
+        
+        // action is a `PopMenuAction`, in this case it's a `PopMenuDefaultAction`
+        for i in cityList {
+            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
+                debugPrint("\(action.title) is tapped") // will print out: 'Action 1 is tapped'
+            }))
+        }
+
+
+        // Pass the UIView in init
+        let menu = PopMenuViewController(sourceView: sender, actions: actions)
+        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
+        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
+        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
+        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
+        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
+        menu.appearance.popMenuScrollIndicatorHidden = true // default false
+        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
+
+
+        present(menu, animated: true, completion: nil)
     }
     
     
@@ -414,13 +490,6 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
-    // 키보드 내리기
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        debugPrint("searchViewController - touchesBegan() 실헹, 키보드 내리기")
-//        self.view.endEditing(true)
-//    }
-    
-    
     // 테마 키워드 카테고리 버튼 누를 경우 실행
     @objc func move(_ sender: UIButton) {
         debugPrint("searchViewController - move() 실헹, 결과페이지로 이동하는 버튼 클릭")
@@ -437,11 +506,5 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         // 상세정보 뷰로 이동
         self.navigationController?.pushViewController(RVC, animated: true)
-    }
-    
-    
-    // 드랍박스 버튼 클릭시 실행
-    @objc func dropEvent(_ sender: UIButton) {
-        menu.show()
     }
 }

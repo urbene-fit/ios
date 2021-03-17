@@ -7,7 +7,7 @@
 
 import UIKit
 import Alamofire
-import DropDown
+import iOSDropDown
 
 
 class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
@@ -59,12 +59,8 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     
     // 지역 선택 드랍박스 - 참고: https://www.youtube.com/watch?v=-tpJMQRSl_o
-    let menu: DropDown = {
-        let menu = DropDown()
-        menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
-        return menu
-    }()
-    
+    // menu.dataSource = [ "전국", "강원", "경기", "경남" , "경북", "광주","대구","대전","부산", "서울", "세종","울산", "인천", "전남", "전북","제주","충남", "충북" ]
+
     
     // 메인 UI
     let stackView = UIStackView()
@@ -196,28 +192,6 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
             textfield.overrideUserInterfaceStyle = .light
             textfield.backgroundColor = .lightText
             textfield.leftView = button
-        }
-        
-        // 드랍 다운 추가
-        menu.anchorView = button
-        
-        
-        menu.direction = .bottom
-        
-        
-        // 드랍박스 가로 길이 설정
-        menu.width = 80
-        
-        
-        // 선택시 트리거되는 작업
-        menu.selectionAction = { [unowned self] (index: Int, item: String) in
-            debugPrint("Selected item: \(item) at index: \(index)") //Selected item: code at index: 0
-            
-            // 선택한 지역 정보 저장
-            selectCity = item
-            
-            // 타이틀 이름 수정
-            button.setTitle(item, for: .normal)
         }
         
         
@@ -454,30 +428,29 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
             cell.policyName.text = "\(title)"
             cell.localName.text = "#\(items[indexPath.row].welf_local)"
             
-            let imgName = items[indexPath.row].welf_category[0]
-            if(imgDic[imgName] != nil){
-                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
-            }else{
-                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
-            }
+//            let imgName = items[indexPath.row].welf_category[0]
+//            if(imgDic[imgName] != nil){
+//                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
+//            }else{
+//                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
+//            }
         default:
             let title = filtered[indexPath.row].welf_name.replacingOccurrences(of: " ", with: "\n")
             cell.policyName.text = "\(title)"
             cell.localName.text = "#\(items[indexPath.row].welf_local)"
             
-            let imgName = filtered[indexPath.row].welf_category[0]
-            if(imgDic[imgName] != nil){
-                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
-            }else{
-                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
-            }
+//            let imgName = filtered[indexPath.row].welf_category[0]
+//            if(imgDic[imgName] != nil){
+//                cell.categoryImg.setImage(UIImage(named: imgDic[imgName]!)!)
+//            }else{
+//                cell.categoryImg.setImage(UIImage(named: "AppIcon")!)
+//            }
         }
         
+        // cell.policyName.textRect(forBounds: CGRect(x: 0, y: 0, width: ce, height: <#T##Int#>), limitedToNumberOfLines: 3)
         
-        cell.categoryImg.backgroundColor = UIColor.clear
-        // cell.layer.shadowColor = UIColor.black.cgColor // 음영
+        
         cell.layer.shadowOffset = CGSize(width: 5, height: 5) // 반경에 대해서 너무 적용이 되어서 4point 정도 내림.
-        cell.layer.shadowOpacity = 1
         cell.layer.shadowRadius = 1 // 반경?
         cell.layer.shadowOpacity = 0.5 // alpha값입니다.
         cell.selectionStyle = .none //셀 선택시 회색으로 변하지 않게 하기
@@ -547,9 +520,9 @@ class NewResultView: UIViewController , UITableViewDelegate, UITableViewDataSour
     
     // 드랍박스 버튼 클릭시 실행
     @objc func dropEvent(_ sender: UIButton) {
-        menu.show()
+//        menu.show()
     }
-    
+
     
     // 엔터 감지하는 함수
     func searchBarSearchButtonClicked(_ seachBar: UISearchBar) {

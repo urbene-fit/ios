@@ -20,7 +20,8 @@ pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
 pod 'DeviceKit', '~> 4.0'
 pod 'lottie-ios'
 pod 'Gemini'
-pod 'DropDown'
+pod 'iOSDropDown'
+pod 'NewPopMenu', '~> 2.0'
 
 # add pods for desired Firebase products
 # https://firebase.google.com/docs/ios/setup#available-pods

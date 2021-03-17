@@ -8,7 +8,6 @@ PODS:
   - AppAuth/Core (1.4.0)
   - AppAuth/ExternalUserAgent (1.4.0)
   - DeviceKit (4.2.1)
-  - DropDown (2.3.13)
   - Firebase/Analytics (6.28.1):
     - Firebase/Core
   - Firebase/Auth (6.28.1):
@@ -108,6 +107,7 @@ PODS:
   - GTMSessionFetcher/Core (1.4.0)
   - GTMSessionFetcher/Full (1.4.0):
     - GTMSessionFetcher/Core (= 1.4.0)
+  - iOSDropDown (0.3.4)
   - Kingfisher (4.10.1)
   - lottie-ios (3.2.1)
   - nanopb (1.30905.0):
@@ -115,6 +115,7 @@ PODS:
     - nanopb/encode (= 1.30905.0)
   - nanopb/decode (1.30905.0)
   - nanopb/encode (1.30905.0)
+  - NewPopMenu (2.1.2)
   - PromisesObjC (1.2.9)
   - Protobuf (3.13.0)
   - SnapKit (5.0.1)
@@ -127,7 +128,6 @@ DEPENDENCIES:
   - Alamofire (= 4.7.3)
   - AlamofireImage
   - DeviceKit (~> 4.0)
-  - DropDown
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core
@@ -135,8 +135,10 @@ DEPENDENCIES:
   - Gemini
   - GoogleAPIClientForREST/YouTube (~> 1.2.1)
   - GoogleSignIn (~> 5.0)
+  - iOSDropDown
   - Kingfisher (~> 4.0)
   - lottie-ios
+  - NewPopMenu (~> 2.0)
   - SnapKit (~> 5.0.0)
   - SwiftyGif
   - SwiftyJSON
@@ -149,7 +151,6 @@ SPEC REPOS:
     - AlamofireImage
     - AppAuth
     - DeviceKit
-    - DropDown
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -166,9 +167,11 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - iOSDropDown
     - Kingfisher
     - lottie-ios
     - nanopb
+    - NewPopMenu
     - PromisesObjC
     - Protobuf
     - SnapKit
@@ -182,7 +185,6 @@ SPEC CHECKSUMS:
   AlamofireImage: 78d67ccbb763d87ba44b21583d2153500a195630
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   DeviceKit: cadb5ff25d45fe186778bf2d0fd2ea4750542189
-  DropDown: 8a2116376c1981888557f72ec2ffc9a5e0e456ec
   Firebase: ed042590caa0029392257529a8003c25ee82bc18
   FirebaseAnalytics: 5fa308e1b13f838d0f6dc74719ac2a72e8c5afc4
   FirebaseAuth: 06feef26ff3a98323677c76c4102146b872cd6b7
@@ -199,9 +201,11 @@ SPEC CHECKSUMS:
   GoogleUtilities: e121a3867449ce16b0e35ddf1797ea7a389ffdf2
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
+  iOSDropDown: c10a761f9a00c3f1cc9d3bce43ae504628e2f692
   Kingfisher: c148cd7b47ebde9989f6bc7c27dcaa79d81279a0
   lottie-ios: 106e92eaf11fbed0a76590b4cdb9b5ec26123ff7
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
+  NewPopMenu: c6129e08e8192f6257ceb5f9a4357e1b59c6e2e7
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
@@ -210,6 +214,6 @@ SPEC CHECKSUMS:
   youtube-ios-player-helper: 40b96e52c22445f0fdc43731cefa32c67075ff81
   YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
 
-PODFILE CHECKSUM: 488a4fb32bfc7472a8d4215d52ec7d7a0323728b
+PODFILE CHECKSUM: e5d972f92e0690929cd02a29969c4e9bf844f8d8
 
 COCOAPODS: 1.10.1

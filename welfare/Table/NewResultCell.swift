@@ -47,9 +47,16 @@ class NewResultCell: UITableViewCell {
     let policyName: UILabel = {
         let policyName = UILabel()
         policyName.translatesAutoresizingMaskIntoConstraints = false
-        policyName.font = UIFont(name: "Jalnan", size: 20  *  DeviceManager.sharedInstance.heightRatio)
-        policyName.textColor = UIColor.white
-        policyName.numberOfLines = 6
+//        policyName.font = UIFont(name: "Jalnan", size: 20  *  DeviceManager.sharedInstance.heightRatio)
+        policyName.textColor = UIColor.black
+        policyName.numberOfLines = 3 // 최대 몇줄로 표시할 수 있는지에 대한 설정
+//        policyName.backgroundColor = .yellow
+        
+        if #available(iOS 14.0, *) {
+            policyName.lineBreakStrategy = .hangulWordPriority
+        } else {
+            // Fallback on earlier versions
+        }
         return policyName
     }()
     
@@ -107,14 +114,15 @@ class NewResultCell: UITableViewCell {
     
     
     private func addContentView() {
-        contentView.addSubview(categoryImg)
+//        contentView.addSubview(categoryImg)
         contentView.addSubview(policyName)
+        
         contentView.addSubview(localName)
-        contentView.layer.shadowColor = UIColor.black.cgColor
-        contentView.layer.shadowOffset = CGSize(width: 5  *  DeviceManager.sharedInstance.heightRatio, height: 5  *  DeviceManager.sharedInstance.heightRatio) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
-        contentView.layer.shadowOpacity = 1
-        contentView.layer.shadowRadius = 1 // 반경?
-        contentView.layer.shadowOpacity = 0.5 // alpha값입니다.
+//        contentView.layer.shadowColor = UIColor.black.cgColor
+//        contentView.layer.shadowOffset = CGSize(width: 5  *  DeviceManager.sharedInstance.heightRatio, height: 5  *  DeviceManager.sharedInstance.heightRatio) // 반경에 대해서 너무 적용이 되어서 4point 정도 ㅐ림.
+//        contentView.layer.shadowOpacity = 1
+//        contentView.layer.shadowRadius = 1 // 반경?
+//        contentView.layer.shadowOpacity = 0.5 // alpha값입니다.
     }
     
     
@@ -123,8 +131,8 @@ class NewResultCell: UITableViewCell {
             //마진 설정하는 부분
             
             //하위 카테고리 이미지
-            categoryImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
-            categoryImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 200  *  DeviceManager.sharedInstance.heightRatio),
+//            categoryImg.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+//            categoryImg.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 200  *  DeviceManager.sharedInstance.heightRatio),
             
             //정책이름
             policyName.topAnchor.constraint(equalTo: self.topAnchor, constant: 60  * DeviceManager.sharedInstance.widthRatio),
@@ -145,9 +153,9 @@ class NewResultCell: UITableViewCell {
             //
             
             //크기 지정하는 부분
-            categoryImg.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
-            categoryImg.heightAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.heightRatio),
-            policyName.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
+//            categoryImg.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
+//            categoryImg.heightAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.heightRatio),
+//            policyName.widthAnchor.constraint(equalToConstant: 400  *  DeviceManager.sharedInstance.widthRatio),
             policyName.heightAnchor.constraint(equalToConstant: 120  *  DeviceManager.sharedInstance.heightRatio),
             localName.widthAnchor.constraint(equalToConstant: 200  *  DeviceManager.sharedInstance.widthRatio),
             localName.heightAnchor.constraint(equalToConstant: 20  *  DeviceManager.sharedInstance.heightRatio),
