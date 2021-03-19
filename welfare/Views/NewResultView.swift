@@ -4,10 +4,9 @@
 //  Created by 김동현 on 2020/12/31.
 //  Copyright © 2020 com. All rights reserved.
 
-
 import UIKit
 import Alamofire
-import PopMenu
+import iOSDropDown
 
 
 class NewResultView: UIViewController , UISearchBarDelegate {
@@ -96,17 +95,16 @@ class NewResultView: UIViewController , UISearchBarDelegate {
     }
     
     
-    // 드롭다운 표시할 버튼
-    let cityButton = UIButton()
+    // 드랍박스 UI
+    let leftView = UIStackView()
     
     
-    // 드랍박스_v2, 도시 리스트
+    // 도시 리스트
     let cityList = [ "전국", "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북" ]
     
     
-    // 드랍박스 틀 생성
-    var actions : [PopMenuDefaultAction] = []
-    
+    //검색창 바
+    let searchBar = UISearchBar()
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -179,48 +177,83 @@ class NewResultView: UIViewController , UISearchBarDelegate {
     
     // 서치 바 UI 생성
     func createSearchBarUI() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "혜택을 검색해보세요"
-        searchController.hidesNavigationBarDuringPresentation = false // NavigationTitle 숨김 설정
-        searchController.automaticallyShowsCancelButton = false // 자동으로 cancel버튼이 나오게 할지 여부
-        searchController.searchBar.delegate = self // 검색창, 서치바를 동작하기 위한 대리자 선언
-        searchController.searchBar.sizeToFit()
         
         
-        // 드롭 다운 표시할 버튼 UI 생성
-        cityButton.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
-        cityButton.backgroundColor = .clear
-        cityButton.setTitle("전국", for: .normal)
-        cityButton.setTitleColor(UIColor.black, for: .normal)
-        cityButton.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
+        // 스택 뷰에 추가
+        self.stackView.addArrangedSubview(leftView)
         
         
-        // 검색바 텍스트 필드 UI 수정
-        if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
-            textfield.overrideUserInterfaceStyle = .light
-            textfield.backgroundColor = .lightText
-            textfield.leftView = cityButton
-            textfield.leftViewMode = .always
-        }
+        // 가로 스택 뷰 설정
+        leftView.translatesAutoresizingMaskIntoConstraints = false
+        leftView.heightAnchor.constraint(equalToConstant: 50  *  DeviceManager.sharedInstance.heightRatio).isActive = true
         
         
-        // NavigationBar에 SearchBar 추가
-        self.navigationItem.searchController = searchController
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-    }
-    
-    
-    // 메인 UI 생성
-    func createMainUI() {
+        // 패딩 증가
+        leftView.backgroundColor = .clear
+        leftView.axis = .horizontal // 수평 또는 수직 스택의 방향을 결정
+        leftView.distribution = .equalSpacing // 스택 축을 따라 정렬 된 뷰의 레이아웃을 결정
+        leftView.alignment = .center // 스택 축에 수직으로 정렬 된 뷰의 레이아웃을 결정
+        leftView.spacing = 5
+        
         
         // 메인 뷰 상단 UI
         let centerView = UILabel()
         centerView.text = "검색결과 "+String(items.count)+"개 입니다. "
+        centerView.frame = CGRect(x: 0, y: 0, width: 200, height: 50 * DeviceManager.sharedInstance.heightRatio)
         centerView.textColor = .white
         centerView.font = UIFont(name: "Jalnan", size: 20  *  DeviceManager.sharedInstance.heightRatio)
         centerView.textAlignment = .right
         centerView.heightAnchor.constraint(equalToConstant: 20).isActive = true
         centerView.layer.backgroundColor = UIColor.clear.cgColor
+        self.stackView.addArrangedSubview(centerView)
+        
+        
+        // 지역 선택 버튼 - 드랍 박스 추가
+        let dropDown = DropDown()
+        dropDown.frame = CGRect(x: self.stackView.frame.minX+20, y: 0, width: 100, height: 50 * DeviceManager.sharedInstance.heightRatio)
+        dropDown.arrowSize = 10
+        dropDown.borderColor = .clear
+        dropDown.borderWidth = 1.0
+        dropDown.cornerRadius = 5
+        dropDown.backgroundColor = UIColor.white
+        dropDown.selectedRowColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
+        
+        
+        // 지역 정보 추가
+        dropDown.optionArray = cityList
+        
+        
+        // 지역 선택시 발생하는 이벤트 추가
+        dropDown.didSelect{(selectedText , index ,id) in
+            debugPrint("Selected String: \(selectedText) \n index: \(index)")
+            self.selectCity = selectedText
+        }
+        
+        
+        self.leftView.addSubview(dropDown)
+        
+        
+        // 참고 - https://medium.com/flawless-app-stories/customize-uisearchbar-for-different-ios-versions-6ee02f4d4419
+        self.leftView.addSubview(searchBar)
+        searchBar.frame = CGRect(x: self.stackView.frame.minX+130, y: 0, width: 300 * DeviceManager.sharedInstance.heightRatio, height: 50 * DeviceManager.sharedInstance.heightRatio)
+        
+        
+        // 배경색 제거
+        searchBar.backgroundColor = .clear
+        searchBar.backgroundImage = UIImage()
+        
+        
+        // 검색 텍스트 필드 색 설정
+        searchBar.searchTextField.backgroundColor = .white
+        
+        
+        // 검색바 이벤트 추가
+        searchBar.delegate = self
+    }
+    
+    
+    // 메인 UI 생성
+    func createMainUI() {
         
         
         // 빈 뷰 추가 - 간격 벌리기 목적
@@ -230,10 +263,6 @@ class NewResultView: UIViewController , UISearchBarDelegate {
         
         // 이전 클래스에서 받아온 값 저장
         itemCount = items.count
-        
-        
-        // 전체 버튼 추가
-        categoryItems.insert("전체", at: 0)
         
         
         // 카테고리 버튼 UI 생성
@@ -285,7 +314,7 @@ class NewResultView: UIViewController , UISearchBarDelegate {
         
         
         // 스택 뷰에 추가
-        self.stackView.addArrangedSubview(centerView)
+        self.stackView.addArrangedSubview(empty)
         self.stackView.addArrangedSubview(empty)
         self.stackView.addArrangedSubview(categoryScrlview)
         self.stackView.addArrangedSubview(resultTbView)
@@ -299,6 +328,7 @@ class NewResultView: UIViewController , UISearchBarDelegate {
     // viewDidAppear: 뷰가 화면에 나타난 직후에 실행, 화면에 적용될 애니메이션을 그려줌, 네비게이션 컨트롤러 변경
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         
         // 네비게이션 UI 생성
         createNaviUI()
@@ -377,40 +407,12 @@ class NewResultView: UIViewController , UISearchBarDelegate {
             filtered = items.filter{ $0.welf_category.contains(selected)}
         }
         
+        
         // 셀, 섹션 머리글 및 바닥 글, 인덱스 배열 등을 포함하여 테이블을 구성하는 데 사용되는 모든 데이터를 다시로드
         // reloadData: collectionView, tableView 를 새로 그려야 할 경우 가장 먼저 떠오르는 방법
         // 테이블 뷰의 현재 보이는 전체 열(row), 섹션(section) 업데이트를 할 때 사용
         // 특정 열, 섹션의 부분적 업데이트가 아닌, 테이블뷰의 보이는 영역 전체를 업데이트 해줄 때 효율적
         self.resultTbView.reloadData()
-    }
-    
-    
-    // 드랍박스 버튼 클릭시 실행
-    @objc func dropEvent(_ sender: UIButton) {
-        
-        // 드랍박스 UI 안에 표시할 값 추가
-        for i in cityList {
-            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
-                
-                // 선택한 지역 정보명으로 버튼 타이틀 수정
-                self.cityButton.setTitle(action.title, for: .normal)
-            }))
-        }
-
-        
-        // 드랍박스 UI 생성 및 설정
-        let menu = PopMenuViewController(sourceView: sender, actions: actions)
-        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
-        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
-        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
-        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
-        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
-        menu.appearance.popMenuScrollIndicatorHidden = true // default false
-        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
-
-        
-        // 드랍박스 UI 표시
-        present(menu, animated: true, completion: nil)
     }
     
     
@@ -505,7 +507,7 @@ class NewResultView: UIViewController , UISearchBarDelegate {
                                     
                                     
                                     // 버튼 값 초기화
-                                    self.cityButton.setTitle("전국", for: .normal)
+                                    self.selected = ""
                                     
                                     
                                     // 검색 포커스 해제

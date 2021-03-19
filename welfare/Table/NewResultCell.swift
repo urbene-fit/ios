@@ -106,9 +106,10 @@ class NewResultCell: UITableViewCell {
         NSLayoutConstraint.activate([
             
             // 정책이름
-            policyName.topAnchor.constraint(equalTo: self.topAnchor, constant: 60  * DeviceManager.sharedInstance.widthRatio),
+            policyName.topAnchor.constraint(equalTo: self.topAnchor, constant: 40  * DeviceManager.sharedInstance.widthRatio),
             policyName.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20  *  DeviceManager.sharedInstance.heightRatio),
             policyName.trailingAnchor.constraint(equalTo: self.trailingAnchor,constant: -20  *  DeviceManager.sharedInstance.heightRatio),
+            policyName.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -20  *  DeviceManager.sharedInstance.heightRatio),
             policyName.heightAnchor.constraint(equalToConstant: 120  *  DeviceManager.sharedInstance.heightRatio),
             
             

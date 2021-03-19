@@ -4,9 +4,10 @@
 //  Created by 김동현 on 2020/12/13.
 //  Copyright © 2020 com. All rights reserved.
 
+
 import UIKit
 import Alamofire
-import PopMenu
+import iOSDropDown
 
 
 class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate {
@@ -60,75 +61,16 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     let bottomView = UIStackView()
     
     
+    // 드랍박스 UI
+    let leftView = UIStackView()
+    
+    
     // 선택한 지역 정보
-    var selectCity = "전국"
+    var selectCity : String = ""
     
     
-    // 드롭다운 표시할 버튼
-    let cityButton = UIButton()
-    
-    
-    // 드랍박스_v1
-    var menuItems: [UIAction] {
-        return [
-            
-            UIAction(title: "전국", handler: { (_) in
-            }),
-            UIAction(title: "강원", handler: { (_) in
-            }),
-            UIAction(title: "경기", handler: { (_) in
-            }),
-            UIAction(title: "경남", handler: { (_) in
-            }),
-            UIAction(title: "경북", handler: { (_) in
-            }),
-            UIAction(title: "광주", handler: { (_) in
-            }),
-            UIAction(title: "대구", handler: { (_) in
-            }),
-            UIAction(title: "대전", handler: { (_) in
-            }),
-            UIAction(title: "부산", handler: { (_) in
-            }),
-            UIAction(title: "서울", handler: { (_) in
-            }),
-            UIAction(title: "세종", handler: { (_) in
-            }),
-            UIAction(title: "울산", handler: { (_) in
-            }),
-            UIAction(title: "인천", handler: { (_) in
-            }),
-            UIAction(title: "전남", handler: { (_) in
-            }),
-            UIAction(title: "전북", handler: { (_) in
-            }),
-            UIAction(title: "제주", handler: { (_) in
-            }),
-            UIAction(title: "충남", handler: { (_) in
-            }),
-            UIAction(title: "충북", handler: { (_) in
-            })
-            
-            //            UIAction(title: "충남", image: UIImage(systemName: "moon"), attributes: .disabled, handler: { (_) in
-            //            }),
-            //            UIAction(title: "충북", image: nil, attributes: .destructive, handler: { (_) in
-            //            })
-        ]
-    }
-    
-    
-    var demoMenu: UIMenu {
-        return UIMenu(children: menuItems)
-    }
-    
-    
-    // 드랍박스_v2, 도시 리스트
+    // 도시 리스트
     let cityList = [ "전국", "강원", "경기", "경남", "경북", "광주", "대구", "대전", "부산", "서울", "세종", "울산", "인천", "전남", "전북", "제주", "충남", "충북" ]
-    
-    
-    // 드랍박스 틀 생성
-    var actions : [PopMenuDefaultAction] = []
-    
     
     
     // viewDidLoad: 뷰의 컨트롤러가 메모리에 로드되고 난 후에 호출, 화면이 처음 만들어질 때 한 번만 실행, 일반적으로 리소스를 초기화하거나 초기 화면을 구성하는 용도로 주로 사용
@@ -179,7 +121,7 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
         
         // 스택 뷰 적용
         self.view.addSubview(stackView)
-        
+        //        stackView.backgroundColor = .blue
         
         // 스택 뷰 설정
         stackView.axis = .vertical // 수평 또는 수직 스택의 방향을 결정
@@ -200,62 +142,66 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     
     // 서치 바 UI 생성, 참고
     func createSearchBarUI() {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "혜택을 검색해보세요"
-        searchController.hidesNavigationBarDuringPresentation = false // NavigationTitle 숨김 설정
-        searchController.automaticallyShowsCancelButton = false // 자동으로 cancel버튼이 나오게 할지 여부
-        searchController.searchBar.delegate = self // 검색창, 서치바를 동작하기 위한 대리자 선언
-        searchController.searchBar.sizeToFit()
         
         
-        // 드롭 다운 표시할 버튼 UI 생성
-        cityButton.frame = CGRect(x: 0, y: 0, width: 100, height: self.accessibilityFrame.height)
-        cityButton.backgroundColor = .clear
-        cityButton.setTitle("전국", for: .normal)
-        cityButton.setTitleColor(UIColor.black, for: .normal)
-        cityButton.imageEdgeInsets = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-        cityButton.addTarget(self, action: #selector(self.dropEvent), for: .touchUpInside)
+        // 스택 뷰에 추가
+        self.stackView.addArrangedSubview(leftView)
         
         
-        let rightButton  = UIButton()
-        //this is not taken into account
-        rightButton.frame = CGRect(x:0, y:0, width:100, height:self.accessibilityFrame.height)
-        rightButton.imageView?.contentMode = .scaleAspectFit
-        rightButton.backgroundColor = .blue
-        rightButton.setTitle("전국", for: .normal)
-        rightButton.setTitleColor(UIColor.black, for: .normal)
-        rightButton.setImage(UIImage(named: "searchIcon") , for: .normal)
-        rightButton.imageEdgeInsets = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 3.0, right: 3.0)
-
+        // 가로 스택 뷰 설정
+        leftView.translatesAutoresizingMaskIntoConstraints = false
+        leftView.heightAnchor.constraint(equalToConstant: 50  *  DeviceManager.sharedInstance.heightRatio).isActive = true
         
-        // 검색바 텍스트 필드 UI 수정
-        if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
-            textfield.overrideUserInterfaceStyle = .light
-            textfield.backgroundColor = .lightText
-            
-            textfield.leftView = cityButton
-            textfield.leftViewMode = .always
-            
-            //오른쪽 x버튼 이미지넣기
-                       if let rightView = textfield.rightView as? UIImageView {
-                           rightView.image = rightView.image?.withRenderingMode(.alwaysTemplate)
-                           //이미지 틴트 정하기
-                           rightView.tintColor = UIColor.blue
-                       }
-            
-            textfield.autoresizesSubviews = true
-           
+        
+        // 패딩 증가
+        leftView.backgroundColor = .clear
+        leftView.axis = .horizontal // 수평 또는 수직 스택의 방향을 결정
+        leftView.distribution = .equalSpacing // 스택 축을 따라 정렬 된 뷰의 레이아웃을 결정
+        leftView.alignment = .center // 스택 축에 수직으로 정렬 된 뷰의 레이아웃을 결정
+        leftView.spacing = 5
+        
+        
+        // 지역 선택 버튼 - 드랍 박스 추가
+        let dropDown = DropDown()
+        dropDown.frame = CGRect(x: self.stackView.frame.minX+20, y: 0, width: 100, height: 50 * DeviceManager.sharedInstance.heightRatio)
+        dropDown.arrowSize = 10
+        dropDown.borderColor = .clear
+        dropDown.borderWidth = 1.0
+        dropDown.cornerRadius = 5
+        dropDown.backgroundColor = UIColor.white
+        dropDown.selectedRowColor = UIColor(displayP3Red:242/255,green : 182/255, blue : 157/255, alpha: 1)
+        
+        
+        // 지역 정보 추가
+        dropDown.optionArray = cityList
+        
+        
+        // 지역 선택시 발생하는 이벤트 추가
+        dropDown.didSelect{(selectedText , index ,id) in
+            debugPrint("Selected String: \(selectedText) \n index: \(index)")
+            self.selectCity = selectedText
         }
         
         
-        // 버튼 드랍다운_v1 적용 - 참고: https://nemecek.be/blog/85/how-to-show-uimenu-from-uibutton-or-uibarbuttonitem
-        //        button.menu = demoMenu
-        //        button.showsMenuAsPrimaryAction = true
+        self.leftView.addSubview(dropDown)
         
         
-        // NavigationBar에 SearchBar 추가
-        self.navigationItem.searchController = searchController
-        self.navigationItem.hidesSearchBarWhenScrolling = false
+        // 참고 - https://medium.com/flawless-app-stories/customize-uisearchbar-for-different-ios-versions-6ee02f4d4419
+        self.leftView.addSubview(searchBar)
+        searchBar.frame = CGRect(x: self.stackView.frame.minX+130, y: 0, width: 300 * DeviceManager.sharedInstance.heightRatio, height: 50 * DeviceManager.sharedInstance.heightRatio)
+        
+        
+        // 배경색 제거
+        searchBar.backgroundColor = .clear
+        searchBar.backgroundImage = UIImage()
+        
+        
+        // 검색 텍스트 필드 색 설정
+        searchBar.searchTextField.backgroundColor = .white
+        
+        
+        // 검색바 이벤트 추가
+        searchBar.delegate = self
     }
     
     
@@ -326,134 +272,107 @@ class searchViewController: UIViewController, UISearchBarDelegate, UITableViewDe
     }
     
     
-    // 드랍박스 버튼 클릭시 실행
-    @objc func dropEvent(_ sender: UIButton) {
-        
-        // 드랍박스 UI 안에 표시할 값 추가
-        for i in cityList {
-            actions.append(PopMenuDefaultAction(title: i, didSelect: { action in
-                
-                // 선택한 지역 정보명으로 버튼 타이틀 수정
-                self.cityButton.setTitle(action.title, for: .normal)
-            }))
-        }
-        
-        
-        // 드랍박스 UI 생성 및 설정
-        let menu = PopMenuViewController(sourceView: sender, actions: actions)
-        menu.appearance.popMenuBackgroundStyle = .dimmed(color: .white, opacity: 0.2)
-        menu.appearance.popMenuColor.backgroundColor = .solid(fill: .white) // 내용 배경색
-        menu.appearance.popMenuColor.actionColor = .tint(.red) // 글자색
-        menu.appearance.popMenuItemSeparator = .fill(.gray, height: 1) // 항목 구분선
-        menu.appearance.popMenuActionCountForScrollable = 8 // default 6
-        menu.appearance.popMenuScrollIndicatorHidden = true // default false
-        menu.appearance.popMenuScrollIndicatorStyle = .black // default .white
-        
-        
-        // 드랍박스 UI 표시
-        present(menu, animated: true, completion: nil)
-    }
-    
-    
     // 엔터 감지하는 함수
     func searchBarSearchButtonClicked(_ seachBar: UISearchBar) {
         debugPrint("searchViewController - searchBarSearchButtonClicked 실행, 엔터감지")
         
-        // 검색어가 있는지 확인해보고, 비어있는지 확인하고 출력
-        guard let search = seachBar.text, search.isEmpty == false else { return }
         
-        let params = ["type":"search", "keyword":search, "city":selectCity, "userAgent" : DeviceManager.sharedInstance.log]
-        Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
-            .validate()
-            .responseJSON { response in
-                switch response.result {
-                case .success(let value):
-                    
-                    //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
-                    do {
-                        let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
-                        let parseResult = try JSONDecoder().decode(parse.self, from: data)
+        switch selectCity {
+        
+        case "": // 알림창 출력
+            let alert = UIAlertController(title: "알림", message: "지역을 선택해 주세요.", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "확인", style: .cancel){
+                (action : UIAlertAction) -> Void in
+                alert.dismiss(animated: false)
+            }
+            
+            alert.addAction(cancelAction)
+            
+            self.present(alert, animated: true, completion: nil)
+        default:
+            // 검색어가 있는지 확인해보고, 비어있는지 확인하고 출력
+            guard let search = seachBar.text, search.isEmpty == false else { return }
+            
+            let params = ["type":"search", "keyword":search, "city":selectCity, "userAgent" : DeviceManager.sharedInstance.log]
+            Alamofire.request("https://www.hyemo.com/welf", method: .get, parameters: params)
+                .validate()
+                .responseJSON { response in
+                    switch response.result {
+                    case .success(let value):
                         
-                        
-                        guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView else{
-                            return
-                        }
-                        
-                        
-                        switch parseResult.Status {
-                        case "200":
-                            let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
+                        //상세페이지로 카테고리선택결과 데이터를  전달하기 위해 상세페이지 객체를 선언
+                        do {
+                            let data = try JSONSerialization.data(withJSONObject: value, options: .prettyPrinted)
+                            let parseResult = try JSONDecoder().decode(parse.self, from: data)
                             
-                            // 검색 결과값 파싱 해서 처리 후 다음 화면에 전달
-                            for i in 0..<parseResult.Message.count {
-                                let tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
-                                let split = tag.components(separatedBy: ";;")
+                            
+                            guard let RVC = self.storyboard?.instantiateViewController(withIdentifier: "NewResultView") as? NewResultView else{
+                                return
+                            }
+                            
+                            
+                            switch parseResult.Status {
+                            case "200":
+                                let parseResult = try JSONDecoder().decode(searchParse.self, from: data)
                                 
-                                RVC.items.append(NewResultView.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: parseResult.Message[i].welf_local, parent_category: parseResult.Message[i].parent_category, welf_category: split, tag: parseResult.Message[i].tag))
-                                
-                                
-                                // NewResultView 태그 추가
-                                for i in split {
-                                    if(!RVC.categoryItems.contains(i)){
-                                        RVC.categoryItems.append(i)
+                                // 검색 결과값 파싱 해서 처리 후 다음 화면에 전달
+                                for i in 0..<parseResult.Message.count {
+                                    let tag = parseResult.Message[i].welf_category.replacingOccurrences(of: " ", with: "")
+                                    let split = tag.components(separatedBy: ";;")
+                                    
+                                    RVC.items.append(NewResultView.item.init(welf_name: parseResult.Message[i].welf_name, welf_local: parseResult.Message[i].welf_local, parent_category: parseResult.Message[i].parent_category, welf_category: split, tag: parseResult.Message[i].tag))
+                                    
+                                    
+                                    // NewResultView 태그 추가
+                                    for i in split {
+                                        if(!RVC.categoryItems.contains(i)){
+                                            RVC.categoryItems.append(i)
+                                        }
                                     }
                                 }
+                                
+                                
+                                //뷰 이동
+                                RVC.modalPresentationStyle = .fullScreen
+                                
+                                
+                                // 상세정보 뷰로 이동
+                                self.navigationController?.pushViewController(RVC, animated: true)
+                            default:
+                                debugPrint("Status:", parseResult.Status, ", parseResult:",parseResult)
+                                
+                                let orderResult = try JSONDecoder().decode(orderParse.self, from: data)
+                                
+                                // 알림창 출력
+                                let alert = UIAlertController(title: "알림", message: orderResult.Message, preferredStyle: .alert)
+                                
+                                let cancelAction = UIAlertAction(title: "확인", style: .cancel){
+                                    (action : UIAlertAction) -> Void in
+                                    alert.dismiss(animated: false)
+                                }
+                                
+                                alert.addAction(cancelAction)
+                                
+                                self.present(alert, animated: true, completion: nil)
                             }
-                            
-                            
-                            //뷰 이동
-                            RVC.modalPresentationStyle = .fullScreen
-                            
-                            
-                            // 상세정보 뷰로 이동
-                            self.navigationController?.pushViewController(RVC, animated: true)
-                        default:
-                            debugPrint("Status:", parseResult.Status, ", parseResult:",parseResult)
-                            
-                            let orderResult = try JSONDecoder().decode(orderParse.self, from: data)
-                            
-                            // 알림창 출력
-                            let alert = UIAlertController(title: "알림", message: orderResult.Message, preferredStyle: .alert)
-                            
-                            let cancelAction = UIAlertAction(title: "확인", style: .cancel){
-                                (action : UIAlertAction) -> Void in
-                                alert.dismiss(animated: false)
-                            }
-                            
-                            alert.addAction(cancelAction)
-                            
-                            self.present(alert, animated: true, completion: nil)
+                        } catch let DecodingError.dataCorrupted(context) {
+                            debugPrint(context)
+                        } catch let DecodingError.keyNotFound(key, context) {
+                            debugPrint("Key '\(key)' not found:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch let DecodingError.valueNotFound(value, context) {
+                            debugPrint("Value '\(value)' not found:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch let DecodingError.typeMismatch(type, context)  {
+                            debugPrint("Type '\(type)' mismatch:", context.debugDescription)
+                            debugPrint("codingPath:", context.codingPath)
+                        } catch {
+                            debugPrint("error: ", error)
                         }
-                    } catch let DecodingError.dataCorrupted(context) {
-                        debugPrint(context)
-                    } catch let DecodingError.keyNotFound(key, context) {
-                        debugPrint("Key '\(key)' not found:", context.debugDescription)
-                        debugPrint("codingPath:", context.codingPath)
-                    } catch let DecodingError.valueNotFound(value, context) {
-                        debugPrint("Value '\(value)' not found:", context.debugDescription)
-                        debugPrint("codingPath:", context.codingPath)
-                    } catch let DecodingError.typeMismatch(type, context)  {
-                        debugPrint("Type '\(type)' mismatch:", context.debugDescription)
-                        debugPrint("codingPath:", context.codingPath)
-                    } catch {
-                        debugPrint("error: ", error)
+                    case .failure(let error):
+                        debugPrint(error)
                     }
-                case .failure(let error):
-                    debugPrint(error)
                 }
-            }
-    }
-}
-
-extension UITextField {
-    func rightImage(_ image: UIImage?, imageWidth: CGFloat, padding: CGFloat) {
-        let imageView = UIImageView()
-        imageView.frame = CGRect(x: padding + 2, y: 0, width: imageWidth, height: frame.height)
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = image
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + padding , height: frame.height))
-        containerView.addSubview(imageView)
-        rightView = containerView
-        rightViewMode = .always
+        }
     }
 }

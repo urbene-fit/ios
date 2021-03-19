@@ -22,6 +22,9 @@ pod 'lottie-ios'
 pod 'Gemini'
 pod 'iOSDropDown'
 pod 'NewPopMenu', '~> 2.0'
+pod 'SwiftyMenu', '~> 0.6.5'
+pod 'FTPopOverMenu' , '~>2.1.1'
+
 
 # add pods for desired Firebase products
 # https://firebase.google.com/docs/ios/setup#available-pods
